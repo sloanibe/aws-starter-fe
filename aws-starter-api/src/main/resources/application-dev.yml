@@ -1,0 +1,16 @@
+spring:
+  data:
+    mongodb:
+      uri: mongodb://adminuser:password123@44.234.191.56:27017/aws_starter?authSource=admin
+      database: aws_starter
+      auto-index-creation: true
+      uuid-representation: standard
+
+logging:
+  level:
+    root: INFO
+    org.mongodb.driver: DEBUG
+    com.example.awsstarterapi: DEBUG
+    com.example.awsstarterapi.config: DEBUG
+    org.springframework.data.mongodb: DEBUG
+    org.springframework.boot.autoconfigure.mongo: DEBUG

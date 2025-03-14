@@ -1,0 +1,274 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: 'AWS infrastructure for Spring Boot + MongoDB development environment (Combined Instance)'
+
+Parameters:
+  KeyName:
+    Description: Name of an existing EC2 KeyPair to enable SSH access
+    Type: AWS::EC2::KeyPair::KeyName
+    Default: aws-starter-key
+
+  LocalIpAddress:
+    Description: Your local IP address for SSH access (with /32)
+    Type: String
+    Default: 47.147.63.102/32
+
+  EnvironmentName:
+    Description: Environment name prefix
+    Type: String
+    Default: aws-starter
+
+Resources:
+  # IAM Roles and Profiles
+  CombinedRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: ec2.amazonaws.com
+            Action: sts:AssumeRole
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/CloudWatchAgentServerPolicy
+
+  CombinedInstanceProfile:
+    Type: AWS::IAM::InstanceProfile
+    Properties:
+      Roles:
+        - !Ref CombinedRole
+
+  # CloudWatch Alarms
+  CombinedCPUAlarm:
+    Type: AWS::CloudWatch::Alarm
+    Properties:
+      AlarmDescription: Combined instance CPU utilization
+      MetricName: CPUUtilization
+      Namespace: AWS/EC2
+      Statistic: Average
+      Period: 300
+      EvaluationPeriods: 2
+      DatapointsToAlarm: 2
+      Threshold: 80
+      ComparisonOperator: GreaterThanThreshold
+      Dimensions:
+        - Name: InstanceId
+          Value: !Ref CombinedInstance
+
+  # VPC and Network Configuration
+  VPC:
+    Type: AWS::EC2::VPC
+    Properties:
+      CidrBlock: 10.0.0.0/16
+      EnableDnsHostnames: true
+      EnableDnsSupport: true
+      Tags:
+        - Key: Name
+          Value: !Sub ${EnvironmentName}-vpc
+
+  InternetGateway:
+    Type: AWS::EC2::InternetGateway
+    Properties:
+      Tags:
+        - Key: Name
+          Value: !Sub ${EnvironmentName}-igw
+
+  AttachGateway:
+    Type: AWS::EC2::VPCGatewayAttachment
+    Properties:
+      VpcId: !Ref VPC
+      InternetGatewayId: !Ref InternetGateway
+
+  PublicSubnet:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref VPC
+      CidrBlock: 10.0.1.0/24
+      AvailabilityZone: us-west-1b
+      MapPublicIpOnLaunch: true
+      Tags:
+        - Key: Name
+          Value: !Sub ${EnvironmentName}-public-subnet
+
+  PublicRouteTable:
+    Type: AWS::EC2::RouteTable
+    Properties:
+      VpcId: !Ref VPC
+      Tags:
+        - Key: Name
+          Value: !Sub ${EnvironmentName}-public-rt
+
+  PublicRoute:
+    Type: AWS::EC2::Route
+    DependsOn: AttachGateway
+    Properties:
+      RouteTableId: !Ref PublicRouteTable
+      DestinationCidrBlock: 0.0.0.0/0
+      GatewayId: !Ref InternetGateway
+
+  PublicSubnetRouteTableAssociation:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      SubnetId: !Ref PublicSubnet
+      RouteTableId: !Ref PublicRouteTable
+
+  # Security Group for Combined Instance
+  CombinedSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Security group for combined instance (Spring Boot + MongoDB)
+      VpcId: !Ref VPC
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 22
+          ToPort: 22
+          CidrIp: !Ref LocalIpAddress
+          Description: SSH access from local machine
+        - IpProtocol: tcp
+          FromPort: 8080
+          ToPort: 8080
+          CidrIp: 0.0.0.0/0
+          Description: Spring Boot API access
+        - IpProtocol: tcp
+          FromPort: 27017
+          ToPort: 27017
+          CidrIp: !Ref LocalIpAddress
+          Description: MongoDB access from local machine
+      Tags:
+        - Key: Name
+          Value: !Sub ${EnvironmentName}-combined-sg
+
+  # EC2 Instance for both MongoDB and Spring Boot
+  CombinedInstance:
+    Type: AWS::EC2::Instance
+    Properties:
+      InstanceType: t2.micro
+      ImageId: ami-0a0409af1cb831414  # Ubuntu 22.04 LTS in us-west-1
+      KeyName: !Ref KeyName
+      SubnetId: !Ref PublicSubnet
+      SecurityGroupIds:
+        - !Ref CombinedSecurityGroup
+      IamInstanceProfile: !Ref CombinedInstanceProfile
+      Tags:
+        - Key: Name
+          Value: !Sub ${EnvironmentName}-combined
+        - Key: AutoStop
+          Value: true
+      UserData:
+        Fn::Base64: !Sub |
+          #!/bin/bash -xe
+          apt-get update
+          apt-get install -y openjdk-17-jdk
+          apt-get install -y maven
+          apt-get install -y awscli
+          apt-get install -y amazon-cloudwatch-agent
+          
+          # Install MongoDB
+          apt-get install -y gnupg curl
+          curl -fsSL https://pgp.mongodb.com/server-7.0.asc | gpg -o /usr/share/keyrings/mongodb-server-7.0.gpg --dearmor
+          echo "deb [ arch=amd64,arm64 signed-by=/usr/share/keyrings/mongodb-server-7.0.gpg ] https://repo.mongodb.org/apt/ubuntu jammy/mongodb-org/7.0 multiverse" | tee /etc/apt/sources.list.d/mongodb-org-7.0.list
+          apt-get update
+          apt-get install -y mongodb-org
+          
+          # Configure MongoDB to accept external connections
+          sed -i 's/bindIp: 127.0.0.1/bindIp: 0.0.0.0/' /etc/mongod.conf
+          
+          # Start MongoDB
+          systemctl enable mongod
+          systemctl start mongod
+          
+          # Wait for MongoDB to be ready
+          sleep 10
+          
+          # Create MongoDB admin user
+          mongosh --eval "db = db.getSiblingDB('admin'); db.createUser({user: 'admin', pwd: 'admin123', roles: [{role: 'root', db: 'admin'}]});"
+          
+          # Enable MongoDB authentication
+          sed -i '/^#security:/c\security:\n  authorization: enabled' /etc/mongod.conf
+          
+          # Restart MongoDB with new configuration
+          systemctl restart mongod
+          
+          # Create application database
+          mongosh --authenticationDatabase admin -u admin -p admin123 --eval "db = db.getSiblingDB('aws_starter_db'); db.createCollection('test');"
+          
+          # Create application directory for Spring Boot
+          mkdir -p /opt/aws-starter-api
+          chown -R ubuntu:ubuntu /opt/aws-starter-api
+          
+          # Create systemd service file for Spring Boot
+          cat > /etc/systemd/system/spring-boot-app.service << 'EOF'
+          [Unit]
+          Description=Spring Boot Application
+          After=network.target
+          
+          [Service]
+          Type=simple
+          User=ubuntu
+          WorkingDirectory=/opt/aws-starter-api
+          ExecStart=/usr/bin/java -jar /opt/aws-starter-api/aws-starter-api.jar
+          SuccessExitStatus=143
+          TimeoutStopSec=10
+          Restart=on-failure
+          RestartSec=5
+          
+          [Install]
+          WantedBy=multi-user.target
+          EOF
+          
+          # Set permissions and enable service
+          chmod 755 /opt/aws-starter-api
+          systemctl daemon-reload
+          systemctl enable spring-boot-app
+          
+          # Set up CloudWatch agent
+          cat > /opt/aws/amazon-cloudwatch-agent/etc/amazon-cloudwatch-agent.json << 'EOF'
+          {
+            "metrics": {
+              "metrics_collected": {
+                "cpu": {
+                  "measurement": ["cpu_usage_idle", "cpu_usage_user", "cpu_usage_system"]
+                },
+                "mem": {
+                  "measurement": ["mem_used_percent"]
+                },
+                "disk": {
+                  "measurement": ["used_percent"],
+                  "resources": ["*"]
+                }
+              },
+              "append_dimensions": {
+                "InstanceId": "${!aws:InstanceId}"
+              }
+            },
+            "logs": {
+              "logs_collected": {
+                "files": {
+                  "collect_list": [
+                    {
+                      "file_path": "/var/log/cloud-init-output.log",
+                      "log_group_name": "/aws/ec2/combined",
+                      "log_stream_name": "cloud-init-output"
+                    }
+                  ]
+                }
+              }
+            }
+          }
+          EOF
+          
+          systemctl start amazon-cloudwatch-agent
+          systemctl enable amazon-cloudwatch-agent
+
+Outputs:
+  CombinedInstancePublicIP:
+    Description: Public IP of the combined instance
+    Value: !GetAtt CombinedInstance.PublicIp
+
+  CombinedSecurityGroupId:
+    Description: Security Group ID for the combined instance
+    Value: !GetAtt CombinedSecurityGroup.GroupId
+
+  VpcId:
+    Description: VPC ID
+    Value: !Ref VPC

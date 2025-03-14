@@ -1,0 +1,31 @@
+{
+  "Comment": "Update API and MongoDB endpoints",
+  "Changes": [
+    {
+      "Action": "UPSERT",
+      "ResourceRecordSet": {
+        "Name": "api.sloandev.net",
+        "Type": "A",
+        "TTL": 300,
+        "ResourceRecords": [
+          {
+            "Value": "54.215.190.170"
+          }
+        ]
+      }
+    },
+    {
+      "Action": "UPSERT",
+      "ResourceRecordSet": {
+        "Name": "mongodb.sloandev.net",
+        "Type": "A",
+        "TTL": 300,
+        "ResourceRecords": [
+          {
+            "Value": "3.101.153.60"
+          }
+        ]
+      }
+    }
+  ]
+}

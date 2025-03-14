@@ -1,0 +1,360 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: 'AWS infrastructure for Spring Boot + MongoDB development environment'
+
+Parameters:
+  KeyName:
+    Description: Name of an existing EC2 KeyPair to enable SSH access
+    Type: AWS::EC2::KeyPair::KeyName
+    Default: aws-starter-key
+
+  LocalIpAddress:
+    Description: Your local IP address for SSH access (with /32)
+    Type: String
+    Default: 47.147.63.102/32
+
+  EnvironmentName:
+    Description: Environment name prefix
+    Type: String
+    Default: aws-starter
+
+Resources:
+  # IAM Roles and Profiles
+  MongoDBRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: ec2.amazonaws.com
+            Action: sts:AssumeRole
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/CloudWatchAgentServerPolicy
+
+  MongoDBInstanceProfile:
+    Type: AWS::IAM::InstanceProfile
+    Properties:
+      Roles:
+        - !Ref MongoDBRole
+
+  # CloudWatch Alarms
+  MongoDBCPUAlarm:
+    Type: AWS::CloudWatch::Alarm
+    Properties:
+      AlarmDescription: MongoDB CPU utilization
+      MetricName: CPUUtilization
+      Namespace: AWS/EC2
+      Statistic: Average
+      Period: 300
+      EvaluationPeriods: 2
+      DatapointsToAlarm: 2
+      Threshold: 80
+      ComparisonOperator: GreaterThanThreshold
+      Dimensions:
+        - Name: InstanceId
+          Value: !Ref MongoDBInstance
+
+  MongoDBMemoryAlarm:
+    Type: AWS::CloudWatch::Alarm
+    Properties:
+      AlarmDescription: MongoDB memory utilization
+      MetricName: MemoryUtilization
+      Namespace: CWAgent
+      Statistic: Average
+      Period: 300
+      EvaluationPeriods: 2
+      DatapointsToAlarm: 2
+      Threshold: 80
+      ComparisonOperator: GreaterThanThreshold
+      Dimensions:
+        - Name: InstanceId
+          Value: !Ref MongoDBInstance
+
+  # VPC and Network Configuration
+  VPC:
+    Type: AWS::EC2::VPC
+    Properties:
+      CidrBlock: 10.0.0.0/16
+      EnableDnsHostnames: true
+      EnableDnsSupport: true
+      Tags:
+        - Key: Name
+          Value: !Sub ${EnvironmentName}-vpc
+
+  InternetGateway:
+    Type: AWS::EC2::InternetGateway
+    Properties:
+      Tags:
+        - Key: Name
+          Value: !Sub ${EnvironmentName}-igw
+
+  AttachGateway:
+    Type: AWS::EC2::VPCGatewayAttachment
+    Properties:
+      VpcId: !Ref VPC
+      InternetGatewayId: !Ref InternetGateway
+
+  PublicSubnet:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref VPC
+      CidrBlock: 10.0.1.0/24
+      AvailabilityZone: us-west-1b
+      MapPublicIpOnLaunch: true
+      Tags:
+        - Key: Name
+          Value: !Sub ${EnvironmentName}-public-subnet
+
+  PublicRouteTable:
+    Type: AWS::EC2::RouteTable
+    Properties:
+      VpcId: !Ref VPC
+      Tags:
+        - Key: Name
+          Value: !Sub ${EnvironmentName}-public-rt
+
+  PublicRoute:
+    Type: AWS::EC2::Route
+    DependsOn: AttachGateway
+    Properties:
+      RouteTableId: !Ref PublicRouteTable
+      DestinationCidrBlock: 0.0.0.0/0
+      GatewayId: !Ref InternetGateway
+
+  PublicSubnetRouteTableAssociation:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      SubnetId: !Ref PublicSubnet
+      RouteTableId: !Ref PublicRouteTable
+
+  # Security Groups
+  SpringBootSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Security group for Spring Boot instance
+      VpcId: !Ref VPC
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 22
+          ToPort: 22
+          CidrIp: !Ref LocalIpAddress
+          Description: SSH access from local machine
+        - IpProtocol: tcp
+          FromPort: 8080
+          ToPort: 8080
+          CidrIp: 0.0.0.0/0
+          Description: Spring Boot API access
+      Tags:
+        - Key: Name
+          Value: !Sub ${EnvironmentName}-springboot-sg
+
+  MongoDBSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Security group for MongoDB instance
+      VpcId: !Ref VPC
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 22
+          ToPort: 22
+          CidrIp: !Ref LocalIpAddress
+          Description: SSH access from local machine
+        - IpProtocol: tcp
+          FromPort: 27017
+          ToPort: 27017
+          CidrIp: !Ref LocalIpAddress
+          Description: MongoDB access from local machine
+      Tags:
+        - Key: Name
+          Value: !Sub ${EnvironmentName}-mongodb-sg
+
+  MongoDBSpringBootIngress:
+    Type: AWS::EC2::SecurityGroupIngress
+    Properties:
+      GroupId: !Ref MongoDBSecurityGroup
+      IpProtocol: tcp
+      FromPort: 27017
+      ToPort: 27017
+      SourceSecurityGroupId: !Ref SpringBootSecurityGroup
+      Description: Allow Spring Boot to access MongoDB
+
+  # EC2 Instances
+  SpringBootInstance:
+    Type: AWS::EC2::Instance
+    Properties:
+      InstanceType: t2.nano
+      ImageId: ami-0a0409af1cb831414  # Ubuntu 22.04 LTS in us-west-1
+      KeyName: !Ref KeyName
+      SubnetId: !Ref PublicSubnet
+      SecurityGroupIds:
+        - !Ref SpringBootSecurityGroup
+      Tags:
+        - Key: Name
+          Value: !Sub ${EnvironmentName}-springboot
+        - Key: AutoStop
+          Value: true
+      UserData:
+        Fn::Base64: !Sub |
+          #!/bin/bash
+          apt-get update
+          apt-get install -y openjdk-17-jdk
+
+          # Create application directory
+          mkdir -p /opt/aws-starter-api
+          
+          # Create systemd service file
+          cat > /etc/systemd/system/spring-boot-app.service << 'EOF'
+          [Unit]
+          Description=Spring Boot Application
+          After=network.target
+          
+          [Service]
+          Type=simple
+          User=ubuntu
+          WorkingDirectory=/opt/aws-starter-api
+          ExecStart=/usr/bin/java -jar /opt/aws-starter-api/aws-starter-api.jar
+          SuccessExitStatus=143
+          TimeoutStopSec=10
+          Restart=on-failure
+          RestartSec=5
+          
+          [Install]
+          WantedBy=multi-user.target
+          EOF
+          
+          # Set permissions
+          chown -R ubuntu:ubuntu /opt/aws-starter-api
+          chmod 755 /opt/aws-starter-api
+          
+          # Reload systemd and enable service
+          systemctl daemon-reload
+          systemctl enable spring-boot-app
+
+  MongoDBInstance:
+    Type: AWS::EC2::Instance
+    Properties:
+      InstanceType: t2.nano
+      ImageId: ami-0a0409af1cb831414  # Ubuntu 22.04 LTS in us-west-1
+      KeyName: !Ref KeyName
+      SubnetId: !Ref PublicSubnet
+      SecurityGroupIds:
+        - !Ref MongoDBSecurityGroup
+      Tags:
+        - Key: Name
+          Value: !Sub ${EnvironmentName}-mongodb
+        - Key: AutoStop
+          Value: true
+      
+      # Enable detailed monitoring
+      Monitoring: true
+      
+      # IAM role for CloudWatch
+      IamInstanceProfile: !Ref MongoDBInstanceProfile
+      UserData:
+        Fn::Base64: !Sub |
+          #!/bin/bash
+          # Install MongoDB
+          apt-get update
+          apt-get install -y gnupg curl
+          curl -fsSL https://pgp.mongodb.com/server-7.0.asc | gpg -o /usr/share/keyrings/mongodb-server-7.0.gpg --dearmor
+          echo "deb [ arch=amd64,arm64 signed-by=/usr/share/keyrings/mongodb-server-7.0.gpg ] https://repo.mongodb.org/apt/ubuntu jammy/mongodb-org/7.0 multiverse" | tee /etc/apt/sources.list.d/mongodb-org-7.0.list
+          apt-get update
+          apt-get install -y mongodb-org
+
+          # Update MongoDB config to listen on all interfaces
+          sed -i 's/bindIp: 127.0.0.1/bindIp: 0.0.0.0/' /etc/mongod.conf
+
+          # Start MongoDB
+          systemctl enable mongod
+          systemctl start mongod
+
+          # Wait for MongoDB to be ready
+          sleep 10
+
+          # Create MongoDB initialization script
+          cat > /tmp/init-mongo.js << 'EOF'
+          db = db.getSiblingDB('admin');
+          db.createUser({
+            user: 'admin',
+            pwd: 'admin123',
+            roles: [{ role: 'root', db: 'admin' }]
+          });
+
+          db = db.getSiblingDB('aws_starter_db');
+          db.createCollection('messages');
+          EOF
+
+          # Initialize MongoDB
+          mongosh --quiet /tmp/init-mongo.js
+
+          # Restart MongoDB to apply changes
+          systemctl restart mongod
+
+          # Install CloudWatch agent
+          wget https://amazoncloudwatch-agent.s3.amazonaws.com/ubuntu/amd64/latest/amazon-cloudwatch-agent.deb
+          dpkg -i -E ./amazon-cloudwatch-agent.deb
+
+          # Configure CloudWatch agent
+          cat > /opt/aws/amazon-cloudwatch-agent/bin/config.json << 'EOF'
+          {
+            "metrics": {
+              "namespace": "CWAgent",
+              "metrics_collected": {
+                "mem": {
+                  "measurement": [
+                    "mem_used_percent"
+                  ],
+                  "metrics_collection_interval": 60
+                },
+                "disk": {
+                  "measurement": [
+                    "disk_used_percent"
+                  ],
+                  "metrics_collection_interval": 60,
+                  "resources": [
+                    "/"
+                  ]
+                }
+              }
+            }
+          }
+          EOF
+
+          # Start CloudWatch agent
+          /opt/aws/amazon-cloudwatch-agent/bin/amazon-cloudwatch-agent-ctl -a fetch-config -m ec2 -s -c file:/opt/aws/amazon-cloudwatch-agent/bin/config.json
+          systemctl start amazon-cloudwatch-agent
+          systemctl enable amazon-cloudwatch-agent
+
+          # Setup MongoDB health check script
+          cat > /usr/local/bin/mongodb-healthcheck.sh << 'EOF'
+          #!/bin/bash
+          mongosh --quiet --eval "db.runCommand({ ping: 1 }).ok" || exit 1
+          exit 0
+          EOF
+
+          chmod +x /usr/local/bin/mongodb-healthcheck.sh
+
+          # Add health check to cron (every 5 minutes)
+          echo "*/5 * * * * /usr/local/bin/mongodb-healthcheck.sh" | crontab -
+
+Outputs:
+  SpringBootPublicIP:
+    Description: Public IP of Spring Boot instance
+    Value: !GetAtt SpringBootInstance.PublicIp
+
+  MongoDBPublicIP:
+    Description: Public IP of MongoDB instance
+    Value: !GetAtt MongoDBInstance.PublicIp
+
+  VpcId:
+    Description: VPC ID
+    Value: !Ref VPC
+
+  SpringBootSecurityGroupId:
+    Description: Security Group ID for Spring Boot instance
+    Value: !Ref SpringBootSecurityGroup
+
+  MongoDBSecurityGroupId:
+    Description: Security Group ID for MongoDB instance
+    Value: !Ref MongoDBSecurityGroup

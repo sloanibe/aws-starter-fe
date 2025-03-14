@@ -1,0 +1,133 @@
+{
+  "projectName": "AWS Starter Project",
+  "lastUpdated": "2025-03-13T09:42:21-07:00",
+  "overview": {
+    "description": "A full-stack application deployed on AWS with a React frontend and Spring Boot backend, demonstrating AWS infrastructure setup and application architecture.",
+    "components": {
+      "frontend": {
+        "technology": "React with TypeScript",
+        "hosting": "AWS S3 and CloudFront",
+        "url": "https://sloandev.net",
+        "buildTool": "Vite"
+      },
+      "backend": {
+        "technology": "Spring Boot",
+        "hosting": "EC2 instance",
+        "url": "https://api.sloandev.net",
+        "database": "MongoDB"
+      }
+    }
+  },
+  "infrastructure": {
+    "cloudFormation": {
+      "description": "AWS infrastructure managed with CloudFormation templates",
+      "mainFiles": [
+        "/home/msloan/gitprojects/aws-starter/infrastructure/aws-infrastructure.yml",
+        "/home/msloan/gitprojects/aws-starter/infrastructure/aws-infrastructure-combined.yml"
+      ],
+      "managementScript": "/home/msloan/gitprojects/aws-starter/infrastructure/manage-stack.sh"
+    },
+    "ec2": {
+      "instanceType": "t2.micro",
+      "ip": "3.101.24.225",
+      "services": ["MongoDB", "Spring Boot", "NGINX"],
+      "securityGroups": {
+        "openPorts": [22, 80, 443, 8080]
+      }
+    },
+    "s3": {
+      "bucketName": "aws-starter-app",
+      "purpose": "Hosting React frontend"
+    },
+    "cloudFront": {
+      "distributionId": "E3HMJW9ME79W32",
+      "purpose": "CDN for React frontend"
+    },
+    "dns": {
+      "frontend": "sloandev.net",
+      "backend": "api.sloandev.net"
+    },
+    "https": {
+      "provider": "Let's Encrypt",
+      "implementation": "Certbot with NGINX"
+    }
+  },
+  "documentation": {
+    "structure": {
+      "hierarchical": true,
+      "mainSections": [
+        {
+          "name": "AWS Infrastructure",
+          "path": "/docs/aws-infrastructure",
+          "documents": [
+            "infrastructure-setup.md",
+            "s3-cloudfront-setup.md",
+            "ec2-springboot-setup.md",
+            "https-configuration.md",
+            "elastic-ip-setup.md",
+            "nginx-configuration.md"
+          ]
+        },
+        {
+          "name": "Application Architecture",
+          "path": "/docs/application-architecture",
+          "documents": [
+            "deployment-process.md",
+            "troubleshooting-guide.md"
+          ]
+        }
+      ]
+    },
+    "navigation": {
+      "component": "/home/msloan/gitprojects/aws-starter/aws-react-hello-world/src/components/DocsNavigation.tsx",
+      "features": ["Hierarchical structure", "Collapsible categories", "Active document highlighting"]
+    },
+    "copyScript": "/home/msloan/gitprojects/aws-starter/aws-react-hello-world/copy-docs.js"
+  },
+  "recentChanges": [
+    {
+      "date": "2025-03-13",
+      "description": "Created hierarchical documentation structure",
+      "details": "Organized documentation into AWS Infrastructure and Application Architecture categories"
+    },
+    {
+      "date": "2025-03-13",
+      "description": "Added comprehensive NGINX documentation",
+      "details": "Created detailed guide on NGINX setup, configuration, and troubleshooting"
+    },
+    {
+      "date": "2025-03-13",
+      "description": "Updated DocsNavigation component",
+      "details": "Modified to support hierarchical structure with collapsible categories"
+    },
+    {
+      "date": "2025-03-13",
+      "description": "Enhanced copy-docs.js script",
+      "details": "Updated to support recursive directory copying for documentation files"
+    }
+  ],
+  "previousIssues": [
+    {
+      "issue": "HTTPS connection between frontend and backend",
+      "status": "Resolved",
+      "solution": "Opened port 443 in EC2 security group",
+      "details": "The frontend at sloandev.net was unable to connect to the backend at api.sloandev.net via HTTPS. The root cause was that port 443 was not open in the EC2 security group."
+    }
+  ],
+  "deploymentProcess": {
+    "frontend": {
+      "command": "npm run deploy",
+      "steps": [
+        "Version bump with npm version patch",
+        "Build with npm run build",
+        "Sync to S3 with aws s3 sync",
+        "Invalidate CloudFront cache"
+      ]
+    }
+  },
+  "nextSteps": [
+    "Consider adding more application architecture documentation",
+    "Explore adding API documentation",
+    "Consider implementing automated testing documentation"
+  ]
+}

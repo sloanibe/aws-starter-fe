@@ -1,0 +1,28 @@
+server:
+  port: 8080
+  address: 0.0.0.0
+  shutdown: immediate
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: ${MANAGEMENT_ENDPOINTS_WEB_EXPOSURE:health,info}
+  endpoint:
+    health:
+      show-details: ${MANAGEMENT_ENDPOINT_HEALTH_SHOW_DETAILS:when_authorized}
+
+spring:
+  data:
+    mongodb:
+      uri: mongodb://${MONGO_USER:admin}:${MONGO_PWD:admin123}@localhost:27017/aws_starter_db?authSource=admin&connectTimeoutMS=3000
+      database: aws_starter_db
+
+app:
+  cors:
+    allowed-origins: ${APP_CORS_ALLOWED_ORIGINS:http://localhost:3000,http://localhost:5173,http://localhost:5174,http://aws-starter-app.s3-website-us-west-1.amazonaws.com,https://d23g2ah1oukxrw.cloudfront.net,https://sloandev.net,https://www.sloandev.net,https://api.sloandev.net}
+  api:
+    version: ${APP_API_VERSION:v1}
+  rate-limit:
+    enabled: ${APP_RATE_LIMIT_ENABLED:true}
+    requests-per-second: ${APP_RATE_LIMIT_REQUESTS_PER_SECOND:10}

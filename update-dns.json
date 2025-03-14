@@ -1,0 +1,18 @@
+{
+  "Comment": "Update api.sloandev.net to point to the new Elastic IP",
+  "Changes": [
+    {
+      "Action": "UPSERT",
+      "ResourceRecordSet": {
+        "Name": "api.sloandev.net",
+        "Type": "A",
+        "TTL": 300,
+        "ResourceRecords": [
+          {
+            "Value": "13.52.157.48"
+          }
+        ]
+      }
+    }
+  ]
+}

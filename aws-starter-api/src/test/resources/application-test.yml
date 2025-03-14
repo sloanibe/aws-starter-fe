@@ -1,0 +1,9 @@
+spring:
+  data:
+    mongodb:
+      database: taskdb-test
+  
+  # Disable auto-configuration for embedded MongoDB (we're using TestContainers)
+  autoconfigure:
+    exclude:
+      - org.springframework.boot.autoconfigure.mongo.embedded.EmbeddedMongoAutoConfiguration
