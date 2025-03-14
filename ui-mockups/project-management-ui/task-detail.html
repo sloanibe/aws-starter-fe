@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Task Detail - Task Manager UI Mockup</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons" />
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="task-detail.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Top Navigation Bar -->
+        <header class="app-header">
+            <div class="logo">
+                <a href="index.html" style="display: flex; align-items: center; text-decoration: none; color: white;">
+                    <span class="material-icons">dashboard</span>
+                    <h1>ProjectHub</h1>
+                </a>
+            </div>
+            <div class="search-bar">
+                <span class="material-icons">search</span>
+                <input type="text" placeholder="Search...">
+            </div>
+            <div class="header-actions">
+                <button class="icon-button">
+                    <span class="material-icons">notifications</span>
+                </button>
+                <button class="icon-button">
+                    <span class="material-icons">help</span>
+                </button>
+                <div class="user-profile">
+                    <div class="avatar">MS</div>
+                    <span>Mike Sloan</span>
+                </div>
+            </div>
+        </header>
+
+        <div class="main-container">
+            <!-- Side Navigation -->
+            <nav class="side-nav">
+                <div class="nav-section">
+                    <h3>NAVIGATION</h3>
+                    <ul>
+                        <li>
+                            <a href="index.html">
+                                <span class="material-icons">dashboard</span>
+                                Dashboard
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#">
+                                <span class="material-icons">assignment</span>
+                                My Tasks
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#">
+                                <span class="material-icons">notifications</span>
+                                Notifications
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+                
+                <div class="nav-section">
+                    <div class="section-header">
+                        <h3>PROJECTS</h3>
+                        <button class="icon-button">
+                            <span class="material-icons">add</span>
+                        </button>
+                    </div>
+                    <ul>
+                        <li class="active">
+                            <a href="project-detail.html">
+                                <span class="project-color" style="background-color: #4caf50;"></span>
+                                AWS Starter
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#">
+                                <span class="project-color" style="background-color: #2196f3;"></span>
+                                Task Manager
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#">
+                                <span class="project-color" style="background-color: #ff9800;"></span>
+                                Documentation
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#">
+                                <span class="project-color" style="background-color: #f44336;"></span>
+                                API Development
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </nav>
+
+            <!-- Main Content Area -->
+            <main class="content">
+                <div class="task-detail-container">
+                    <!-- Task Header -->
+                    <div class="task-header">
+                        <div class="breadcrumb">
+                            <a href="project-detail.html">AWS Starter</a> / <span>Task Detail</span>
+                        </div>
+                        <div class="task-actions">
+                            <button class="button secondary">
+                                <span class="material-icons">edit</span>
+                                Edit
+                            </button>
+                            <button class="button primary">
+                                <span class="material-icons">check_circle</span>
+                                Mark Complete
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Task Content -->
+                    <div class="task-detail-content">
+                        <div class="task-main">
+                            <div class="task-title-section">
+                                <div class="task-id">#TASK-123</div>
+                                <h1>Implement JWT authentication</h1>
+                                <div class="task-badges">
+                                    <div class="badge priority high">High Priority</div>
+                                    <div class="badge status in-progress">In Progress</div>
+                                </div>
+                            </div>
+
+                            <div class="task-description">
+                                <h3>Description</h3>
+                                <p>Implement JWT (JSON Web Token) authentication to secure API endpoints. This should include:</p>
+                                <ul>
+                                    <li>User login endpoint that returns a JWT</li>
+                                    <li>JWT validation middleware</li>
+                                    <li>Role-based access control for protected endpoints</li>
+                                    <li>Token refresh mechanism</li>
+                                    <li>Secure storage of tokens on the client side</li>
+                                </ul>
+                                <p>All API endpoints except for login and registration should require authentication.</p>
+                            </div>
+
+                            <div class="task-updates">
+                                <div class="updates-header">
+                                    <h3>Updates & Comments</h3>
+                                    <span class="update-count">5 updates</span>
+                                </div>
+
+                                <!-- Update Timeline -->
+                                <div class="update-timeline">
+                                    <!-- Update 1 -->
+                                    <div class="update-item">
+                                        <div class="update-icon status-change">
+                                            <span class="material-icons">swap_horiz</span>
+                                        </div>
+                                        <div class="update-content">
+                                            <div class="update-header">
+                                                <div class="update-user">
+                                                    <div class="avatar small">MS</div>
+                                                    <span class="user-name">Mike Sloan</span>
+                                                </div>
+                                                <div class="update-time">Mar 15, 2025 at 10:30 AM</div>
+                                            </div>
+                                            <div class="update-body">
+                                                <p>Changed status from <strong>To Do</strong> to <strong>In Progress</strong></p>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Update 2 -->
+                                    <div class="update-item">
+                                        <div class="update-icon comment">
+                                            <span class="material-icons">chat</span>
+                                        </div>
+                                        <div class="update-content">
+                                            <div class="update-header">
+                                                <div class="update-user">
+                                                    <div class="avatar small">MS</div>
+                                                    <span class="user-name">Mike Sloan</span>
+                                                </div>
+                                                <div class="update-time">Mar 15, 2025 at 11:45 AM</div>
+                                            </div>
+                                            <div class="update-body">
+                                                <p>I've started implementing the JWT authentication. I'm using the jsonwebtoken library for token generation and validation. @JohnDoe could you review my approach when you have time?</p>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Update 3 -->
+                                    <div class="update-item">
+                                        <div class="update-icon attachment">
+                                            <span class="material-icons">attach_file</span>
+                                        </div>
+                                        <div class="update-content">
+                                            <div class="update-header">
+                                                <div class="update-user">
+                                                    <div class="avatar small">MS</div>
+                                                    <span class="user-name">Mike Sloan</span>
+                                                </div>
+                                                <div class="update-time">Mar 15, 2025 at 2:15 PM</div>
+                                            </div>
+                                            <div class="update-body">
+                                                <p>Added attachment: <a href="#">jwt-auth-diagram.png</a></p>
+                                                <div class="attachment-preview">
+                                                    <div class="attachment-icon">
+                                                        <span class="material-icons">image</span>
+                                                    </div>
+                                                    <div class="attachment-info">
+                                                        <div class="attachment-name">jwt-auth-diagram.png</div>
+                                                        <div class="attachment-size">245 KB</div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Update 4 -->
+                                    <div class="update-item">
+                                        <div class="update-icon comment">
+                                            <span class="material-icons">chat</span>
+                                        </div>
+                                        <div class="update-content">
+                                            <div class="update-header">
+                                                <div class="update-user">
+                                                    <div class="avatar small">JD</div>
+                                                    <span class="user-name">John Doe</span>
+                                                </div>
+                                                <div class="update-time">Mar 16, 2025 at 9:20 AM</div>
+                                            </div>
+                                            <div class="update-body">
+                                                <p>@MikeSloan The approach looks good. Make sure to include expiration time in the token and implement the refresh token mechanism. Also, consider using environment variables for the JWT secret.</p>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Update 5 -->
+                                    <div class="update-item">
+                                        <div class="update-icon progress">
+                                            <span class="material-icons">trending_up</span>
+                                        </div>
+                                        <div class="update-content">
+                                            <div class="update-header">
+                                                <div class="update-user">
+                                                    <div class="avatar small">MS</div>
+                                                    <span class="user-name">Mike Sloan</span>
+                                                </div>
+                                                <div class="update-time">Mar 16, 2025 at 3:45 PM</div>
+                                            </div>
+                                            <div class="update-body">
+                                                <p>Progress update: 60% complete</p>
+                                                <p>Completed:</p>
+                                                <ul>
+                                                    <li>Login endpoint with JWT generation</li>
+                                                    <li>JWT validation middleware</li>
+                                                    <li>Role-based access control</li>
+                                                </ul>
+                                                <p>Still working on:</p>
+                                                <ul>
+                                                    <li>Token refresh mechanism</li>
+                                                    <li>Client-side secure storage</li>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- New Comment Form -->
+                                <div class="new-comment">
+                                    <div class="avatar small">MS</div>
+                                    <div class="comment-form">
+                                        <textarea placeholder="Add a comment or update..."></textarea>
+                                        <div class="comment-actions">
+                                            <div class="comment-tools">
+                                                <button class="icon-button">
+                                                    <span class="material-icons">attach_file</span>
+                                                </button>
+                                                <button class="icon-button">
+                                                    <span class="material-icons">alternate_email</span>
+                                                </button>
+                                                <button class="icon-button">
+                                                    <span class="material-icons">emoji_emotions</span>
+                                                </button>
+                                            </div>
+                                            <button class="button primary">
+                                                Add Comment
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="task-sidebar">
+                            <div class="sidebar-section">
+                                <h3>Details</h3>
+                                <div class="detail-item">
+                                    <div class="detail-label">Project</div>
+                                    <div class="detail-value">
+                                        <span class="project-color" style="background-color: #4caf50;"></span>
+                                        AWS Starter
+                                    </div>
+                                </div>
+                                <div class="detail-item">
+                                    <div class="detail-label">Status</div>
+                                    <div class="detail-value">In Progress</div>
+                                </div>
+                                <div class="detail-item">
+                                    <div class="detail-label">Priority</div>
+                                    <div class="detail-value">High</div>
+                                </div>
+                                <div class="detail-item">
+                                    <div class="detail-label">Category</div>
+                                    <div class="detail-value">Security</div>
+                                </div>
+                                <div class="detail-item">
+                                    <div class="detail-label">Due Date</div>
+                                    <div class="detail-value">Mar 18, 2025</div>
+                                </div>
+                                <div class="detail-item">
+                                    <div class="detail-label">Created</div>
+                                    <div class="detail-value">Mar 14, 2025</div>
+                                </div>
+                            </div>
+
+                            <div class="sidebar-section">
+                                <h3>People</h3>
+                                <div class="detail-item">
+                                    <div class="detail-label">Assignee</div>
+                                    <div class="detail-value user">
+                                        <div class="avatar small">MS</div>
+                                        <span>Mike Sloan</span>
+                                    </div>
+                                </div>
+                                <div class="detail-item">
+                                    <div class="detail-label">Reporter</div>
+                                    <div class="detail-value user">
+                                        <div class="avatar small">JD</div>
+                                        <span>John Doe</span>
+                                    </div>
+                                </div>
+                                <div class="detail-item">
+                                    <div class="detail-label">Watchers</div>
+                                    <div class="detail-value">
+                                        <div class="watchers-list">
+                                            <div class="avatar small">MS</div>
+                                            <div class="avatar small">JD</div>
+                                            <div class="avatar small">AS</div>
+                                            <button class="icon-button">
+                                                <span class="material-icons">add</span>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="sidebar-section">
+                                <h3>Dates</h3>
+                                <div class="detail-item">
+                                    <div class="detail-label">Created</div>
+                                    <div class="detail-value">Mar 14, 2025</div>
+                                </div>
+                                <div class="detail-item">
+                                    <div class="detail-label">Updated</div>
+                                    <div class="detail-value">Mar 16, 2025</div>
+                                </div>
+                                <div class="detail-item">
+                                    <div class="detail-label">Due Date</div>
+                                    <div class="detail-value">Mar 18, 2025</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+</body>
+</html>

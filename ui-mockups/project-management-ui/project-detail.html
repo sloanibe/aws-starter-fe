@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Project Detail - Task Manager UI Mockup</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons" />
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="project-detail.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Top Navigation Bar -->
+        <header class="app-header">
+            <div class="logo">
+                <a href="index.html" style="display: flex; align-items: center; text-decoration: none; color: white;">
+                    <span class="material-icons">dashboard</span>
+                    <h1>ProjectHub</h1>
+                </a>
+            </div>
+            <div class="search-bar">
+                <span class="material-icons">search</span>
+                <input type="text" placeholder="Search...">
+            </div>
+            <div class="header-actions">
+                <button class="icon-button">
+                    <span class="material-icons">notifications</span>
+                </button>
+                <button class="icon-button">
+                    <span class="material-icons">help</span>
+                </button>
+                <div class="user-profile">
+                    <div class="avatar">MS</div>
+                    <span>Mike Sloan</span>
+                </div>
+            </div>
+        </header>
+
+        <div class="main-container">
+            <!-- Side Navigation -->
+            <nav class="side-nav">
+                <div class="nav-section">
+                    <h3>NAVIGATION</h3>
+                    <ul>
+                        <li>
+                            <a href="index.html">
+                                <span class="material-icons">dashboard</span>
+                                Dashboard
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#">
+                                <span class="material-icons">assignment</span>
+                                My Tasks
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#">
+                                <span class="material-icons">notifications</span>
+                                Notifications
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+                
+                <div class="nav-section">
+                    <div class="section-header">
+                        <h3>PROJECTS</h3>
+                        <button class="icon-button">
+                            <span class="material-icons">add</span>
+                        </button>
+                    </div>
+                    <ul>
+                        <li class="active">
+                            <a href="project-detail.html">
+                                <span class="project-color" style="background-color: #4caf50;"></span>
+                                AWS Starter
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#">
+                                <span class="project-color" style="background-color: #2196f3;"></span>
+                                Task Manager
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#">
+                                <span class="project-color" style="background-color: #ff9800;"></span>
+                                Documentation
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#">
+                                <span class="project-color" style="background-color: #f44336;"></span>
+                                API Development
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </nav>
+
+            <!-- Main Content Area -->
+            <main class="content">
+                <!-- Project Header -->
+                <div class="project-header" style="background-color: #4caf50;">
+                    <div class="project-info">
+                        <h1>AWS Starter</h1>
+                        <p>AWS infrastructure and application deployment project</p>
+                    </div>
+                    <div class="project-actions">
+                        <button class="button light">
+                            <span class="material-icons">settings</span>
+                            Settings
+                        </button>
+                        <button class="button light">
+                            <span class="material-icons">share</span>
+                            Share
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Project Navigation -->
+                <div class="project-nav">
+                    <div class="tab active">
+                        <span class="material-icons">view_kanban</span>
+                        Tasks
+                    </div>
+                    <div class="tab">
+                        <span class="material-icons">people</span>
+                        Team
+                    </div>
+                    <div class="tab">
+                        <span class="material-icons">timeline</span>
+                        Activity
+                    </div>
+                    <div class="tab">
+                        <span class="material-icons">description</span>
+                        Documents
+                    </div>
+                </div>
+
+                <!-- Task Board Actions -->
+                <div class="board-actions">
+                    <div class="board-filters">
+                        <div class="filter-group">
+                            <label>View:</label>
+                            <select>
+                                <option>Kanban Board</option>
+                                <option>List View</option>
+                                <option>Calendar</option>
+                            </select>
+                        </div>
+                        <div class="filter-group">
+                            <label>Filter:</label>
+                            <select>
+                                <option>All Tasks</option>
+                                <option>My Tasks</option>
+                                <option>Unassigned</option>
+                            </select>
+                        </div>
+                    </div>
+                    <button class="button primary">
+                        <span class="material-icons">add</span>
+                        Add Task
+                    </button>
+                </div>
+
+                <!-- Task Board -->
+                <div class="task-board">
+                    <!-- To Do Column -->
+                    <div class="board-column">
+                        <div class="column-header">
+                            <h3>To Do</h3>
+                            <span class="task-count">4</span>
+                        </div>
+                        <div class="column-content">
+                            <!-- Task Card 1 -->
+                            <div class="task-card">
+                                <a href="task-detail.html" style="text-decoration: none; color: inherit; display: block;">
+                                <div class="task-priority high"></div>
+                                <h4>Update API documentation</h4>
+                                <p>Add examples and update endpoint descriptions</p>
+                                <div class="task-meta">
+                                    <div class="task-category">Documentation</div>
+                                    <div class="task-due">Mar 20</div>
+                                </div>
+                                <div class="task-footer">
+                                    <div class="task-assignee">
+                                        <div class="avatar small">JD</div>
+                                    </div>
+                                    <div class="task-actions">
+                                        <span class="material-icons">chat</span>
+                                        <span class="count">3</span>
+                                    </div>
+                                </div>
+                                </a>
+                            </div>
+
+                            <!-- Task Card 2 -->
+                            <div class="task-card">
+                                <a href="task-detail.html" style="text-decoration: none; color: inherit; display: block;">
+                                <div class="task-priority medium"></div>
+                                <h4>Setup MongoDB indexes</h4>
+                                <p>Create indexes for frequently queried fields</p>
+                                <div class="task-meta">
+                                    <div class="task-category">Database</div>
+                                    <div class="task-due">Mar 22</div>
+                                </div>
+                                <div class="task-footer">
+                                    <div class="task-assignee">
+                                        <div class="avatar small">MS</div>
+                                    </div>
+                                    <div class="task-actions">
+                                        <span class="material-icons">chat</span>
+                                        <span class="count">1</span>
+                                    </div>
+                                </div>
+                                </a>
+                            </div>
+
+                            <!-- Task Card 3 -->
+                            <div class="task-card">
+                                <div class="task-priority low"></div>
+                                <h4>Review pull requests</h4>
+                                <p>Review and merge pending PRs</p>
+                                <div class="task-meta">
+                                    <div class="task-category">Development</div>
+                                    <div class="task-due">Mar 25</div>
+                                </div>
+                                <div class="task-footer">
+                                    <div class="task-assignee">
+                                        <div class="avatar small">AS</div>
+                                    </div>
+                                    <div class="task-actions">
+                                        <span class="material-icons">chat</span>
+                                        <span class="count">0</span>
+                                    </div>
+                                </div>
+                                </a>
+                            </div>
+
+                            <!-- Task Card 4 -->
+                            <div class="task-card">
+                                <div class="task-priority medium"></div>
+                                <h4>Update dependencies</h4>
+                                <p>Update npm packages to latest versions</p>
+                                <div class="task-meta">
+                                    <div class="task-category">Maintenance</div>
+                                    <div class="task-due">Mar 27</div>
+                                </div>
+                                <div class="task-footer">
+                                    <div class="task-assignee unassigned">
+                                        <span class="material-icons">person_add</span>
+                                    </div>
+                                    <div class="task-actions">
+                                        <span class="material-icons">chat</span>
+                                        <span class="count">0</span>
+                                    </div>
+                                </div>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- In Progress Column -->
+                    <div class="board-column">
+                        <div class="column-header">
+                            <h3>In Progress</h3>
+                            <span class="task-count">3</span>
+                        </div>
+                        <div class="column-content">
+                            <!-- Task Card 1 -->
+                            <div class="task-card">
+                                <a href="task-detail.html" style="text-decoration: none; color: inherit; display: block;">
+                                <div class="task-priority high"></div>
+                                <h4>Implement JWT authentication</h4>
+                                <p>Add JWT-based auth to secure API endpoints</p>
+                                <div class="task-meta">
+                                    <div class="task-category">Security</div>
+                                    <div class="task-due">Mar 18</div>
+                                </div>
+                                <div class="task-footer">
+                                    <div class="task-assignee">
+                                        <div class="avatar small">MS</div>
+                                    </div>
+                                    <div class="task-actions">
+                                        <span class="material-icons">chat</span>
+                                        <span class="count">5</span>
+                                    </div>
+                                </div>
+                                </a>
+                            </div>
+
+                            <!-- Task Card 2 -->
+                            <div class="task-card">
+                                <div class="task-priority medium"></div>
+                                <h4>Create project membership API</h4>
+                                <p>Implement endpoints for managing project members</p>
+                                <div class="task-meta">
+                                    <div class="task-category">API</div>
+                                    <div class="task-due">Mar 19</div>
+                                </div>
+                                <div class="task-footer">
+                                    <div class="task-assignee">
+                                        <div class="avatar small">JD</div>
+                                    </div>
+                                    <div class="task-actions">
+                                        <span class="material-icons">chat</span>
+                                        <span class="count">2</span>
+                                    </div>
+                                </div>
+                                </a>
+                            </div>
+
+                            <!-- Task Card 3 -->
+                            <div class="task-card">
+                                <div class="task-priority low"></div>
+                                <h4>Design UI mockups</h4>
+                                <p>Create mockups for project management UI</p>
+                                <div class="task-meta">
+                                    <div class="task-category">Design</div>
+                                    <div class="task-due">Mar 21</div>
+                                </div>
+                                <div class="task-footer">
+                                    <div class="task-assignee">
+                                        <div class="avatar small">AS</div>
+                                    </div>
+                                    <div class="task-actions">
+                                        <span class="material-icons">chat</span>
+                                        <span class="count">7</span>
+                                    </div>
+                                </div>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Review Column -->
+                    <div class="board-column">
+                        <div class="column-header">
+                            <h3>Review</h3>
+                            <span class="task-count">2</span>
+                        </div>
+                        <div class="column-content">
+                            <!-- Task Card 1 -->
+                            <div class="task-card">
+                                <div class="task-priority high"></div>
+                                <h4>Implement task comments</h4>
+                                <p>Add ability to comment on tasks with @mentions</p>
+                                <div class="task-meta">
+                                    <div class="task-category">Feature</div>
+                                    <div class="task-due">Mar 15</div>
+                                </div>
+                                <div class="task-footer">
+                                    <div class="task-assignee">
+                                        <div class="avatar small">JD</div>
+                                    </div>
+                                    <div class="task-actions">
+                                        <span class="material-icons">chat</span>
+                                        <span class="count">4</span>
+                                    </div>
+                                </div>
+                                </a>
+                            </div>
+
+                            <!-- Task Card 2 -->
+                            <div class="task-card">
+                                <div class="task-priority medium"></div>
+                                <h4>Add project filtering</h4>
+                                <p>Implement filtering by project status</p>
+                                <div class="task-meta">
+                                    <div class="task-category">Feature</div>
+                                    <div class="task-due">Mar 17</div>
+                                </div>
+                                <div class="task-footer">
+                                    <div class="task-assignee">
+                                        <div class="avatar small">MS</div>
+                                    </div>
+                                    <div class="task-actions">
+                                        <span class="material-icons">chat</span>
+                                        <span class="count">2</span>
+                                    </div>
+                                </div>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Done Column -->
+                    <div class="board-column">
+                        <div class="column-header">
+                            <h3>Done</h3>
+                            <span class="task-count">3</span>
+                        </div>
+                        <div class="column-content">
+                            <!-- Task Card 1 -->
+                            <div class="task-card completed">
+                                <div class="task-priority high"></div>
+                                <h4>Setup MongoDB data model</h4>
+                                <p>Create MongoDB collections and schemas</p>
+                                <div class="task-meta">
+                                    <div class="task-category">Database</div>
+                                    <div class="task-due">Mar 10</div>
+                                </div>
+                                <div class="task-footer">
+                                    <div class="task-assignee">
+                                        <div class="avatar small">MS</div>
+                                    </div>
+                                    <div class="task-actions">
+                                        <span class="material-icons">chat</span>
+                                        <span class="count">6</span>
+                                    </div>
+                                </div>
+                                </a>
+                            </div>
+
+                            <!-- Task Card 2 -->
+                            <div class="task-card completed">
+                                <div class="task-priority medium"></div>
+                                <h4>Design API endpoints</h4>
+                                <p>Create comprehensive API design documentation</p>
+                                <div class="task-meta">
+                                    <div class="task-category">API</div>
+                                    <div class="task-due">Mar 12</div>
+                                </div>
+                                <div class="task-footer">
+                                    <div class="task-assignee">
+                                        <div class="avatar small">JD</div>
+                                    </div>
+                                    <div class="task-actions">
+                                        <span class="material-icons">chat</span>
+                                        <span class="count">3</span>
+                                    </div>
+                                </div>
+                                </a>
+                            </div>
+
+                            <!-- Task Card 3 -->
+                            <div class="task-card completed">
+                                <div class="task-priority low"></div>
+                                <h4>Deploy to AWS</h4>
+                                <p>Deploy documentation to AWS S3 and CloudFront</p>
+                                <div class="task-meta">
+                                    <div class="task-category">DevOps</div>
+                                    <div class="task-due">Mar 14</div>
+                                </div>
+                                <div class="task-footer">
+                                    <div class="task-assignee">
+                                        <div class="avatar small">AS</div>
+                                    </div>
+                                    <div class="task-actions">
+                                        <span class="material-icons">chat</span>
+                                        <span class="count">2</span>
+                                    </div>
+                                </div>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Project Management UI Mockup</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons" />
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Top Navigation Bar -->
+        <header class="app-header">
+            <div class="logo">
+                <span class="material-icons">dashboard</span>
+                <h1>ProjectHub</h1>
+            </div>
+            <div class="search-bar">
+                <span class="material-icons">search</span>
+                <input type="text" placeholder="Search...">
+            </div>
+            <div class="header-actions">
+                <button class="icon-button">
+                    <span class="material-icons">notifications</span>
+                </button>
+                <button class="icon-button">
+                    <span class="material-icons">help</span>
+                </button>
+                <div class="user-profile">
+                    <div class="avatar">MS</div>
+                    <span>Mike Sloan</span>
+                </div>
+            </div>
+        </header>
+
+        <div class="main-container">
+            <!-- Side Navigation -->
+            <nav class="side-nav">
+                <div class="nav-section">
+                    <h3>NAVIGATION</h3>
+                    <ul>
+                        <li class="active">
+                            <a href="index.html">
+                                <span class="material-icons">dashboard</span>
+                                Dashboard
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#">
+                                <span class="material-icons">assignment</span>
+                                My Tasks
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#">
+                                <span class="material-icons">notifications</span>
+                                Notifications
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+                
+                <div class="nav-section">
+                    <div class="section-header">
+                        <h3>PROJECTS</h3>
+                        <button class="icon-button">
+                            <span class="material-icons">add</span>
+                        </button>
+                    </div>
+                    <ul>
+                        <li>
+                            <a href="project-detail.html">
+                                <span class="project-color" style="background-color: #4caf50;"></span>
+                                AWS Starter
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#">
+                                <span class="project-color" style="background-color: #2196f3;"></span>
+                                Task Manager
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#">
+                                <span class="project-color" style="background-color: #ff9800;"></span>
+                                Documentation
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#">
+                                <span class="project-color" style="background-color: #f44336;"></span>
+                                API Development
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </nav>
+
+            <!-- Main Content Area -->
+            <main class="content">
+                <div class="page-header">
+                    <h2>Dashboard</h2>
+                    <div class="page-actions">
+                        <button class="button secondary">
+                            <span class="material-icons">filter_list</span>
+                            Filter
+                        </button>
+                        <button class="button primary">
+                            <span class="material-icons">add</span>
+                            New Project
+                        </button>
+                    </div>
+                </div>
+
+                <div class="dashboard-stats">
+                    <div class="stat-card">
+                        <div class="stat-value">12</div>
+                        <div class="stat-label">Active Projects</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value">48</div>
+                        <div class="stat-label">Open Tasks</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value">8</div>
+                        <div class="stat-label">Team Members</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value">16</div>
+                        <div class="stat-label">Completed This Week</div>
+                    </div>
+                </div>
+
+                <h3>My Projects</h3>
+                <div class="project-grid">
+                    <!-- Project Card 1 -->
+                    <div class="project-card">
+                        <a href="project-detail.html" class="card-link">
+                        <div class="card-header" style="background-color: #4caf50;">
+                            <h3>AWS Starter</h3>
+                            <span class="status-chip active">Active</span>
+                        </div>
+                        <div class="card-content">
+                            <p>AWS infrastructure and application deployment project</p>
+                            <div class="progress-bar">
+                                <div class="progress" style="width: 75%;"></div>
+                            </div>
+                            <div class="progress-label">75% Complete</div>
+                            <div class="card-meta">
+                                <div class="meta-item">
+                                    <span class="material-icons">people</span>
+                                    <span>5 Members</span>
+                                </div>
+                                <div class="meta-item">
+                                    <span class="material-icons">assignment</span>
+                                    <span>12 Tasks</span>
+                                </div>
+                            </div>
+                        </div>
+                        </a>
+                    </div>
+
+                    <!-- Project Card 2 -->
+                    <div class="project-card">
+                        <a href="#" class="card-link">
+                        <div class="card-header" style="background-color: #2196f3;">
+                            <h3>Task Manager</h3>
+                            <span class="status-chip active">Active</span>
+                        </div>
+                        <div class="card-content">
+                            <p>Project management system with task tracking</p>
+                            <div class="progress-bar">
+                                <div class="progress" style="width: 45%;"></div>
+                            </div>
+                            <div class="progress-label">45% Complete</div>
+                            <div class="card-meta">
+                                <div class="meta-item">
+                                    <span class="material-icons">people</span>
+                                    <span>3 Members</span>
+                                </div>
+                                <div class="meta-item">
+                                    <span class="material-icons">assignment</span>
+                                    <span>8 Tasks</span>
+                                </div>
+                            </div>
+                        </div>
+                        </a>
+                    </div>
+
+                    <!-- Project Card 3 -->
+                    <div class="project-card">
+                        <a href="#" class="card-link">
+                        <div class="card-header" style="background-color: #ff9800;">
+                            <h3>Documentation</h3>
+                            <span class="status-chip completed">Completed</span>
+                        </div>
+                        <div class="card-content">
+                            <p>Technical documentation and user guides</p>
+                            <div class="progress-bar">
+                                <div class="progress" style="width: 100%;"></div>
+                            </div>
+                            <div class="progress-label">100% Complete</div>
+                            <div class="card-meta">
+                                <div class="meta-item">
+                                    <span class="material-icons">people</span>
+                                    <span>2 Members</span>
+                                </div>
+                                <div class="meta-item">
+                                    <span class="material-icons">assignment</span>
+                                    <span>6 Tasks</span>
+                                </div>
+                            </div>
+                        </div>
+                        </a>
+                    </div>
+
+                    <!-- Project Card 4 -->
+                    <div class="project-card">
+                        <a href="#" class="card-link">
+                        <div class="card-header" style="background-color: #f44336;">
+                            <h3>API Development</h3>
+                            <span class="status-chip active">Active</span>
+                        </div>
+                        <div class="card-content">
+                            <p>RESTful API design and implementation</p>
+                            <div class="progress-bar">
+                                <div class="progress" style="width: 60%;"></div>
+                            </div>
+                            <div class="progress-label">60% Complete</div>
+                            <div class="card-meta">
+                                <div class="meta-item">
+                                    <span class="material-icons">people</span>
+                                    <span>4 Members</span>
+                                </div>
+                                <div class="meta-item">
+                                    <span class="material-icons">assignment</span>
+                                    <span>15 Tasks</span>
+                                </div>
+                            </div>
+                        </div>
+                        </a>
+                    </div>
+                </div>
+
+                <h3>Recent Activity</h3>
+                <div class="activity-list">
+                    <div class="activity-item">
+                        <div class="avatar">JD</div>
+                        <div class="activity-content">
+                            <div class="activity-header">
+                                <span class="user-name">John Doe</span>
+                                <span class="activity-time">2 hours ago</span>
+                            </div>
+                            <p>Added a new task <strong>"Update API documentation"</strong> to <strong>API Development</strong></p>
+                        </div>
+                        </a>
+                    </div>
+                    <div class="activity-item">
+                        <div class="avatar">AS</div>
+                        <div class="activity-content">
+                            <div class="activity-header">
+                                <span class="user-name">Alice Smith</span>
+                                <span class="activity-time">4 hours ago</span>
+                            </div>
+                            <p>Completed task <strong>"Deploy to AWS"</strong> in <strong>AWS Starter</strong></p>
+                        </div>
+                        </a>
+                    </div>
+                    <div class="activity-item">
+                        <div class="avatar">MS</div>
+                        <div class="activity-content">
+                            <div class="activity-header">
+                                <span class="user-name">Mike Sloan</span>
+                                <span class="activity-time">Yesterday</span>
+                            </div>
+                            <p>Created a new project <strong>"API Development"</strong></p>
+                        </div>
+                        </a>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+</body>
+</html>
