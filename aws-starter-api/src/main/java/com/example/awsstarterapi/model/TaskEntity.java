@@ -1,13 +1,18 @@
 package com.example.awsstarterapi.model;
 
 import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Document(collection = "tasks")
 public class TaskEntity {
     @Id
     private String id;
+    private String projectId;
+    private String assigneeId;
     private String title;
     private String description;
     private String status; // "TODO", "IN_PROGRESS", "DONE"
@@ -17,6 +22,35 @@ public class TaskEntity {
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
     private boolean completed;
+
+    public static class UserReference {
+        private String id;
+        private String name;
+
+        public UserReference() {
+        }
+
+        public UserReference(String id, String name) {
+            this.id = id;
+            this.name = name;
+        }
+
+        public String getId() {
+            return id;
+        }
+
+        public void setId(String id) {
+            this.id = id;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public void setName(String name) {
+            this.name = name;
+        }
+    }
 
     public TaskEntity() {
         // Default constructor required by MongoDB
@@ -42,6 +76,22 @@ public class TaskEntity {
 
     public void setId(String id) {
         this.id = id;
+    }
+
+    public String getProjectId() {
+        return projectId;
+    }
+
+    public void setProjectId(String projectId) {
+        this.projectId = projectId;
+    }
+
+    public String getAssigneeId() {
+        return assigneeId;
+    }
+
+    public void setAssigneeId(String assigneeId) {
+        this.assigneeId = assigneeId;
     }
 
     public String getTitle() {

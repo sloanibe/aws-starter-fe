@@ -1,9 +1,15 @@
+logging:
+  level:
+    root: INFO
+    org.testcontainers: DEBUG
+    org.springframework.test: DEBUG
+    org.springframework.boot.test: DEBUG
+    com.example.awsstarterapi: DEBUG
+
 spring:
   data:
     mongodb:
-      database: taskdb-test
-  
-  # Disable auto-configuration for embedded MongoDB (we're using TestContainers)
-  autoconfigure:
-    exclude:
-      - org.springframework.boot.autoconfigure.mongo.embedded.EmbeddedMongoAutoConfiguration
+      database: test_db
+
+server:
+  port: 0  # Random port for testing

@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/tasks")
@@ -23,26 +24,23 @@ import java.util.Optional;
     "https://www.sloandev.net",
     "https://api.sloandev.net"
 })
-public class TaskController {
+public class TaskController extends BaseController {
 
     @Autowired
     private TaskRepository taskRepository;
 
     // Get all tasks
     @GetMapping
-    public List<TaskEntity> getAllTasks() {
-        return taskRepository.findAll();
+    public ResponseEntity<List<TaskEntity>> getAllTasks() {
+        return success(taskRepository.findAll());
     }
 
     // Get task by ID
     @GetMapping("/{id}")
     public ResponseEntity<TaskEntity> getTaskById(@PathVariable String id) {
-        Optional<TaskEntity> task = taskRepository.findById(id);
-        if (task.isPresent()) {
-            return ResponseEntity.ok(task.get());
-        } else {
-            return ResponseEntity.notFound().build();
-        }
+        return taskRepository.findById(id)
+                .map(task -> success(task))
+                .orElseGet(() -> notFound());
     }
 
     // Create a new task
@@ -64,8 +62,7 @@ public class TaskController {
             task.setPriority("MEDIUM");
         }
         
-        TaskEntity savedTask = taskRepository.save(task);
-        return ResponseEntity.status(HttpStatus.CREATED).body(savedTask);
+        return created(taskRepository.save(task));
     }
 
     // Update an existing task
@@ -115,14 +112,12 @@ public class TaskController {
     // Delete a task
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteTask(@PathVariable String id) {
-        Optional<TaskEntity> task = taskRepository.findById(id);
-        
-        if (task.isPresent()) {
-            taskRepository.deleteById(id);
-            return ResponseEntity.noContent().build();
-        } else {
-            return ResponseEntity.notFound().build();
-        }
+        return taskRepository.findById(id)
+                .map(task -> {
+                    taskRepository.deleteById(id);
+                    return noContent();
+                })
+                .orElseGet(this::notFound);
     }
 
     // Get tasks by status
@@ -137,22 +132,46 @@ public class TaskController {
         return taskRepository.findByPriority(priority);
     }
 
+    // Get tasks by project
+    @GetMapping("/project/{projectId}")
+    public List<TaskEntity> getTasksByProject(@PathVariable String projectId) {
+        return taskRepository.findByProjectId(projectId);
+    }
+
+    // Get tasks by assignee
+    @GetMapping("/assignee/{assigneeId}")
+    public List<TaskEntity> getTasksByAssignee(@PathVariable String assigneeId) {
+        return taskRepository.findByAssigneeId(assigneeId);
+    }
+
+    // Get tasks by reporter
+    @GetMapping("/reporter/{reporterId}")
+    public List<TaskEntity> getTasksByReporter(@PathVariable String reporterId) {
+        return taskRepository.findByReporterId(reporterId);
+    }
+
     // Get tasks by category
     @GetMapping("/category/{category}")
     public List<TaskEntity> getTasksByCategory(@PathVariable String category) {
-        return taskRepository.findByCategory(category);
+        return taskRepository.findAll().stream()
+            .filter(task -> category.equals(task.getCategory()))
+            .collect(Collectors.toList());
     }
 
     // Get completed tasks
     @GetMapping("/completed")
     public List<TaskEntity> getCompletedTasks() {
-        return taskRepository.findByCompleted(true);
+        return taskRepository.findAll().stream()
+            .filter(TaskEntity::isCompleted)
+            .collect(Collectors.toList());
     }
 
     // Get incomplete tasks
     @GetMapping("/incomplete")
     public List<TaskEntity> getIncompleteTasks() {
-        return taskRepository.findByCompleted(false);
+        return taskRepository.findAll().stream()
+            .filter(task -> !task.isCompleted())
+            .collect(Collectors.toList());
     }
 
     // Toggle task completion status
@@ -175,13 +194,10 @@ public class TaskController {
     // Search tasks by title or description
     @GetMapping("/search")
     public List<TaskEntity> searchTasks(@RequestParam String query) {
-        List<TaskEntity> titleResults = taskRepository.findByTitleContainingIgnoreCase(query);
-        List<TaskEntity> descriptionResults = taskRepository.findByDescriptionContainingIgnoreCase(query);
-        
-        // Combine results, removing duplicates
-        titleResults.removeAll(descriptionResults);
-        titleResults.addAll(descriptionResults);
-        
-        return titleResults;
+        List<TaskEntity> byTitle = taskRepository.findByTitleContainingIgnoreCase(query);
+        List<TaskEntity> byDescription = taskRepository.findByDescriptionContainingIgnoreCase(query);
+        return java.util.stream.Stream.concat(byTitle.stream(), byDescription.stream())
+            .distinct()
+            .collect(java.util.stream.Collectors.toList());
     }
 }

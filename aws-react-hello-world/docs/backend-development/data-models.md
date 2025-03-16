@@ -53,6 +53,58 @@ The diagram above illustrates the relationships between our five main MongoDB co
 - **Users to Tasks**: One-to-Many (1:N) - A user can be assigned to or report multiple tasks
 - **Tasks to Task_Updates**: One-to-Many (1:N) - A task can have multiple updates
 
+## Optimized Data Model
+
+### Project Document
+```json
+{
+  "_id": "project123",
+  "name": "AWS Starter Project",
+  "members": [
+    {
+      "userId": "user456",
+      "name": "John Doe",
+      "role": "Member"
+    }
+  ]
+}
+```
+
+### Task Document
+```json
+{
+  "_id": "task789",
+  "projectId": "project123",
+  "assigneeId": "user456",
+  "title": "Implement MongoDB optimizations",
+  "updates": [
+    {
+      "content": "Started implementation",
+      "timestamp": "2025-03-15T09:20:00Z",
+      "user": {
+        "id": "user789",
+        "name": "John Doe"
+      }
+    }
+  ]
+}
+```
+
+### User Document
+```json
+{
+  "_id": "user456",
+  "name": "John Doe",
+  "projects": [
+    {
+      "projectId": "project123",
+      "name": "AWS Starter Project",
+      "role": "Member"
+    }
+  ]
+}
+```
+
 ## 1. User Entity
 
 The `UserEntity` represents users in the system who can create projects, be assigned to tasks, and collaborate with team members.

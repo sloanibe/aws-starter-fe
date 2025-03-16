@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { useMockProjectDetailService } from '../services/mock/MockProjectDetailService.old';
+import { useMockProjectDetailService } from '../services/mock/MockProjectDetailService';
 import { ProjectDetail as ProjectDetailModel, Activity } from '../models/ProjectDetail';
 import { DropResult } from 'react-beautiful-dnd';
 import {
