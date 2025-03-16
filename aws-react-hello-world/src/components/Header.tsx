@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   AppBar, Toolbar, IconButton, Avatar, Typography, Box,
@@ -22,6 +22,38 @@ const Header: React.FC<HeaderProps> = ({
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [filterAnchorEl, setFilterAnchorEl] = useState<null | HTMLElement>(null);
   const [isDocumentationOpen, setIsDocumentationOpen] = useState(false);
+  const [drawerWidth, setDrawerWidth] = useState(800);
+  const [isResizing, setIsResizing] = useState(false);
+  const startXRef = useRef(0);
+  const startWidthRef = useRef(800);
+
+  const handleResizeStart = useCallback((e: React.MouseEvent) => {
+    setIsResizing(true);
+    startXRef.current = e.clientX;
+    startWidthRef.current = drawerWidth;
+  }, [drawerWidth]);
+
+  const handleResizeMove = useCallback((e: MouseEvent) => {
+    if (!isResizing) return;
+    const diff = startXRef.current - e.clientX;
+    const newWidth = Math.min(Math.max(startWidthRef.current + diff, 400), window.innerWidth * 0.9);
+    setDrawerWidth(newWidth);
+  }, [isResizing]);
+
+  const handleResizeEnd = useCallback(() => {
+    setIsResizing(false);
+  }, []);
+
+  React.useEffect(() => {
+    if (isResizing) {
+      document.addEventListener('mousemove', handleResizeMove);
+      document.addEventListener('mouseup', handleResizeEnd);
+      return () => {
+        document.removeEventListener('mousemove', handleResizeMove);
+        document.removeEventListener('mouseup', handleResizeEnd);
+      };
+    }
+  }, [isResizing, handleResizeMove, handleResizeEnd]);
 
   const handleProfileMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
@@ -174,17 +206,36 @@ const Header: React.FC<HeaderProps> = ({
 
       {/* Documentation Drawer */}
       <Drawer
+        variant="temporary"
         anchor="right"
         open={isDocumentationOpen}
         onClose={() => setIsDocumentationOpen(false)}
+        ModalProps={{
+          keepMounted: true
+        }}
         sx={{
           '& .MuiDrawer-paper': {
-            width: '80%',
-            maxWidth: '1000px',
+            width: drawerWidth,
             p: 2
           }
         }}
       >
+        <Box
+          sx={{
+            position: 'absolute',
+            left: 0,
+            top: 0,
+            bottom: 0,
+            width: '8px',
+            cursor: 'col-resize',
+            backgroundColor: isResizing ? 'primary.main' : 'transparent',
+            '&:hover': {
+              backgroundColor: 'primary.light',
+              opacity: 0.3
+            }
+          }}
+          onMouseDown={handleResizeStart}
+        />
         <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
           <Typography variant="h6">Documentation</Typography>
           <IconButton onClick={() => setIsDocumentationOpen(false)}>
