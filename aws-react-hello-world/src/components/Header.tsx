@@ -91,7 +91,7 @@ const Header: React.FC<HeaderProps> = ({
             <Button
               color="inherit"
               startIcon={<MenuBook />}
-              onClick={() => setIsDocumentationOpen(true)}
+              onClick={() => setIsDocumentationOpen(!isDocumentationOpen)}
               sx={{
                 borderRadius: 2,
                 bgcolor: isDocumentationOpen ? 'action.selected' : 'transparent',
