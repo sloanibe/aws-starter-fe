@@ -22,13 +22,13 @@ import {
   FilterList,
   Notifications,
 } from '@mui/icons-material';
-import { useMockProjectService } from '../services/mock/MockProjectService';
+import { useProjectService } from '../services/ServiceFactory';
 import { useNavigate } from 'react-router-dom';
 import Header from './Header';
 import { Project, ProjectStatus } from '../models/Project';
 
 const Dashboard: React.FC = () => {
-  const projectService = useMockProjectService();
+  const projectService = useProjectService();
   const navigate = useNavigate();
   const [isDocumentationOpen, setIsDocumentationOpen] = useState(false);
   const [projects, setProjects] = useState<Project[]>([]);
@@ -94,11 +94,11 @@ const Dashboard: React.FC = () => {
             </Typography>
             <List>
               <ListItem 
-                selected
                 sx={{ 
                   borderRadius: 1, 
                   mb: 0.5,
                   cursor: 'pointer',
+                  bgcolor: 'action.selected',
                   '&:hover': {
                     bgcolor: 'action.hover'
                   }
@@ -125,8 +125,14 @@ const Dashboard: React.FC = () => {
                 <ListItemText primary="My Tasks" />
               </ListItem>
               <ListItem 
-                button
-                sx={{ borderRadius: 1 }}
+                component="div"
+                sx={{ 
+                  borderRadius: 1,
+                  cursor: 'pointer',
+                  '&:hover': {
+                    bgcolor: 'action.hover'
+                  }
+                }}
               >
                 <ListItemIcon>
                   <Notifications />

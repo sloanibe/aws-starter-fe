@@ -6,7 +6,7 @@ const API_BASE_URL = apiConfig.apiBaseUrl;
 
 export class ApiProjectService implements ProjectService {
   async getAllProjects(): Promise<Project[]> {
-    const response = await fetch(`${API_BASE_URL}/api/projects`);
+    const response = await fetch(`${API_BASE_URL}/projects`);
     if (!response.ok) {
       throw new Error('Failed to fetch projects');
     }
@@ -14,7 +14,7 @@ export class ApiProjectService implements ProjectService {
   }
 
   async getProjectById(id: string): Promise<Project | null> {
-    const response = await fetch(`${API_BASE_URL}/api/projects/${id}`);
+    const response = await fetch(`${API_BASE_URL}/projects/${id}`);
     if (!response.ok) {
       if (response.status === 404) {
         return null;
@@ -25,7 +25,7 @@ export class ApiProjectService implements ProjectService {
   }
 
   async getProjectsByStatus(status: ProjectStatus): Promise<Project[]> {
-    const response = await fetch(`${API_BASE_URL}/api/projects?status=${status}`);
+    const response = await fetch(`${API_BASE_URL}/projects?status=${status}`);
     if (!response.ok) {
       throw new Error('Failed to fetch projects by status');
     }
@@ -33,7 +33,7 @@ export class ApiProjectService implements ProjectService {
   }
 
   async getProjectsByUserId(userId: string): Promise<Project[]> {
-    const response = await fetch(`${API_BASE_URL}/api/projects?userId=${userId}`);
+    const response = await fetch(`${API_BASE_URL}/projects?userId=${userId}`);
     if (!response.ok) {
       throw new Error('Failed to fetch user projects');
     }
@@ -41,7 +41,7 @@ export class ApiProjectService implements ProjectService {
   }
 
   async createProject(project: Omit<Project, 'id' | 'createdAt' | 'updatedAt'>): Promise<Project> {
-    const response = await fetch(`${API_BASE_URL}/api/projects`, {
+    const response = await fetch(`${API_BASE_URL}/projects`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -72,7 +72,7 @@ export class ApiProjectService implements ProjectService {
   }
 
   async deleteProject(id: string): Promise<boolean> {
-    const response = await fetch(`${API_BASE_URL}/api/projects/${id}`, {
+    const response = await fetch(`${API_BASE_URL}/projects/${id}`, {
       method: 'DELETE',
     });
     if (!response.ok && response.status !== 404) {
