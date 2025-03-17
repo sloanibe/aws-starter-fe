@@ -9,7 +9,11 @@ import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
 @RestController
 @RequestMapping("/api/users")
 public class UserController extends BaseController {
@@ -34,16 +38,16 @@ public class UserController extends BaseController {
 
     @PostMapping
     public ResponseEntity<UserEntity> createUser(@RequestBody UserEntity user) {
+        log.info("Creating new user: {} ({}) from org {}", user.getDisplayName(), user.getEmail(), user.getOrganization());
         user.setCreatedAt(LocalDateTime.now());
         user.setLastLogin(LocalDateTime.now());
         UserEntity savedUser = userRepository.save(user);
 
         // Send welcome email
-        emailService.sendWelcomeEmail(
-            savedUser.getEmail(),
-            savedUser.getDisplayName() != null ? savedUser.getDisplayName() : savedUser.getUsername(),
-            savedUser.getOrganization()
-        );
+        log.info("Attempting to send welcome email to {} ({}) from org {}", 
+                user.getDisplayName(), user.getEmail(), user.getOrganization());
+        emailService.sendWelcomeEmail(user.getEmail(), user.getDisplayName(), user.getOrganization());
+        log.info("Welcome email sent successfully");
 
         return created(savedUser);
     }
@@ -71,5 +75,31 @@ public class UserController extends BaseController {
                     return noContent();
                 })
                 .orElseGet(this::notFound);
+    }
+
+    @PostMapping("/guest")
+    public ResponseEntity<UserEntity> loginAsGuest(@RequestBody Map<String, String> guestInfo) {
+        String email = guestInfo.get("email");
+        String name = guestInfo.get("name");
+
+        // Create a guest user
+        UserEntity guestUser = new UserEntity();
+        guestUser.setUsername("guest");
+        guestUser.setEmail(email);
+        guestUser.setDisplayName(name);
+        guestUser.setCreatedAt(LocalDateTime.now());
+        guestUser.setLastLogin(LocalDateTime.now());
+        guestUser.setOrganization("Guest");
+
+        UserEntity savedUser = userRepository.save(guestUser);
+
+        // Send both welcome and guest visit notifications
+        log.info("Sending welcome email to guest: {} ({})", name, email);
+        emailService.sendWelcomeEmail(email, name, "Guest");
+        
+        log.info("Sending guest visit notification for: {} ({})", name, email);
+        emailService.sendGuestVisitNotification(email, name);
+
+        return created(savedUser);
     }
 }

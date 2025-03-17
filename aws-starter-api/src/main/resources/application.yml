@@ -22,7 +22,8 @@ aws:
   region: ${AWS_REGION:us-west-1}
   ses:
     sender-email: ${AWS_SES_SENDER_EMAIL:sloanibe@gmail.com}
-    template-name: ${AWS_SES_TEMPLATE_NAME:login-notification-dev}
+    template-name: ${AWS_SES_TEMPLATE_NAME:guest-visit-notification-dev}
+    welcome-template-name: ${AWS_SES_WELCOME_TEMPLATE_NAME:login-notification-dev}
 
 app:
   cors:

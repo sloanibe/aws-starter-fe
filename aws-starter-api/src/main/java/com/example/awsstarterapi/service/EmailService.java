@@ -20,25 +20,47 @@ public class EmailService {
     @Value("${aws.ses.template-name}")
     private String templateName;
 
+    @Value("${aws.ses.welcome-template-name:login-notification-dev}")
+    private String welcomeTemplateName;
+
     public void sendWelcomeEmail(String userEmail, String userName, String organization) {
         try {
             SendTemplatedEmailRequest emailRequest = SendTemplatedEmailRequest.builder()
                     .destination(Destination.builder().toAddresses(userEmail).build())
                     .source(senderEmail)
-                    .template(templateName)
+                    .template(welcomeTemplateName)
                     .templateData(String.format(
-                            "{\"userName\":\"%s\"," +
-                            "\"userEmail\":\"%s\"," +
-                            "\"organization\":\"%s\"," +
-                            "\"appUrl\":\"https://app.sloandev.net\"}",
+                            "{\"userName\":\"%s\",\"userEmail\":\"%s\",\"organization\":\"%s\",\"appUrl\":\"https://sloandev.net\"}",
                             userName, userEmail, organization))
                     .build();
 
             SendTemplatedEmailResponse response = sesClient.sendTemplatedEmail(emailRequest);
-            log.info("Email sent successfully to {}. MessageId: {}", userEmail, response.messageId());
+            log.info("Welcome email sent successfully to {}. MessageId: {}", userEmail, response.messageId());
         } catch (SesException e) {
-            log.error("Failed to send welcome email to {}: {}", userEmail, e.getMessage());
+            log.error("Failed to send welcome email: {}", e.getMessage());
             throw new RuntimeException("Failed to send welcome email", e);
+        }
+    }
+
+    public void sendGuestVisitNotification(String guestEmail, String guestName) {
+        try {
+            SendTemplatedEmailRequest emailRequest = SendTemplatedEmailRequest.builder()
+                    .destination(Destination.builder().toAddresses(senderEmail).build())
+                    .source(senderEmail)
+                    .template(templateName)
+                    .templateData(String.format(
+                            "{\"guestName\":\"%s\"," +
+                            "\"guestEmail\":\"%s\"," +
+                            "\"visitTime\":\"%s\"," +
+                            "\"appUrl\":\"https://sloandev.net\"}",
+                            guestName, guestEmail, java.time.LocalDateTime.now()))
+                    .build();
+
+            SendTemplatedEmailResponse response = sesClient.sendTemplatedEmail(emailRequest);
+            log.info("Guest visit notification sent successfully. MessageId: {}", response.messageId());
+        } catch (SesException e) {
+            log.error("Failed to send guest visit notification: {}", e.getMessage());
+            throw new RuntimeException("Failed to send guest visit notification", e);
         }
     }
 }

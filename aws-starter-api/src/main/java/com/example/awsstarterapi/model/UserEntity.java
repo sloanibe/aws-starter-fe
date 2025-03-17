@@ -19,6 +19,8 @@ public class UserEntity {
     private LocalDateTime lastLogin;
     private List<ProjectReference> projects;
     private List<ProjectMembership> projectMemberships;
+    private List<TaskReference> createdTasks;
+    private List<TaskReference> assignedTasks;
 
     public String getId() {
         return id;
@@ -108,6 +110,22 @@ public class UserEntity {
         this.projectMemberships = projectMemberships;
     }
 
+    public List<TaskReference> getCreatedTasks() {
+        return createdTasks;
+    }
+
+    public void setCreatedTasks(List<TaskReference> createdTasks) {
+        this.createdTasks = createdTasks;
+    }
+
+    public List<TaskReference> getAssignedTasks() {
+        return assignedTasks;
+    }
+
+    public void setAssignedTasks(List<TaskReference> assignedTasks) {
+        this.assignedTasks = assignedTasks;
+    }
+
     public static class ProjectReference {
         private String projectId;
         private String name;
@@ -135,6 +153,44 @@ public class UserEntity {
 
         public void setRole(String role) {
             this.role = role;
+        }
+    }
+
+    public static class TaskReference {
+        private String taskId;
+        private String title;
+        private String status;
+
+        public TaskReference() {}
+
+        public TaskReference(String taskId, String title, String status) {
+            this.taskId = taskId;
+            this.title = title;
+            this.status = status;
+        }
+
+        public String getTaskId() {
+            return taskId;
+        }
+
+        public void setTaskId(String taskId) {
+            this.taskId = taskId;
+        }
+
+        public String getTitle() {
+            return title;
+        }
+
+        public void setTitle(String title) {
+            this.title = title;
+        }
+
+        public String getStatus() {
+            return status;
+        }
+
+        public void setStatus(String status) {
+            this.status = status;
         }
     }
 
