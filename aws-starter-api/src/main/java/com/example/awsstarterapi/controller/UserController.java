@@ -2,10 +2,12 @@ package com.example.awsstarterapi.controller;
 
 import com.example.awsstarterapi.model.UserEntity;
 import com.example.awsstarterapi.repository.UserRepository;
+import com.example.awsstarterapi.service.EmailService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @RestController
@@ -14,6 +16,9 @@ public class UserController extends BaseController {
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private EmailService emailService;
 
     @GetMapping
     public ResponseEntity<List<UserEntity>> getAllUsers() {
@@ -29,7 +34,18 @@ public class UserController extends BaseController {
 
     @PostMapping
     public ResponseEntity<UserEntity> createUser(@RequestBody UserEntity user) {
-        return created(userRepository.save(user));
+        user.setCreatedAt(LocalDateTime.now());
+        user.setLastLogin(LocalDateTime.now());
+        UserEntity savedUser = userRepository.save(user);
+
+        // Send welcome email
+        emailService.sendWelcomeEmail(
+            savedUser.getEmail(),
+            savedUser.getDisplayName() != null ? savedUser.getDisplayName() : savedUser.getUsername(),
+            savedUser.getOrganization()
+        );
+
+        return created(savedUser);
     }
 
     @PutMapping("/{id}")

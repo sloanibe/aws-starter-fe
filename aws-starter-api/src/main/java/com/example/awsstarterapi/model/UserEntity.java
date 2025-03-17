@@ -12,6 +12,7 @@ public class UserEntity {
     private String username;
     private String displayName;
     private String email;
+    private String organization;
     private String avatar;
     private String role;
     private LocalDateTime createdAt;
@@ -49,6 +50,14 @@ public class UserEntity {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public String getOrganization() {
+        return organization;
+    }
+
+    public void setOrganization(String organization) {
+        this.organization = organization;
     }
 
     public String getAvatar() {

@@ -18,6 +18,12 @@ spring:
       uri: mongodb://${MONGO_USER:admin}:${MONGO_PWD:admin123}@localhost:27017/aws_starter_db?authSource=admin&connectTimeoutMS=3000
       database: aws_starter_db
 
+aws:
+  region: ${AWS_REGION:us-west-1}
+  ses:
+    sender-email: ${AWS_SES_SENDER_EMAIL:sloanibe@gmail.com}
+    template-name: ${AWS_SES_TEMPLATE_NAME:login-notification-dev}
+
 app:
   cors:
     allowed-origins: ${APP_CORS_ALLOWED_ORIGINS:http://localhost:3000,http://localhost:5173,http://localhost:5174,http://aws-starter-app.s3-website-us-west-1.amazonaws.com,https://d23g2ah1oukxrw.cloudfront.net,https://sloandev.net,https://www.sloandev.net,https://api.sloandev.net}
