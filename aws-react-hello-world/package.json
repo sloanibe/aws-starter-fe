@@ -1,11 +1,11 @@
 {
   "name": "aws-react-hello-world",
   "private": true,
-  "version": "0.0.51",
+  "version": "0.1.10",
   "type": "module",
   "scripts": {
     "dev": "node copy-docs.js && vite",
-    "build": "node copy-docs.js && tsc -b && vite build",
+    "build": "node copy-docs.js && vite build",
     "lint": "eslint .",
     "preview": "vite preview",
     "copy-docs": "node copy-docs.js",

@@ -1,10 +1,10 @@
 // API configuration
 export const apiConfig = {
-  // Set to true to use mock data instead of real API calls
-  useMockApi: true,
+  // Set to false to use real API calls
+  useMockApi: false,
   
   // Base URL for API calls
-  apiBaseUrl: 'http://localhost:8080/api',
+  apiBaseUrl: 'https://tylsa7bs12.execute-api.us-west-1.amazonaws.com/prod/api',
   
   // API endpoints
   endpoints: {
