@@ -1,0 +1,109 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: 'AWS SES setup for email notifications with HTML templates'
+
+Parameters:
+  SenderEmail:
+    Type: String
+    Description: Email address to send notifications from (must be verified in SES)
+  
+  NotificationEmail:
+    Type: String
+    Description: Email address to receive login notifications (must be verified in SES)
+
+  Environment:
+    Type: String
+    Default: prod
+    AllowedValues:
+      - dev
+      - prod
+    Description: Environment name for resource naming
+
+Resources:
+  # IAM Role for API to use SES
+  EmailSenderRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: 
+                - apigateway.amazonaws.com
+                - ec2.amazonaws.com
+            Action: sts:AssumeRole
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/service-role/AmazonAPIGatewayPushToCloudWatchLogs
+      Policies:
+        - PolicyName: SESSendEmailPolicy
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action:
+                  - ses:SendEmail
+                  - ses:SendRawEmail
+                Resource: '*'
+                Condition:
+                  StringEquals:
+                    'ses:FromAddress': !Ref SenderEmail
+
+  # SES Template for Login Notifications
+  LoginNotificationTemplate:
+    Type: AWS::SES::Template
+    Properties:
+      Template:
+        TemplateName: !Sub 'login-notification-${Environment}'
+        SubjectPart: 'New Login: {{userName}} from {{organization}}'
+        HtmlPart: |
+          <!DOCTYPE html>
+          <html>
+            <head>
+              <style>
+                body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
+                .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+                .header { background-color: #f8f9fa; padding: 20px; border-radius: 5px; }
+                .content { margin-top: 20px; }
+                .footer { margin-top: 30px; font-size: 12px; color: #666; }
+              </style>
+            </head>
+            <body>
+              <div class="container">
+                <div class="header">
+                  <h2>New User Login</h2>
+                </div>
+                <div class="content">
+                  <p>A new user has logged into your application:</p>
+                  <ul>
+                    <li><strong>Name:</strong> {{userName}}</li>
+                    <li><strong>Email:</strong> {{userEmail}}</li>
+                    <li><strong>Organization:</strong> {{organization}}</li>
+                    <li><strong>Time:</strong> {{loginTime}}</li>
+                  </ul>
+                </div>
+                <div class="footer">
+                  <p>This is an automated message from your AWS Starter application.</p>
+                </div>
+              </div>
+            </body>
+          </html>
+        TextPart: |
+          New User Login
+          
+          A new user has logged into your application:
+          
+          Name: {{userName}}
+          Email: {{userEmail}}
+          Organization: {{organization}}
+          Time: {{loginTime}}
+          
+          This is an automated message from your AWS Starter application.
+
+Outputs:
+  EmailSenderRoleArn:
+    Description: ARN of the IAM role for sending emails
+    Value: !GetAtt EmailSenderRole.Arn
+  
+  LoginTemplateArn:
+    Description: Name of the login notification template
+    Value: !Sub 'login-notification-${Environment}'
