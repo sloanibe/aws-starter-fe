@@ -15,7 +15,7 @@ STACK_NAME="aws-starter-ses-$ENVIRONMENT"
 
 echo "Deploying SES configuration..."
 aws cloudformation deploy \
-    --template-file ses-email.yml \
+    --template-file ../../cloudformation/ses-email.yml \
     --stack-name $STACK_NAME \
     --parameter-overrides \
         SenderEmail=$EMAIL \

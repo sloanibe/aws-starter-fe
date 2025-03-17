@@ -7,7 +7,7 @@ set -e
 
 # Configuration
 STACK_NAME="aws-starter-api-gateway"
-TEMPLATE_FILE="api-gateway.yml"
+TEMPLATE_FILE="../../cloudformation/api-gateway.yml"
 REGION="us-west-1"  # Keep all resources in the same region
 DOMAIN_NAME="api.sloandev.net"
 
