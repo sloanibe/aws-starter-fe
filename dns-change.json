@@ -1,0 +1,17 @@
+{
+    "Comment": "Update api.sloandev.net to point to API Gateway",
+    "Changes": [
+        {
+            "Action": "UPSERT",
+            "ResourceRecordSet": {
+                "Name": "api.sloandev.net",
+                "Type": "A",
+                "AliasTarget": {
+                    "HostedZoneId": "Z2MUQ32089INYE",
+                    "DNSName": "d-ppvtfbxwzb.execute-api.us-west-1.amazonaws.com",
+                    "EvaluateTargetHealth": true
+                }
+            }
+        }
+    ]
+}
