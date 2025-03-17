@@ -1,0 +1,90 @@
+{
+  "feature": "Email Notifications",
+  "status": "In Progress",
+  "description": "Implementing AWS SES for sending welcome emails to users upon signup",
+  "components": {
+    "infrastructure": {
+      "cloudformation": {
+        "template": "infrastructure/cloudformation/ses-email.yml",
+        "status": "Deployed",
+        "resources": {
+          "emailTemplate": {
+            "name": "login-notification-dev",
+            "variables": ["userName", "userEmail", "organization", "appUrl"],
+            "status": "Created"
+          },
+          "iamRole": {
+            "name": "aws-starter-ses-dev-EmailSenderRole",
+            "status": "Created",
+            "permissions": ["ses:SendEmail", "ses:SendRawEmail"]
+          }
+        }
+      },
+      "deploymentScript": {
+        "path": "infrastructure/scripts/deploy/deploy-ses.sh",
+        "status": "Working"
+      }
+    },
+    "backend": {
+      "dependencies": {
+        "added": ["software.amazon.awssdk:ses:2.25.11"]
+      },
+      "components": {
+        "config": {
+          "path": "aws-starter-api/src/main/java/com/example/awsstarterapi/config/AwsSesConfig.java",
+          "status": "Created"
+        },
+        "service": {
+          "path": "aws-starter-api/src/main/java/com/example/awsstarterapi/service/EmailService.java",
+          "status": "Created",
+          "methods": ["sendWelcomeEmail"]
+        },
+        "model": {
+          "path": "aws-starter-api/src/main/java/com/example/awsstarterapi/model/UserEntity.java",
+          "changes": ["Added organization field"]
+        },
+        "controller": {
+          "path": "aws-starter-api/src/main/java/com/example/awsstarterapi/controller/UserController.java",
+          "changes": ["Integrated EmailService for welcome emails"]
+        }
+      },
+      "configuration": {
+        "path": "aws-starter-api/src/main/resources/application.yml",
+        "added": {
+          "aws.region": "${AWS_REGION:us-west-1}",
+          "aws.ses.sender-email": "${AWS_SES_SENDER_EMAIL:sloanibe@gmail.com}",
+          "aws.ses.template-name": "${AWS_SES_TEMPLATE_NAME:login-notification-dev}"
+        }
+      }
+    },
+    "email": {
+      "verifiedAddresses": ["sloanibe@gmail.com"],
+      "verificationStatus": "Success",
+      "mode": "sandbox"
+    }
+  },
+  "nextSteps": {
+    "deployment": {
+      "options": [
+        "Deploy full application to AWS EC2 (recommended)",
+        "Test locally with MongoDB"
+      ],
+      "status": "Pending decision"
+    },
+    "testing": {
+      "required": [
+        "Test user creation API endpoint",
+        "Verify welcome email delivery",
+        "Check email template rendering"
+      ]
+    }
+  },
+  "limitations": {
+    "ses": {
+      "sandbox": {
+        "verifiedEmailsOnly": true,
+        "dailyQuota": 200
+      }
+    }
+  }
+}

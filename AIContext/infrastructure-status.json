@@ -1,0 +1,94 @@
+{
+    "lastUpdated": "2025-03-17",
+    "infrastructureStatus": {
+        "ec2": {
+            "instance": {
+                "id": "i-00c601082fcb6bec1",
+                "name": "aws-starter-combined",
+                "ip": "13.52.157.48",
+                "status": "running",
+                "deploymentPath": "/home/ubuntu/aws-starter-api"
+            },
+            "services": {
+                "springBoot": "running",
+                "mongodb": "running",
+                "nginx": "removed"
+            }
+        },
+        "apiGateway": {
+            "stackName": "aws-starter-api-gateway",
+            "url": "https://tylsa7bs12.execute-api.us-west-1.amazonaws.com/prod",
+            "stage": "prod",
+            "rateLimit": "20 requests/second",
+            "endpoints": {
+                "health": "/api/health",
+                "users": "/api/users"
+            },
+            "status": "operational"
+        },
+        "ses": {
+            "stackName": "aws-starter-ses-dev",
+            "senderEmail": "sloanibe@gmail.com",
+            "template": "login-notification-dev",
+            "mode": "sandbox",
+            "limit": "200 emails/day",
+            "status": "operational"
+        }
+    },
+    "managementScripts": {
+        "infrastructure": {
+            "path": "scripts/aws/manage-aws.sh",
+            "description": "Manages AWS infrastructure through CloudFormation",
+            "commands": {
+                "deploy": "Deploy/update AWS services",
+                "status": "Check AWS service status",
+                "delete": "Remove AWS resources"
+            },
+            "services": ["all", "api-gateway", "ses", "ec2"],
+            "options": ["--force", "--env=dev|prod"]
+        },
+        "deployment": {
+            "path": "aws-starter-api/deploy-to-ec2.sh",
+            "description": "Deploys Spring Boot application to EC2",
+            "features": [
+                "Builds application JAR",
+                "Copies to EC2",
+                "Restarts application"
+            ]
+        },
+        "services": {
+            "path": "scripts/server/services.sh",
+            "description": "Manages and monitors application services",
+            "monitors": [
+                "MongoDB status",
+                "Spring Boot health",
+                "API Gateway connectivity",
+                "Email service status"
+            ]
+        }
+    },
+    "testingTools": {
+        "userRegistration": {
+            "path": "aws-starter-api/src/test/java/com/example/awsstarterapi/util/UserRegistrationTest.java",
+            "description": "Standalone test for user registration and email notifications",
+            "features": [
+                "Creates test users with unique emails",
+                "Tests API Gateway connectivity",
+                "Verifies email notifications"
+            ]
+        }
+    },
+    "verifiedFunctionality": [
+        "User registration through API Gateway",
+        "Welcome email delivery via SES",
+        "MongoDB connectivity",
+        "Health monitoring endpoints",
+        "Service status reporting"
+    ],
+    "nextSteps": [
+        "Consider moving from SES sandbox to production mode",
+        "Add more comprehensive API tests",
+        "Implement user authentication",
+        "Add monitoring and alerting"
+    ]
+}
