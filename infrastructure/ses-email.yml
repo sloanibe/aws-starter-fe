@@ -4,15 +4,17 @@ Description: 'AWS SES setup for email notifications with HTML templates'
 Parameters:
   SenderEmail:
     Type: String
-    Description: Email address to send notifications from (must be verified in SES)
+    Description: Email address for sending and receiving notifications (must be verified in SES)
+    Default: sloanibe@gmail.com
   
   NotificationEmail:
     Type: String
-    Description: Email address to receive login notifications (must be verified in SES)
+    Description: Email address for receiving notifications (must be verified in SES)
+    Default: sloanibe@gmail.com
 
   Environment:
     Type: String
-    Default: prod
+    Default: dev
     AllowedValues:
       - dev
       - prod
@@ -54,7 +56,7 @@ Resources:
     Properties:
       Template:
         TemplateName: !Sub 'login-notification-${Environment}'
-        SubjectPart: 'New Login: {{userName}} from {{organization}}'
+        SubjectPart: 'Welcome to AWS Starter App!'
         HtmlPart: |
           <!DOCTYPE html>
           <html>
@@ -65,39 +67,50 @@ Resources:
                 .header { background-color: #f8f9fa; padding: 20px; border-radius: 5px; }
                 .content { margin-top: 20px; }
                 .footer { margin-top: 30px; font-size: 12px; color: #666; }
+                .button { background-color: #007bff; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; display: inline-block; margin-top: 15px; }
               </style>
             </head>
             <body>
               <div class="container">
                 <div class="header">
-                  <h2>New User Login</h2>
+                  <h2>Welcome to AWS Starter App!</h2>
                 </div>
                 <div class="content">
-                  <p>A new user has logged into your application:</p>
+                  <p>Hi {{userName}},</p>
+                  <p>Thank you for signing up! We're excited to have you on board.</p>
+                  <p>Your account details:</p>
                   <ul>
-                    <li><strong>Name:</strong> {{userName}}</li>
-                    <li><strong>Email:</strong> {{userEmail}}</li>
                     <li><strong>Organization:</strong> {{organization}}</li>
-                    <li><strong>Time:</strong> {{loginTime}}</li>
+                    <li><strong>Email:</strong> {{userEmail}}</li>
                   </ul>
+                  <p>You can now access all features of the AWS Starter App.</p>
+                  <a href="{{appUrl}}" class="button">Go to Dashboard</a>
                 </div>
                 <div class="footer">
-                  <p>This is an automated message from your AWS Starter application.</p>
+                  <p>If you have any questions, feel free to reply to this email.</p>
+                  <p>Best regards,<br>Michael Sloan</p>
                 </div>
               </div>
             </body>
           </html>
         TextPart: |
-          New User Login
+          Welcome to AWS Starter App!
           
-          A new user has logged into your application:
+          Hi {{userName}},
           
-          Name: {{userName}}
-          Email: {{userEmail}}
-          Organization: {{organization}}
-          Time: {{loginTime}}
+          Thank you for signing up! We're excited to have you on board.
           
-          This is an automated message from your AWS Starter application.
+          Your account details:
+          - Organization: {{organization}}
+          - Email: {{userEmail}}
+          
+          You can now access all features of the AWS Starter App.
+          Visit your dashboard at: {{appUrl}}
+          
+          If you have any questions, feel free to reply to this email.
+          
+          Best regards,
+          Michael Sloan
 
 Outputs:
   EmailSenderRoleArn:
