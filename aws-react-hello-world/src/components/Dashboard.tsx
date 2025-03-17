@@ -94,9 +94,15 @@ const Dashboard: React.FC = () => {
             </Typography>
             <List>
               <ListItem 
-                button
                 selected
-                sx={{ borderRadius: 1, mb: 0.5 }}
+                sx={{ 
+                  borderRadius: 1, 
+                  mb: 0.5,
+                  cursor: 'pointer',
+                  '&:hover': {
+                    bgcolor: 'action.hover'
+                  }
+                }}
               >
                 <ListItemIcon>
                   <DashboardIcon color="primary" />
@@ -104,8 +110,14 @@ const Dashboard: React.FC = () => {
                 <ListItemText primary="Dashboard" />
               </ListItem>
               <ListItem 
-                button
-                sx={{ borderRadius: 1, mb: 0.5 }}
+                sx={{ 
+                  borderRadius: 1, 
+                  mb: 0.5,
+                  cursor: 'pointer',
+                  '&:hover': {
+                    bgcolor: 'action.hover'
+                  }
+                }}
               >
                 <ListItemIcon>
                   <Assignment />
@@ -136,11 +148,11 @@ const Dashboard: React.FC = () => {
                 {projects.map((project) => (
                   <ListItem 
                     key={project.id}
-                    button
                     onClick={() => handleProjectClick(project.id)}
                     sx={{ 
                       borderRadius: 1,
                       mb: 0.5,
+                      cursor: 'pointer',
                       '&:hover': {
                         bgcolor: 'action.hover'
                       }

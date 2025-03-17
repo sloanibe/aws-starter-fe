@@ -155,7 +155,8 @@ button:hover {
   box-shadow: 0 2px 5px rgba(0,0,0,0.1);
 }
 
-.toggle-docs-button {
+.toggle-docs-button,
+.logout-button {
   background-color: rgba(255, 255, 255, 0.2);
   color: white;
   border: 1px solid rgba(255, 255, 255, 0.3);
@@ -169,12 +170,14 @@ button:hover {
   gap: 8px;
 }
 
-.toggle-docs-button:hover {
+.toggle-docs-button:hover,
+.logout-button:hover {
   background-color: rgba(255, 255, 255, 0.3);
   transform: translateY(-1px);
 }
 
-.toggle-docs-button.active {
+.toggle-docs-button.active,
+.logout-button.active {
   background-color: #e74c3c;
   border-color: #e74c3c;
 }

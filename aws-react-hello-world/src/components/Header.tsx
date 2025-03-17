@@ -13,6 +13,8 @@ import Documentation from './Documentation';
 
 interface HeaderProps {
   title?: string;
+  onToggleDocumentation?: () => void;
+  isDocumentationOpen?: boolean;
 }
 
 const Header: React.FC<HeaderProps> = ({ 

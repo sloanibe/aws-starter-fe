@@ -1,7 +1,8 @@
 import { Project, ProjectStatus } from '../../models';
 import { ProjectService } from '../ProjectService';
+import { apiConfig } from '../../config/apiConfig';
 
-const API_BASE_URL = 'https://api.sloandev.net';
+const API_BASE_URL = apiConfig.apiBaseUrl;
 
 export class ApiProjectService implements ProjectService {
   async getAllProjects(): Promise<Project[]> {
