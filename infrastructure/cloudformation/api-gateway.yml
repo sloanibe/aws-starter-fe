@@ -2,23 +2,15 @@ AWSTemplateFormatVersion: '2010-09-09'
 Description: 'API Gateway setup for AWS Starter API with HTTPS and rate limiting'
 
 Parameters:
-  DomainName:
-    Type: String
-    Default: api.sloandev.net
-    Description: Domain name for the API
-  
   EC2InstanceIP:
     Type: String
+    Default: 13.52.157.48
     Description: IP address of the EC2 instance running the Spring Boot API
   
   EC2Port:
     Type: String
     Default: 8080
     Description: Port on which the Spring Boot API is running
-  
-  CertificateArn:
-    Type: String
-    Description: ARN of the ACM certificate for the domain
 
 Resources:
   # API Gateway REST API
@@ -100,34 +92,9 @@ Resources:
         Limit: 86400  # 86,400 requests per day (1 request per second on average)
         Period: DAY
 
-  # Custom Domain Name
-  ApiDomainName:
-    Type: AWS::ApiGateway::DomainName
-    Properties:
-      DomainName: !Ref DomainName
-      RegionalCertificateArn: !Ref CertificateArn
-      EndpointConfiguration:
-        Types:
-          - REGIONAL
 
-  # Base Path Mapping
-  ApiBasePathMapping:
-    Type: AWS::ApiGateway::BasePathMapping
-    DependsOn: ApiDeployment
-    Properties:
-      DomainName: !Ref DomainName
-      RestApiId: !Ref ApiGateway
-      Stage: prod
 
 Outputs:
   ApiGatewayUrl:
     Description: URL of the API Gateway
     Value: !Sub 'https://${ApiGateway}.execute-api.${AWS::Region}.amazonaws.com/prod/'
-  
-  CustomDomainUrl:
-    Description: Custom domain URL for the API
-    Value: !Sub 'https://${DomainName}/'
-  
-  RegionalDomainName:
-    Description: Regional domain name for DNS configuration
-    Value: !GetAtt ApiDomainName.RegionalDomainName

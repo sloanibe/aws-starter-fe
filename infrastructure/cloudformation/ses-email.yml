@@ -45,12 +45,14 @@ Resources:
                 Action:
                   - ses:SendEmail
                   - ses:SendRawEmail
+                  - ses:GetSendQuota
+                  - ses:GetTemplate
                 Resource: '*'
                 Condition:
                   StringEquals:
                     'ses:FromAddress': !Ref SenderEmail
 
-  # SES Template for Login Notifications
+  # SES Templates for Notifications
   LoginNotificationTemplate:
     Type: AWS::SES::Template
     Properties:
@@ -84,7 +86,7 @@ Resources:
                     <li><strong>Email:</strong> {{userEmail}}</li>
                   </ul>
                   <p>You can now access all features of the AWS Starter App.</p>
-                  <a href="{{appUrl}}" class="button">Go to Dashboard</a>
+                  <a href="https://sloandev.net/dashboard" class="button">Go to Dashboard</a>
                 </div>
                 <div class="footer">
                   <p>If you have any questions, feel free to reply to this email.</p>
@@ -105,12 +107,71 @@ Resources:
           - Email: {{userEmail}}
           
           You can now access all features of the AWS Starter App.
-          Visit your dashboard at: {{appUrl}}
+          Visit your dashboard at: https://sloandev.net/dashboard
           
           If you have any questions, feel free to reply to this email.
           
           Best regards,
           Michael Sloan
+
+  # Guest Visit Notification Template
+  GuestVisitNotificationTemplate:
+    Type: AWS::SES::Template
+    Properties:
+      Template:
+        TemplateName: !Sub 'guest-visit-notification-${Environment}'
+        SubjectPart: 'New Guest Visit - AWS Starter App'
+        HtmlPart: |
+          <!DOCTYPE html>
+          <html>
+            <head>
+              <style>
+                body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
+                .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+                .header { background-color: #f8f9fa; padding: 20px; border-radius: 5px; }
+                .content { margin-top: 20px; }
+                .footer { margin-top: 30px; font-size: 12px; color: #666; }
+                .button { background-color: #007bff; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; display: inline-block; margin-top: 15px; }
+                .guest-info { background-color: #f8f9fa; padding: 15px; border-radius: 5px; margin: 15px 0; }
+              </style>
+            </head>
+            <body>
+              <div class="container">
+                <div class="header">
+                  <h2>New Guest Visit Alert</h2>
+                </div>
+                <div class="content">
+                  <p>A new guest has visited the AWS Starter App.</p>
+                  <div class="guest-info">
+                    <h3>Guest Details:</h3>
+                    <ul>
+                      <li><strong>Name:</strong> {{guestName}}</li>
+                      <li><strong>Email:</strong> {{guestEmail}}</li>
+                      <li><strong>Visit Time:</strong> {{visitTime}}</li>
+                    </ul>
+                  </div>
+                  <a href="{{appUrl}}" class="button">View Dashboard</a>
+                </div>
+                <div class="footer">
+                  <p>Best regards,<br>AWS Starter App</p>
+                </div>
+              </div>
+            </body>
+          </html>
+        TextPart: |
+          New Guest Visit Alert
+
+          A new guest has visited the AWS Starter App:
+
+          Guest Details:
+          - Name: {{guestName}}
+          - Email: {{guestEmail}}
+          - Visit Time: {{visitTime}}
+
+          View dashboard at: {{appUrl}}
+
+          Best regards,
+          AWS Starter App
 
 Outputs:
   EmailSenderRoleArn:
@@ -120,3 +181,7 @@ Outputs:
   LoginTemplateArn:
     Description: Name of the login notification template
     Value: !Sub 'login-notification-${Environment}'
+  
+  GuestVisitTemplateArn:
+    Description: Name of the guest visit notification template
+    Value: !Sub 'guest-visit-notification-${Environment}'

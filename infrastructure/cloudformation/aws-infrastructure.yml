@@ -180,6 +180,37 @@ Resources:
       Description: Allow Spring Boot to access MongoDB
 
   # EC2 Instances
+  SpringBootRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: ec2.amazonaws.com
+            Action: sts:AssumeRole
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/CloudWatchAgentServerPolicy
+      Policies:
+        - PolicyName: SESSendEmailPolicy
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action:
+                  - ses:SendEmail
+                  - ses:SendRawEmail
+                  - ses:GetSendQuota
+                  - ses:GetTemplate
+                Resource: '*'
+
+  SpringBootInstanceProfile:
+    Type: AWS::IAM::InstanceProfile
+    Properties:
+      Roles:
+        - !Ref SpringBootRole
+
   SpringBootInstance:
     Type: AWS::EC2::Instance
     Properties:
@@ -189,6 +220,7 @@ Resources:
       SubnetId: !Ref PublicSubnet
       SecurityGroupIds:
         - !Ref SpringBootSecurityGroup
+      IamInstanceProfile: !Ref SpringBootInstanceProfile
       Tags:
         - Key: Name
           Value: !Sub ${EnvironmentName}-springboot
