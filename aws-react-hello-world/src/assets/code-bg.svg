@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="1200" height="800" xmlns="http://www.w3.org/2000/svg">
+  <style>
+    .code { 
+      font-family: monospace;
+      font-size: 14px;
+      fill: #e0e0e0;
+      opacity: 0.15;
+    }
+    .highlight {
+      fill: #90caf9;
+      opacity: 0.2;
+    }
+  </style>
+  <rect width="100%" height="100%" fill="#1a237e"/>
+  <text x="40" y="40" class="code">
+    <tspan x="40" dy="20">import React from 'react';</tspan>
+    <tspan x="40" dy="20">import { Box, Card } from '@mui/material';</tspan>
+    <tspan x="40" dy="20">interface Props {</tspan>
+    <tspan x="60" dy="20">onLoginSuccess: () => void;</tspan>
+    <tspan x="40" dy="20">}</tspan>
+    <tspan x="40" dy="30" class="highlight">@RestController</tspan>
+    <tspan x="40" dy="20" class="highlight">@RequestMapping("/api")</tspan>
+    <tspan x="40" dy="20">public class UserController {</tspan>
+    <tspan x="60" dy="20">private final EmailService emailService;</tspan>
+    <tspan x="40" dy="20">}</tspan>
+    <tspan x="40" dy="30">const handleLogin = async () => {</tspan>
+    <tspan x="60" dy="20">try {</tspan>
+    <tspan x="80" dy="20">await authService.login();</tspan>
+    <tspan x="80" dy="20">navigate('/dashboard');</tspan>
+    <tspan x="60" dy="20">} catch (error) {</tspan>
+    <tspan x="80" dy="20">console.error(error);</tspan>
+    <tspan x="60" dy="20">}</tspan>
+    <tspan x="40" dy="20">};</tspan>
+  </text>
+</svg>
