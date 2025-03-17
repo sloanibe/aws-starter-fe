@@ -13,6 +13,7 @@ public class TaskEntity {
     private String id;
     private String projectId;
     private String assigneeId;
+    private String reporterId;
     private String title;
     private String description;
     private String status; // "TODO", "IN_PROGRESS", "DONE"
@@ -92,6 +93,14 @@ public class TaskEntity {
 
     public void setAssigneeId(String assigneeId) {
         this.assigneeId = assigneeId;
+    }
+
+    public String getReporterId() {
+        return reporterId;
+    }
+
+    public void setReporterId(String reporterId) {
+        this.reporterId = reporterId;
     }
 
     public String getTitle() {

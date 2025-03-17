@@ -16,6 +16,7 @@ public class ProjectEntity {
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
     private List<ProjectMember> members;
+    private List<TaskReference> tasks;
 
     public static class ProjectMember {
         private String userId;
@@ -140,5 +141,51 @@ public class ProjectEntity {
 
     public void setMembers(List<ProjectMember> members) {
         this.members = members;
+    }
+
+    public List<TaskReference> getTasks() {
+        return tasks;
+    }
+
+    public void setTasks(List<TaskReference> tasks) {
+        this.tasks = tasks;
+    }
+
+    public static class TaskReference {
+        private String taskId;
+        private String title;
+        private String status;
+
+        public TaskReference() {}
+
+        public TaskReference(String taskId, String title, String status) {
+            this.taskId = taskId;
+            this.title = title;
+            this.status = status;
+        }
+
+        public String getTaskId() {
+            return taskId;
+        }
+
+        public void setTaskId(String taskId) {
+            this.taskId = taskId;
+        }
+
+        public String getTitle() {
+            return title;
+        }
+
+        public void setTitle(String title) {
+            this.title = title;
+        }
+
+        public String getStatus() {
+            return status;
+        }
+
+        public void setStatus(String status) {
+            this.status = status;
+        }
     }
 }

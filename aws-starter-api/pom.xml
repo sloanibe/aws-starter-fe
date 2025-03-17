@@ -21,6 +21,7 @@
         <java.version>17</java.version>
         <groovy.version>4.0.15</groovy.version>
         <spock.version>2.3-groovy-4.0</spock.version>
+        <aws.sdk.version>2.25.11</aws.sdk.version>
     </properties>
 
     <dependencies>
@@ -34,6 +35,13 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-data-mongodb</artifactId>
+        </dependency>
+
+        <!-- AWS SDK -->
+        <dependency>
+            <groupId>software.amazon.awssdk</groupId>
+            <artifactId>ses</artifactId>
+            <version>${aws.sdk.version}</version>
         </dependency>
 
         <!-- Lombok for reducing boilerplate -->
