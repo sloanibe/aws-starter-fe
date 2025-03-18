@@ -32,8 +32,10 @@ const Login: React.FC<LoginProps> = ({ onLoginSuccess }) => {
 
     try {
       // Login as guest and send notification
-      const user = await authService.loginAsGuest(email, name);
-      console.log('Login successful:', user);
+      const guestUser = await authService.loginAsGuest(email, name);
+      console.log('Guest login successful:', guestUser);
+      // Store guest user in local storage
+      localStorage.setItem('user', JSON.stringify(guestUser));
       onLoginSuccess();
       navigate('/dashboard');
     } catch (err) {

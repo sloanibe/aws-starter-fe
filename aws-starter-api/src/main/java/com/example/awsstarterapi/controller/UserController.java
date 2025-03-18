@@ -82,7 +82,7 @@ public class UserController extends BaseController {
         String email = guestInfo.get("email");
         String name = guestInfo.get("name");
 
-        // Create a guest user
+        // Create a temporary guest user object (not saved to database)
         UserEntity guestUser = new UserEntity();
         guestUser.setUsername("guest");
         guestUser.setEmail(email);
@@ -90,16 +90,18 @@ public class UserController extends BaseController {
         guestUser.setCreatedAt(LocalDateTime.now());
         guestUser.setLastLogin(LocalDateTime.now());
         guestUser.setOrganization("Guest");
+        guestUser.setId("guest-" + System.currentTimeMillis()); // Temporary ID
 
-        UserEntity savedUser = userRepository.save(guestUser);
+        try {
+            // Only send notification to admin (verified email) since we're in SES sandbox mode
+            log.info("Attempting to send guest visit notification - Name: {}, Email: {}", name, email);
+            emailService.sendGuestVisitNotification(email, name);
+            log.info("Successfully sent guest visit notification for: {} ({})", name, email);
+        } catch (Exception e) {
+            // Log the error but don't prevent login
+            log.error("Failed to send guest notification: {} - Stack trace: {}", e.getMessage(), e.getStackTrace());
+        }
 
-        // Send both welcome and guest visit notifications
-        log.info("Sending welcome email to guest: {} ({})", name, email);
-        emailService.sendWelcomeEmail(email, name, "Guest");
-        
-        log.info("Sending guest visit notification for: {} ({})", name, email);
-        emailService.sendGuestVisitNotification(email, name);
-
-        return created(savedUser);
+        return success(guestUser);
     }
 }
