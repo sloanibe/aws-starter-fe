@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mark R. Sloan - Senior Software Engineer</title>
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Open Sans', sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+            color: #333;
+            background-color: #f5f5f5;
+        }
+        .container {
+            max-width: 1000px;
+            margin: 40px auto;
+            padding: 0;
+            display: grid;
+            grid-template-columns: 300px 1fr;
+            gap: 0;
+            background: white;
+            box-shadow: 0 2px 15px rgba(0,0,0,0.1);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+        .sidebar {
+            background-color: #34495e;
+            color: white;
+            padding: 40px 20px;
+            min-height: 100%;
+        }
+
+        .main-content {
+            padding: 40px;
+            background: white;
+        }
+        .profile-img {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin: 0 auto;
+            display: block;
+        }
+        .contact-info {
+            text-align: center;
+            color: #ecf0f1;
+            margin: 20px 0;
+            font-size: 0.9em;
+            line-height: 1.8;
+        }
+        h1 {
+            margin: 10px 0;
+            font-size: 32px;
+        }
+        .sidebar h2 {
+            color: #ecf0f1;
+            font-size: 16px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin: 30px 0 15px;
+            border-bottom: 2px solid #ecf0f1;
+            padding-bottom: 5px;
+        }
+
+        .main-content h2 {
+            color: #34495e;
+            font-size: 18px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin: 30px 0 15px;
+            border-bottom: 2px solid #34495e;
+            padding-bottom: 5px;
+        }
+        .section {
+            margin-bottom: 20px;
+        }
+        .job {
+            margin-bottom: 25px;
+            padding: 15px;
+            border-radius: 4px;
+            transition: all 0.3s ease;
+        }
+        .job:hover {
+            background: #f8f9fa;
+            transform: translateX(5px);
+        }
+        .job-title {
+            font-weight: 600;
+            margin-bottom: 5px;
+            color: #2c3e50;
+            font-size: 1.1em;
+        }
+        .job-company {
+            font-style: italic;
+            margin-bottom: 5px;
+        }
+        .job-date {
+            float: right;
+            font-style: italic;
+        }
+        .sidebar ul {
+            list-style: none;
+            padding-left: 0;
+            color: #ecf0f1;
+        }
+        .main-content ul {
+            padding-left: 20px;
+            list-style: none;
+        }
+        .main-content ul li {
+            position: relative;
+            padding-left: 20px;
+        }
+        .main-content ul li:before {
+            content: '▹';
+            position: absolute;
+            left: 0;
+            color: #34495e;
+        }
+        li {
+            margin-bottom: 5px;
+        }
+        .summary {
+            margin-bottom: 30px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 4px;
+            border-left: 4px solid #34495e;
+        }
+        .summary strong {
+            display: block;
+            color: #2c3e50;
+            margin-bottom: 10px;
+            font-size: 1.2em;
+        }
+        .summary p {
+            color: #555;
+            line-height: 1.8;
+            margin: 0;
+        }
+        .two-column {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+        .column {
+            flex: 1;
+            min-width: 250px;
+        }
+        @media print {
+            body {
+                background: white;
+            }
+            .container {
+                box-shadow: none;
+                margin: 0;
+                grid-template-columns: 250px 1fr;
+            }
+            .sidebar {
+                background: #f8f9fa;
+                color: #333;
+            }
+            .sidebar h2 {
+                color: #333;
+                border-bottom-color: #333;
+            }
+            .contact-info {
+                color: #333;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .two-column {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="sidebar">
+            <img class="profile-img" src="/api/placeholder/120/120" alt="Mark R. Sloan">
+            <h1>MARK R. SLOAN</h1>
+            
+            <div class="contact-info">
+                Wildomar, CA 92595<br>
+                +1 951 584 4480<br>
+                sloanmbr@gmail.com<br>
+                LinkedIn<br>
+                Willing to relocate
+            </div>
+
+        <div class="summary">
+            <strong>SENIOR SOFTWARE ENGINEER/FULL STACK DEVELOPER</strong>
+            <p>8+ years of experience in full-stack development, creating scalable, maintainable, and secure applications. Proficient in modern technologies, including React, Java, Spring Boot, and cloud platforms. Skilled in front-end and back-end development, focusing on delivering high-quality software solutions through Agile methodologies and best practices. Adept at collaborating with cross-functional teams to drive project success and optimize system performance.</p>
+        </div>
+
+            <h2>EDUCATION</h2>
+            <div class="education-item">
+                <div class="job-title">Bachelor of Science in Computer Science</div>
+                <div class="job-company">California Polytechnic State University - San Luis Obispo, CA</div>
+            </div>
+
+            <h2>CERTIFICATIONS & TRAINING</h2>
+            <ul>
+                <li>Java - Enterprise JavaBeans (EJB) 2.0</li>
+                <li>SpringBoot</li>
+                <li>WebSphere Portlet/modular WebSphere 6.0 Administration</li>
+                <li>JEE/Servlets - San Jose, CA</li>
+                <li>Google Cloud</li>
+                <li>Flagship Labs - San Francisco, CA</li>
+            </ul>
+
+            <h2>PROFESSIONAL COMPETENCIES</h2>
+            <ul>
+                <li>Database design</li>
+                <li>Data Migration</li>
+                <li>Web Application Security</li>
+                <li>Web Programming</li>
+                <li>API Design</li>
+                <li>UML and Data Modeling (advanced)</li>
+                <li>Continuous Integration & Deployment</li>
+                <li>Quality Assurance</li>
+                <li>Unit Testing</li>
+                <li>Integration Testing</li>
+                <li>Data Warehousing</li>
+                <li>Performance Optimization</li>
+                <li>Identity Management</li>
+                <li>SOA Design</li>
+                <li>Microservices</li>
+                <li>Amazon Cloud Services (AWS)</li>
+                <li>GUI development (SmartGWT, User Interface development)</li>
+            </ul>
+        </div>
+
+        <div class="main-content">
+            <div class="summary">
+                <strong>SENIOR SOFTWARE ENGINEER/FULL STACK DEVELOPER</strong>
+                <p>8+ years of experience in full-stack development, creating scalable, maintainable, and secure applications. Proficient in modern technologies, including React, Java, Spring Boot, and cloud platforms. Skilled in front-end and back-end development, focusing on delivering high-quality software solutions through Agile methodologies and best practices. Adept at collaborating with cross-functional teams to drive project success and optimize system performance.</p>
+            </div>
+                <h2>EDUCATION</h2>
+                <div class="job">
+                    <div class="job-title">Bachelor of Science in Computer Science</div>
+                    <div class="job-company">California Polytechnic State University - San Luis Obispo, CA</div>
+                </div>
+
+                <h2>CERTIFICATIONS & TRAINING</h2>
+                <ul>
+                    <li>Java - Enterprise JavaBeans (EJB) 2.0</li>
+                    <li>SpringBoot</li>
+                    <li>WebSphere Portlet/modular WebSphere 6.0 Administration</li>
+                    <li>JEE/Servlets - San Jose, CA</li>
+                    <li>Google Cloud</li>
+                    <li>Flagship Labs - San Francisco, CA</li>
+                </ul>
+
+                <h2>PROFESSIONAL COMPETENCIES</h2>
+                <ul>
+                    <li>Database design</li>
+                    <li>Data Migration</li>
+                    <li>Web Application Security</li>
+                    <li>Web Programming</li>
+                    <li>API Design</li>
+                    <li>UML and Data Modeling (advanced)</li>
+                    <li>Continuous Integration & Deployment</li>
+                    <li>Quality Assurance</li>
+                    <li>Unit Testing</li>
+                    <li>Integration Testing</li>
+                    <li>Data Warehousing</li>
+                    <li>Performance Optimization</li>
+                    <li>Identity Management</li>
+                    <li>SOA Design</li>
+                    <li>Microservices</li>
+                    <li>Amazon Cloud Services (AWS)</li>
+                    <li>GUI development (SmartGWT, User Interface development)</li>
+                </ul>
+            </div>
+
+            <div class="column">
+                <h2>PROFESSIONAL EXPERIENCE</h2>
+
+                <div class="job">
+                    <div class="job-title">Senior Software Engineer</div>
+                    <div class="job-company">Transvision<span class="job-date">2018 – 2024</span></div>
+                    <ul>
+                        <li>Develop and deploy scalable software solutions for a customer-facing credit monitoring application, leading the migration from legacy JSP/SOAP systems to a modern microservices stack to boost performance and maintainability. Implementation of React front-end components.</li>
+                        <li>Design and implement integrated RESTful APIs to support new features and improve system interoperability, ensuring seamless integration with third-party services and internal components.</li>
+                        <li>Established and maintained CI/CD pipelines using Jenkins and Maven, Subversion for Java applications, automating build, test, and deployment processes to improve development efficiency and release quality.</li>
+                        <li>Mentor and guide junior developers, ensuring high code quality through comprehensive reviews and promoting best practices in full-stack development and ADA compliance.</li>
+                        <li>Collaborate with multiple stakeholders, including architecture, product, UI/UX, and remote teams to translate business requirements into effective software solutions, using Agile methodologies and Git for version control.</li>
+                        <li>Design and optimize system architectures to enhance reliability and performance, manage end-to-end release processes, including documentation, and create Docker images for efficient deployments.</li>
+                        <li>Implemented and maintained event-driven software architecture with RabbitMQ in Java backends.</li>
+                        <li>Implement comprehensive testing strategies using JUnit, Jest, Serenity to ensure code integrity.</li>
+                        <li>Participated in the production release process using JiraFuse, Spotfire, SplunkE to monitor integrity of production releases.</li>
+                    </ul>
+                </div>
+
+                <div class="job">
+                    <div class="job-title">Contractor</div>
+                    <div class="job-company">UCSB<span class="job-date">2018</span></div>
+                    <ul>
+                        <li>Design and implement a person-finder service, enhancing search capabilities across various university departments using SpringBoot and MySQL.</li>
+                        <li>Revamp Spring OAuth2 authentication from memory-based to MySQL-based, improving security and scalability for identity services.</li>
+                        <li>Implemented and maintained a service-oriented identity services layer to efficiently manage batch processing and data integration tasks.</li>
+                        <li>Develop and optimize Apache Kafka components for real-time data streaming and build REST services to expose and manage functionality securely.</li>
+                    </ul>
+                </div>
+
+                <div class="job">
+                    <div class="job-title">Software Engineer</div>
+                    <div class="job-company">Viridian - Napa, CA<span class="job-date">2016 - 2018</span></div>
+                    <ul>
+                        <li>Engineered REST APIs for seamless integration with TruDay's image recognition service, providing comprehensive documentation via Swagger.</li>
+                        <li>Architected a scalable database schema tailored to support customer and administrative app functionalities.</li>
+                        <li>Implemented Hibernate ORM for effective data persistence and conducted rigorous testing of back-end REST APIs.</li>
+                        <li>Set up Jenkins CI/CD in a Docker environment on AWS EC2 and assisted in designing the Vue.js front-end for administrative features.</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <h2>ADDITIONAL EXPERIENCE</h2>
+
+        <div class="job">
+            <div class="job-title">Senior Software Engineer</div>
+            <div class="job-company">SoCal Technologies International - San Luis Obispo, CA<span class="job-date">2007 - 2016</span></div>
+            <ul>
+                <li>Led development of a high-performance trading platform using Java, Spring, and Hibernate, processing over 100,000 transactions daily.</li>
+                <li>Designed and implemented real-time data processing systems using Apache Kafka and Spring Boot microservices.</li>
+                <li>Developed and maintained RESTful APIs for internal and external integrations, ensuring high availability and security.</li>
+                <li>Implemented automated testing frameworks using JUnit and Mockito, achieving 85% code coverage.</li>
+            </ul>
+        </div>
+    </div>
+</body>
+</html>
