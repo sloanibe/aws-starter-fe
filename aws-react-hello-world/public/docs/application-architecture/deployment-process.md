@@ -39,7 +39,7 @@ The Spring Boot backend is deployed to an EC2 instance (IP: 13.52.157.48) using 
 
 ### Deployment Process Details
 
-The deployment script (`deploy-to-ec2.sh`) performs the following steps:
+The deployment script (`scripts/deploy/deploy-backend.sh`) performs the following steps:
 
 1. **Build Application**:
    ```bash

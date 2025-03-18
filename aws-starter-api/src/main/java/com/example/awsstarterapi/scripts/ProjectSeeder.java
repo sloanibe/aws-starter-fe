@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.Scanner;
 
 public class ProjectSeeder {
-    private static final String API_URL = "https://tylsa7bs12.execute-api.us-west-1.amazonaws.com/prod/api/projects";
+    private static final String API_URL = "https://sloandev.net/prod/api/projects";
     private static final RestTemplate restTemplate = new RestTemplate();
 
     private static void clearAllProjects() {
@@ -45,6 +45,7 @@ public class ProjectSeeder {
 
         // AWS Starter Project
         ProjectEntity awsStarter = new ProjectEntity();
+        awsStarter.setId("project-1");
         awsStarter.setName("AWS Starter");
         awsStarter.setDescription("AWS infrastructure and application deployment project");
         awsStarter.setStatus("ACTIVE");

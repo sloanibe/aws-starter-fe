@@ -53,21 +53,10 @@ fi
 echo "📂 Setting up deployment directory..."
 ssh -i $SSH_KEY ubuntu@$EC2_IP "mkdir -p $REMOTE_DIR"
 
-# Create backup directory for this deployment
-TIMESTAMP=$(date +%Y%m%d_%H%M%S)
-BACKUP_DIR="$REMOTE_DIR/backups/$TIMESTAMP"
-
-echo "📂 Creating backup directory..."
-ssh -i $SSH_KEY ubuntu@$EC2_IP "mkdir -p $BACKUP_DIR"
-
-# Backup current deployment
+# Clean up old deployment
 if ssh -i $SSH_KEY ubuntu@$EC2_IP "test -f $REMOTE_DIR/${APP_NAME}-0.0.1-SNAPSHOT.jar"; then
-    echo "📁 Backing up current deployment..."
-    ssh -i $SSH_KEY ubuntu@$EC2_IP "
-        cp $REMOTE_DIR/${APP_NAME}-0.0.1-SNAPSHOT.jar $BACKUP_DIR/ 2>/dev/null || true
-        cp $REMOTE_DIR/.env $BACKUP_DIR/ 2>/dev/null || true
-        cp $REMOTE_DIR/app.log $BACKUP_DIR/ 2>/dev/null || true
-    "
+    echo "🗑 Cleaning up old deployment..."
+    ssh -i $SSH_KEY ubuntu@$EC2_IP "rm -f $REMOTE_DIR/${APP_NAME}-0.0.1-SNAPSHOT.jar $REMOTE_DIR/app.log"
 fi
 
 # Copy new JAR file to EC2
@@ -109,10 +98,23 @@ if [ ! -z "$OLD_PIDS" ]; then
     fi
 fi
 
+# Verify directory exists and has correct permissions
+echo "🔍 Verifying deployment directory..."
+ssh -i $SSH_KEY ubuntu@$EC2_IP "mkdir -p $REMOTE_DIR && chmod 755 $REMOTE_DIR"
+
+# Verify Java is installed and accessible
+echo "🔍 Verifying Java installation..."
+JAVA_CHECK=$(ssh -i $SSH_KEY ubuntu@$EC2_IP "which java")
+if [ -z "$JAVA_CHECK" ]; then
+    echo "❌ Java not found. Please ensure Java is installed."
+    exit 1
+fi
+
 # Start the application with environment variables
 echo "▶️ Starting the application..."
 ssh -i $SSH_KEY ubuntu@$EC2_IP "cd $REMOTE_DIR && \
     # Start the application with environment variables
+    JAVA_HOME=\$(dirname \$(dirname \$(readlink -f \$(which java)))) \
     nohup java -Xmx512m -Xms256m \
         -DSERVER_PORT=8080 \
         -DSPRING_PROFILES_ACTIVE=prod \
@@ -130,75 +132,70 @@ if [ -z "$NEW_PID" ]; then
     exit 1
 fi
 
-# Start monitoring the log file for startup progress
-echo "🔍 Starting deployment status monitor..."
+# Monitor application startup
+echo "🔍 Monitoring deployment status..."
 
-# Clear the log file to ensure clean monitoring
+# Clear the log file
 ssh -i $SSH_KEY ubuntu@$EC2_IP "truncate -s 0 $REMOTE_DIR/app.log"
 
-# Monitor the log file in real-time with a timeout
-timeout 60 ssh -i $SSH_KEY ubuntu@$EC2_IP "tail -f $REMOTE_DIR/app.log" | {
-    while IFS= read -r line; do
-        if [[ $line == *"Starting AwsStarterApiApplication"* ]]; then
-            echo "📡 Application starting..."
-        elif [[ $line == *"Bootstrapping Spring Data MongoDB"* ]]; then
-            echo "📚 Initializing MongoDB repositories..."
-        elif [[ $line == *"Tomcat initialized"* ]]; then
-            echo "🌐 Tomcat server initializing..."
-        elif [[ $line == *"Successfully connected to server"* ]] || [[ $line == *"Monitor thread successfully connected"* ]]; then
-            echo "🔌 MongoDB connection established"
-        elif [[ $line == *"Started AwsStarterApiApplication"* ]]; then
-            echo "✨ Application startup completed!"
-            pkill -P $$ tail
-            exit 0
-        fi
-    done
-    echo "⚠️ Startup monitoring timed out after 60 seconds"
-    exit 1
+# Initialize variables
+MAX_WAIT_TIME=120
+START_TIME=$(date +%s)
+
+echo "⏳ Waiting up to ${MAX_WAIT_TIME} seconds for startup..."
+
+# Function to check application status
+check_status() {
+    local log_content=$1
+    local marker=$2
+    local message=$3
+    
+    if echo "$log_content" | grep -q "$marker" && ! echo "$STATUS_SHOWN" | grep -q "$marker"; then
+        echo "$message"
+        STATUS_SHOWN="$STATUS_SHOWN $marker"
+    fi
 }
-        fi
-    done
-} &
 
-# Wait for application to start
-echo "Waiting for application to start..."
-MAX_RETRIES=24
-RETRY=0
-APP_STARTED=false
-
-while [ $RETRY -lt $MAX_RETRIES ]; do
-    if ssh -i $SSH_KEY ubuntu@$EC2_IP "grep 'Started AwsStarterApiApplication' $REMOTE_DIR/app.log 2>/dev/null"; then
-        APP_STARTED=true
-        break
+# Monitor startup
+while true; do
+    CURRENT_TIME=$(date +%s)
+    ELAPSED_TIME=$((CURRENT_TIME - START_TIME))
+    
+    if [ $ELAPSED_TIME -gt $MAX_WAIT_TIME ]; then
+        echo "❌ Startup timed out after ${MAX_WAIT_TIME} seconds"
+        echo "📋 Last 20 lines of log:"
+        ssh -i $SSH_KEY ubuntu@$EC2_IP "tail -n 20 $REMOTE_DIR/app.log"
+        ssh -i $SSH_KEY ubuntu@$EC2_IP "kill -9 $NEW_PID 2>/dev/null || true"
+        exit 1
     fi
     
-    RETRY=$((RETRY+1))
-    sleep 5
-done
-
-if [ "$APP_STARTED" = true ]; then
-    echo "🔍 Verifying application health..."
-    MAX_HEALTH_RETRIES=6
-    HEALTH_RETRY=0
+    LOG_CONTENT=$(ssh -i $SSH_KEY ubuntu@$EC2_IP "tail -n 50 $REMOTE_DIR/app.log 2>/dev/null")
     
-    while [ $HEALTH_RETRY -lt $MAX_HEALTH_RETRIES ]; do
-        if curl -s http://$EC2_IP:8080/actuator/health 2>&1 | grep -q '"status":"UP"'; then
-            echo "✅ Application is healthy and ready to serve requests!"
-            break
-        fi
-        HEALTH_RETRY=$((HEALTH_RETRY+1))
-        if [ $HEALTH_RETRY -eq $MAX_HEALTH_RETRIES ]; then
-        echo "❌ Application failed to start. Rolling back to previous version..."
-        ssh -i $SSH_KEY ubuntu@$EC2_IP "
-            kill -9 $NEW_PID 2>/dev/null || true
-            cp $BACKUP_DIR/${APP_NAME}-0.0.1-SNAPSHOT.jar $REMOTE_DIR/ 2>/dev/null || true
-            cp $BACKUP_DIR/.env $REMOTE_DIR/ 2>/dev/null || true
-            cd $REMOTE_DIR && \
-            nohup java -Xmx512m -Xms256m \
-                -DSERVER_PORT=8080 \
-                -DSPRING_PROFILES_ACTIVE=prod \
-                -DAPP_NAME=aws-starter-api \
-                -DMONGODB_URI=\$(grep MONGODB_URI .env | cut -d'=' -f2-) \
+    check_status "$LOG_CONTENT" "Starting AwsStarterApiApplication" "📡 Application starting..."
+    check_status "$LOG_CONTENT" "Bootstrapping Spring Data MongoDB" "📚 Initializing MongoDB repositories..."
+    check_status "$LOG_CONTENT" "Tomcat initialized" "🌐 Tomcat server initializing..."
+    check_status "$LOG_CONTENT" "Successfully connected to server" "🔌 MongoDB connection established"
+    
+    if echo "$LOG_CONTENT" | grep -q "Started AwsStarterApiApplication"; then
+        echo "✨ Application startup completed!"
+        
+        # Verify health
+        echo "🔍 Verifying application health..."
+        for i in {1..6}; do
+            if curl -s http://$EC2_IP:8080/actuator/health 2>&1 | grep -q '"status":"UP"'; then
+                echo "✅ Application is healthy and ready to serve requests!"
+                exit 0
+            fi
+            sleep 5
+        done
+        
+        echo "❌ Health check failed"
+        ssh -i $SSH_KEY ubuntu@$EC2_IP "kill -9 $NEW_PID 2>/dev/null || true"
+        exit 1
+    fi
+    
+    sleep 2
+done
                 -jar ${APP_NAME}-0.0.1-SNAPSHOT.jar > app.log 2>&1 &
         "
         echo "❌ Deployment failed. Rolled back to previous version. Check logs:"

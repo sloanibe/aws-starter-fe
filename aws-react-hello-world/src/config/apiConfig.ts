@@ -4,7 +4,7 @@ export const apiConfig = {
   useMockApi: false,
   
   // Base URL for API calls
-  apiBaseUrl: 'https://tylsa7bs12.execute-api.us-west-1.amazonaws.com/prod/api',
+  apiBaseUrl: 'https://vab90wx4u0.execute-api.us-west-1.amazonaws.com/prod/api',
   
   // API endpoints
   endpoints: {

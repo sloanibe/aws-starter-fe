@@ -1,12 +1,13 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { useMockProjectDetailService } from '../services/mock/MockProjectDetailService';
+import { useProjectDetailService } from '../services/ServiceFactory';
 import { ProjectDetail as ProjectDetailModel, Activity } from '../models/ProjectDetail';
 import { DropResult } from 'react-beautiful-dnd';
 import {
   Box, Typography, Avatar, Chip, Paper, Tabs, Tab, IconButton,
   Button, AvatarGroup, Divider, List, ListItem, ListItemText,
-  ListItemAvatar, Card, CardContent, Grid, LinearProgress, Toolbar
+  ListItemAvatar, Card, CardContent, Grid, LinearProgress, Toolbar,
+  CircularProgress
 } from '@mui/material';
 import {
   ArrowBack, Add, Edit, Delete, Flag, Comment,
@@ -20,14 +21,63 @@ const statusColumns = ['To Do', 'In Progress', 'Done'];
 const ProjectDetailComponent: React.FC = () => {
   const navigate = useNavigate();
   const projectId = useParams<{ projectId: string }>().projectId || '';
-  const { getProjectDetails } = useMockProjectDetailService();
-  const project: ProjectDetailModel | undefined = getProjectDetails(projectId);
+  const { getProjectDetails } = useProjectDetailService();
+  const [project, setProject] = useState<ProjectDetailModel | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchProjectDetails = async () => {
+      try {
+        const data = await getProjectDetails(projectId);
+        setProject(data);
+      } catch (err) {
+        setError('Failed to load project details');
+        console.error('Error fetching project details:', err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchProjectDetails();
+  }, [projectId, getProjectDetails]);
   const [selectedTab, setSelectedTab] = useState(0);
   const [isDocumentationOpen, setIsDocumentationOpen] = useState(false);
 
   const handleToggleDocumentation = () => {
     setIsDocumentationOpen(!isDocumentationOpen);
   };
+
+  if (loading) {
+    return (
+      <Box sx={{ display: 'flex', flexDirection: 'column', height: '100vh' }}>
+        <Header
+          onToggleDocumentation={handleToggleDocumentation}
+          isDocumentationOpen={isDocumentationOpen}
+        />
+        <Box sx={{ p: 3, mt: 8, display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+          <CircularProgress />
+        </Box>
+      </Box>
+    );
+  }
+
+  if (error) {
+    return (
+      <Box sx={{ display: 'flex', flexDirection: 'column', height: '100vh' }}>
+        <Header
+          onToggleDocumentation={handleToggleDocumentation}
+          isDocumentationOpen={isDocumentationOpen}
+        />
+        <Box sx={{ p: 3, mt: 8 }}>
+          <Button startIcon={<ArrowBack />} onClick={() => navigate('/')} sx={{ mb: 2 }}>
+            Back to Dashboard
+          </Button>
+          <Typography color="error">{error}</Typography>
+        </Box>
+      </Box>
+    );
+  }
 
   if (!project) {
     return (

@@ -1,0 +1,1 @@
+/home/msloan/gitprojects/aws-starter/infrastructure/scripts/monitoring/check-services.sh

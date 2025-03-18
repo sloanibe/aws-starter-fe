@@ -1,9 +1,19 @@
 import { apiConfig } from '../../config/apiConfig';
 
 export interface GuestUser {
-  email: string;
-  name: string;
+  id: string;
   username: string;
+  displayName: string;
+  email: string;
+  organization: string;
+  avatar: string | null;
+  role: string | null;
+  createdAt: string;
+  lastLogin: string;
+  projects: any[] | null;
+  projectMemberships: any[] | null;
+  createdTasks: any[] | null;
+  assignedTasks: any[] | null;
 }
 
 class AuthService {
@@ -16,7 +26,8 @@ class AuthService {
         },
         body: JSON.stringify({
           email,
-          name,
+          name: name,
+          displayName: name,
           username: 'guest'
         })
       });

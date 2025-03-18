@@ -1,4 +1,5 @@
 import { ProjectDetail, Activity } from '../../models/ProjectDetail';
+import { ProjectDetailService } from '../ProjectDetailService';
 
 const mockActivities: Activity[] = [
   {
@@ -140,9 +141,10 @@ const mockProjectDetails: ProjectDetail[] = [
   }
 ];
 
-export const useMockProjectDetailService = () => {
-  const getProjectDetails = (id: string): ProjectDetail | undefined => {
-    return mockProjectDetails.find(project => project.id === id);
+export const useMockProjectDetailService = (): ProjectDetailService => {
+  const getProjectDetails = async (id: string): Promise<ProjectDetail | null> => {
+    const project = mockProjectDetails.find(project => project.id === id);
+    return project || null;
   };
 
   return { getProjectDetails };

@@ -23,12 +23,20 @@ Resources:
         Types:
           - REGIONAL
 
-  # API Gateway Resource (root path)
+  # API Resource (/api)
   ApiResource:
     Type: AWS::ApiGateway::Resource
     Properties:
       RestApiId: !Ref ApiGateway
       ParentId: !GetAtt ApiGateway.RootResourceId
+      PathPart: api
+
+  # API Gateway Resource (proxy under /api)
+  ApiProxyResource:
+    Type: AWS::ApiGateway::Resource
+    Properties:
+      RestApiId: !Ref ApiGateway
+      ParentId: !Ref ApiResource
       PathPart: '{proxy+}'
 
   # API Gateway Method (ANY)
@@ -36,13 +44,13 @@ Resources:
     Type: AWS::ApiGateway::Method
     Properties:
       RestApiId: !Ref ApiGateway
-      ResourceId: !Ref ApiResource
+      ResourceId: !Ref ApiProxyResource
       HttpMethod: ANY
       AuthorizationType: NONE
       Integration:
         Type: HTTP_PROXY
         IntegrationHttpMethod: ANY
-        Uri: !Sub 'http://${EC2InstanceIP}:${EC2Port}/{proxy}'
+        Uri: !Sub 'http://${EC2InstanceIP}:${EC2Port}/api/{proxy}'
         RequestParameters:
           integration.request.path.proxy: 'method.request.path.proxy'
         IntegrationResponses:
@@ -71,6 +79,8 @@ Resources:
     DependsOn:
       - ApiMethod
       - RootMethod
+      - ApiResource
+      - ApiProxyResource
     Properties:
       RestApiId: !Ref ApiGateway
       StageName: prod

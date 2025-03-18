@@ -5,6 +5,9 @@ import { ApiUserService } from './api/ApiUserService';
 import { useMockProjectService } from './mock/MockProjectService';
 import { ApiProjectService } from './api/ApiProjectService';
 import { ProjectService } from './ProjectService';
+import { ProjectDetailService } from './ProjectDetailService';
+import { useMockProjectDetailService } from './mock/MockProjectDetailService';
+import { ApiProjectDetailService } from './api/ApiProjectDetailService';
 
 // Factory class to get the appropriate service implementation
 export class ServiceFactory {
@@ -22,4 +25,10 @@ export const useProjectService = (): ProjectService => {
   return apiConfig.useMockApi
     ? useMockProjectService()
     : new ApiProjectService();
+};
+
+export const useProjectDetailService = (): ProjectDetailService => {
+  return apiConfig.useMockApi
+    ? useMockProjectDetailService()
+    : new ApiProjectDetailService();
 };
