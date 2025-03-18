@@ -14,6 +14,9 @@ import {
   Typography,
   Toolbar,
   IconButton,
+  Chip,
+  Paper,
+  alpha,
 } from '@mui/material';
 import {
   Dashboard as DashboardIcon,
@@ -21,6 +24,7 @@ import {
   Add,
   FilterList,
   Notifications,
+  People,
 } from '@mui/icons-material';
 import { useProjectService } from '../services/ServiceFactory';
 import { useNavigate } from 'react-router-dom';
@@ -279,77 +283,93 @@ const Dashboard: React.FC = () => {
           {/* Project Grid */}
           <Grid container spacing={3}>
             {projects.map((project) => (
-              <Grid item xs={12} sm={6} md={4} lg={3} key={project.id}>
+              <Grid item xs={12} sm={6} md={4} key={project.id}>
                 <Card 
+                  onClick={() => handleProjectClick(project.id)}
                   sx={{ 
                     cursor: 'pointer',
-                    '&:hover': { 
+                    overflow: 'visible',
+                    '&:hover': {
                       transform: 'translateY(-4px)',
-                      boxShadow: 3 
-                    },
-                    transition: 'transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out'
+                      boxShadow: 6,
+                      transition: 'transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out'
+                    }
                   }}
-                  onClick={() => handleProjectClick(project.id)}
                 >
-                  <CardContent>
-                    <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
-                      <Box
-                        sx={{
-                          width: 12,
-                          height: 12,
-                          borderRadius: 1,
-                          bgcolor: project.color,
-                          mr: 2
-                        }}
-                      />
-                      <Typography variant="h6" noWrap>
-                        {project.name}
-                      </Typography>
-                    </Box>
-                    <Typography 
-                      color="text.secondary" 
-                      sx={{ 
-                        mb: 2,
-                        display: '-webkit-box',
-                        WebkitLineClamp: 2,
-                        WebkitBoxOrient: 'vertical',
-                        overflow: 'hidden',
-                        height: '40px'
+                  <Box
+                    sx={{
+                      height: 100,
+                      bgcolor: project.color || '#1976d2',
+                      borderRadius: '8px 8px 0 0',
+                      position: 'relative',
+                      display: 'flex',
+                      alignItems: 'center',
+                      px: 2,
+                      backgroundImage: `linear-gradient(45deg, ${project.color || '#1976d2'}, ${alpha(project.color || '#1976d2', 0.8)})`,
+                    }}
+                  >
+                    <Typography variant="h6" sx={{ color: 'white', flexGrow: 1 }}>
+                      {project.name}
+                    </Typography>
+                    <Chip
+                      label={project.status}
+                      size="small"
+                      sx={{
+                        bgcolor: 'rgba(255, 255, 255, 0.2)',
+                        color: 'white',
+                        '& .MuiChip-label': { fontWeight: 500 }
                       }}
-                    >
+                    />
+                  </Box>
+                  <CardContent sx={{ pt: 2 }}>
+                    <Typography variant="body2" color="text.secondary" sx={{ mb: 2, minHeight: 40 }}>
                       {project.description}
                     </Typography>
-                    <Box sx={{ mt: 2 }}>
-                      <Typography variant="body2" color="text.secondary">
-                        Progress
-                      </Typography>
+                    <Box sx={{ mb: 2 }}>
+                      <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 0.5 }}>
+                        <Typography variant="caption" color="text.secondary">
+                          Progress
+                        </Typography>
+                        <Typography variant="caption" color="text.secondary">
+                          {project.progress || 0}%
+                        </Typography>
+                      </Box>
                       <LinearProgress 
                         variant="determinate" 
-                        value={project.progress} 
-                        sx={{ 
-                          mt: 1,
+                        value={project.progress || 0}
+                        sx={{
                           height: 6,
-                          borderRadius: 1
-                        }} 
+                          borderRadius: 3,
+                          bgcolor: alpha(project.color || '#1976d2', 0.1),
+                          '& .MuiLinearProgress-bar': {
+                            bgcolor: project.color || '#1976d2',
+                            borderRadius: 3
+                          }
+                        }}
                       />
                     </Box>
-                    <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 2, alignItems: 'center' }}>
-                      <Typography variant="body2" color="text.secondary">
-                        {project.tasks.length} tasks
-                      </Typography>
-                      <Typography 
-                        variant="body2" 
-                        sx={{ 
-                          color: 'white',
-                          bgcolor: getStatusColor(project.status),
-                          px: 1,
-                          py: 0.5,
-                          borderRadius: 1,
-                          fontSize: '0.75rem'
-                        }}
-                      >
-                        {project.status}
-                      </Typography>
+                    <Box 
+                      sx={{ 
+                        display: 'flex', 
+                        alignItems: 'center', 
+                        justifyContent: 'space-between',
+                        pt: 1,
+                        borderTop: 1,
+                        borderColor: 'divider'
+                      }}
+                    >
+                      <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                        <People sx={{ fontSize: 20, color: 'text.secondary', mr: 0.5 }} />
+                        <Typography variant="caption" color="text.secondary">
+                          {project.members?.length || 0} Members
+                        </Typography>
+                      </Box>
+                      <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                        <Assignment sx={{ fontSize: 20, color: 'text.secondary', mr: 0.5 }} />
+                        <Typography variant="caption" color="text.secondary">
+                          {project.tasks?.length || 0} Tasks
+                        </Typography>
+                      </Box>
                     </Box>
                   </CardContent>
                 </Card>
