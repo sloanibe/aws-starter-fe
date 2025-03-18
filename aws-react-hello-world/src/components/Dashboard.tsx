@@ -17,6 +17,13 @@ import {
   Chip,
   Paper,
   alpha,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  TextField,
+  MenuItem,
+  Stack,
 } from '@mui/material';
 import {
   Dashboard as DashboardIcon,
@@ -36,6 +43,21 @@ const Dashboard: React.FC = () => {
   const navigate = useNavigate();
   const [isDocumentationOpen, setIsDocumentationOpen] = useState(false);
   const [projects, setProjects] = useState<Project[]>([]);
+  const [isNewProjectDialogOpen, setIsNewProjectDialogOpen] = useState(false);
+  const [newProject, setNewProject] = useState({
+    name: '',
+    description: '',
+    status: 'ACTIVE' as ProjectStatus,
+    color: '#1976d2',
+    progress: 0,
+    ownerId: 'current-user', // This would come from auth context in a real app
+    members: [] as string[],
+    tasks: [] as string[]
+  });
+  const [formErrors, setFormErrors] = useState({
+    name: '',
+    description: ''
+  });
 
   React.useEffect(() => {
     console.log('Fetching projects...');
@@ -54,6 +76,73 @@ const Dashboard: React.FC = () => {
 
   const handleToggleDocumentation = () => {
     setIsDocumentationOpen(!isDocumentationOpen);
+  };
+
+  const handleOpenNewProjectDialog = () => {
+    setIsNewProjectDialogOpen(true);
+  };
+
+  const handleCloseNewProjectDialog = () => {
+    setIsNewProjectDialogOpen(false);
+    setNewProject({
+      name: '',
+      description: '',
+      status: 'ACTIVE' as ProjectStatus,
+      color: '#1976d2',
+      progress: 0,
+      ownerId: 'current-user',
+      members: [],
+      tasks: []
+    });
+    setFormErrors({ name: '', description: '' });
+  };
+
+  const validateForm = () => {
+    const errors = {
+      name: '',
+      description: ''
+    };
+    let isValid = true;
+
+    if (!newProject.name.trim()) {
+      errors.name = 'Project name is required';
+      isValid = false;
+    }
+
+    if (!newProject.description.trim()) {
+      errors.description = 'Project description is required';
+      isValid = false;
+    }
+
+    setFormErrors(errors);
+    return isValid;
+  };
+
+  const handleCreateProject = async () => {
+    if (!validateForm()) return;
+
+    try {
+      const createdProject = await projectService.createProject(newProject);
+      setProjects([...projects, createdProject]);
+      handleCloseNewProjectDialog();
+    } catch (error) {
+      console.error('Error creating project:', error);
+      // You could add error handling UI here
+    }
+  };
+
+  const handleProjectChange = (field: keyof typeof newProject) => (event: React.ChangeEvent<HTMLInputElement>) => {
+    setNewProject({
+      ...newProject,
+      [field]: event.target.value
+    });
+    // Clear error when user starts typing
+    if (formErrors[field as keyof typeof formErrors]) {
+      setFormErrors({
+        ...formErrors,
+        [field]: ''
+      });
+    }
   };
 
   const getStatusColor = (status: ProjectStatus): string => {
@@ -150,7 +239,7 @@ const Dashboard: React.FC = () => {
                 <Typography variant="overline" sx={{ color: 'text.secondary' }}>
                   PROJECTS
                 </Typography>
-                <IconButton size="small" color="primary">
+                <IconButton size="small" color="primary" onClick={handleOpenNewProjectDialog}>
                   <Add fontSize="small" />
                 </IconButton>
               </Box>
@@ -199,7 +288,16 @@ const Dashboard: React.FC = () => {
               <Button variant="outlined" startIcon={<FilterList />}>
                 Filter
               </Button>
-              <Button variant="contained" startIcon={<Add />}>
+              <Button 
+                variant="contained" 
+                startIcon={<Add />} 
+                onClick={handleOpenNewProjectDialog}
+                sx={{
+                  borderRadius: 2,
+                  textTransform: 'none',
+                  boxShadow: 2
+                }}
+              >
                 New Project
               </Button>
             </Box>
@@ -377,6 +475,88 @@ const Dashboard: React.FC = () => {
             ))}
           </Grid>
         </Box>
+
+        {/* New Project Dialog */}
+        <Dialog 
+          open={isNewProjectDialogOpen} 
+          onClose={handleCloseNewProjectDialog}
+          maxWidth="sm"
+          fullWidth
+        >
+          <DialogTitle sx={{ pb: 1 }}>
+            <Typography variant="h6" component="div">
+              Create New Project
+            </Typography>
+            <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5 }}>
+              Fill in the project details below
+            </Typography>
+          </DialogTitle>
+          <DialogContent>
+            <Stack spacing={3} sx={{ mt: 2 }}>
+              <TextField
+                label="Project Name"
+                fullWidth
+                value={newProject.name}
+                onChange={handleProjectChange('name')}
+                error={!!formErrors.name}
+                helperText={formErrors.name}
+                placeholder="Enter project name"
+              />
+              <TextField
+                label="Description"
+                fullWidth
+                multiline
+                rows={3}
+                value={newProject.description}
+                onChange={handleProjectChange('description')}
+                error={!!formErrors.description}
+                helperText={formErrors.description}
+                placeholder="Enter project description"
+              />
+              <TextField
+                label="Status"
+                select
+                fullWidth
+                value={newProject.status}
+                onChange={handleProjectChange('status')}
+              >
+                <MenuItem value="ACTIVE">Active</MenuItem>
+                <MenuItem value="COMPLETED">Completed</MenuItem>
+                <MenuItem value="ARCHIVED">Archived</MenuItem>
+              </TextField>
+              <TextField
+                label="Project Color"
+                type="color"
+                fullWidth
+                value={newProject.color}
+                onChange={handleProjectChange('color')}
+                sx={{
+                  '& input': {
+                    height: 50,
+                    padding: 1,
+                    width: '100%'
+                  }
+                }}
+              />
+            </Stack>
+          </DialogContent>
+          <DialogActions sx={{ px: 3, pb: 3 }}>
+            <Button 
+              onClick={handleCloseNewProjectDialog}
+              variant="outlined"
+              sx={{ borderRadius: 2, textTransform: 'none' }}
+            >
+              Cancel
+            </Button>
+            <Button 
+              onClick={handleCreateProject}
+              variant="contained"
+              sx={{ borderRadius: 2, textTransform: 'none', px: 3 }}
+            >
+              Create Project
+            </Button>
+          </DialogActions>
+        </Dialog>
       </Box>
     </Box>
   );

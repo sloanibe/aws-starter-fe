@@ -29,7 +29,13 @@ const ProjectDetailComponent: React.FC = () => {
   useEffect(() => {
     const fetchProjectDetails = async () => {
       try {
+        console.log('Fetching project details for ID:', projectId);
         const data = await getProjectDetails(projectId);
+        console.log('Received project data:', data);
+        if (!data) {
+          setError('Project not found');
+          return;
+        }
         setProject(data);
       } catch (err) {
         setError('Failed to load project details');
@@ -174,134 +180,244 @@ const ProjectDetailComponent: React.FC = () => {
           <Box sx={{ mt: 2 }}>
             {selectedTab === 0 && (
               <Box>
-            <Typography variant="h6" gutterBottom>Project Overview</Typography>
-            <Typography variant="body1" paragraph>{project.description}</Typography>
+                <Card sx={{ mb: 3 }}>
+                  <CardContent>
+                    <Typography variant="h6" gutterBottom>Project Overview</Typography>
+                    <Typography variant="body1" sx={{ mb: 3 }}>{project.description}</Typography>
+                    
+                    <Box sx={{ mb: 3 }}>
+                      <Typography variant="subtitle1" gutterBottom>Project Progress</Typography>
+                      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                        <Box sx={{ flexGrow: 1 }}>
+                          <LinearProgress
+                            variant="determinate"
+                            value={project.progress}
+                            sx={{ height: 8, borderRadius: 4 }}
+                          />
+                        </Box>
+                        <Typography variant="body2" sx={{ fontWeight: 500 }}>
+                          {project.progress}%
+                        </Typography>
+                      </Box>
+                    </Box>
 
-            <Grid container spacing={3}>
-              <Grid item xs={12} md={8}>
+                    <Grid container spacing={3}>
+                      <Grid item xs={12} sm={6}>
+                        <Paper sx={{ p: 2, textAlign: 'center' }}>
+                          <Typography variant="h4" sx={{ mb: 1, color: 'primary.main' }}>
+                            {project.tasks.length}
+                          </Typography>
+                          <Typography variant="body2" color="text.secondary">
+                            Total Tasks
+                          </Typography>
+                        </Paper>
+                      </Grid>
+                      <Grid item xs={12} sm={6}>
+                        <Paper sx={{ p: 2, textAlign: 'center' }}>
+                          <Typography variant="h4" sx={{ mb: 1, color: 'primary.main' }}>
+                            {project.members.length}
+                          </Typography>
+                          <Typography variant="body2" color="text.secondary">
+                            Team Members
+                          </Typography>
+                        </Paper>
+                      </Grid>
+                    </Grid>
+                  </CardContent>
+                </Card>
+
                 <Card>
                   <CardContent>
                     <Typography variant="h6" gutterBottom>Recent Activity</Typography>
-                    <List>
-                      {project.activities.slice(0, 5).map((activity: Activity, index: number) => (
-                        <ListItem key={index} alignItems="flex-start">
-                          <ListItemAvatar>
-                            <Avatar>{activity.user.charAt(0)}</Avatar>
-                          </ListItemAvatar>
-                          <ListItemText
-                            primary={activity.action}
-                            secondary={
-                              <>
-                                <Typography component="span" variant="body2" color="text.primary">
-                                  {activity.user}
-                                </Typography>
-                                {' — '}{new Date(activity.timestamp).toLocaleString()}
-                              </>
-                            }
-                          />
-                        </ListItem>
-                      ))}
-                    </List>
+                    {project.activities.length > 0 ? (
+                      <List>
+                        {project.activities.slice(0, 5).map((activity: Activity, index: number) => (
+                          <ListItem key={index} alignItems="flex-start">
+                            <ListItemAvatar>
+                              <Avatar sx={{ bgcolor: `primary.${index % 2 ? 'light' : 'main'}` }}>
+                                {activity.user.charAt(0)}
+                              </Avatar>
+                            </ListItemAvatar>
+                            <ListItemText
+                              primary={activity.action}
+                              secondary={
+                                <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+                                  <Typography component="span" variant="body2" color="text.primary">
+                                    {activity.user}
+                                  </Typography>
+                                  <Typography component="span" variant="body2" color="text.secondary">
+                                    — {new Date(activity.timestamp).toLocaleString()}
+                                  </Typography>
+                                </Box>
+                              }
+                            />
+                          </ListItem>
+                        ))}
+                      </List>
+                    ) : (
+                      <Box sx={{ textAlign: 'center', py: 3 }}>
+                        <Typography variant="body2" color="text.secondary">
+                          No recent activity
+                        </Typography>
+                      </Box>
+                    )}
                   </CardContent>
                 </Card>
-              </Grid>
-
-              <Grid item xs={12} md={4}>
-                <Card>
-                  <CardContent>
-                    <Typography variant="h6" gutterBottom>Project Stats</Typography>
-                    <Box sx={{ mb: 2 }}>
-                      <Typography variant="body2" color="text.secondary">Progress</Typography>
-                      <LinearProgress
-                        variant="determinate"
-                        value={project.progress}
-                        sx={{ mt: 1, mb: 1 }}
-                      />
-                      <Typography variant="body2">{project.progress}% Complete</Typography>
-                    </Box>
-                    <Divider sx={{ my: 2 }} />
-                    <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
-                      <Typography variant="body2" color="text.secondary">Tasks</Typography>
-                      <Typography variant="body2">{project.tasks.length}</Typography>
-                    </Box>
-                    <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
-                      <Typography variant="body2" color="text.secondary">Team Members</Typography>
-                      <Typography variant="body2">{project.members.length}</Typography>
-                    </Box>
-                  </CardContent>
-                </Card>
-              </Grid>
-            </Grid>
               </Box>
             )}
 
             {selectedTab === 1 && (
           <Box>
-            <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 3 }}>
-              <Typography variant="h6">Tasks</Typography>
-              <Button startIcon={<Add />} variant="contained">Add Task</Button>
+            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
+              <Box>
+                <Typography variant="h6" sx={{ mb: 0.5 }}>Tasks Board</Typography>
+                <Typography variant="body2" color="text.secondary">
+                  {project?.tasks?.length || 0} tasks in total
+                </Typography>
+              </Box>
+              <Button 
+                startIcon={<Add />} 
+                variant="contained" 
+                sx={{ 
+                  borderRadius: 2,
+                  textTransform: 'none',
+                  boxShadow: 2
+                }}
+              >
+                Add Task
+              </Button>
             </Box>
 
-            <DragDropContext onDragEnd={onDragEnd}>
-              <Box sx={{ display: 'flex', gap: 3 }}>
-                {statusColumns.map((status) => (
-                  <Droppable droppableId={status} key={status}>
-                    {(provided) => (
-                      <Paper
-                        {...provided.droppableProps}
-                        ref={provided.innerRef}
-                        sx={{
-                          p: 2,
-                          width: 300,
-                          minHeight: '500px',
-                          bgcolor: 'background.paper',
-                          borderRadius: 2
-                        }}
-                      >
-                        <Box sx={{
-                          display: 'flex',
-                          justifyContent: 'space-between',
-                          alignItems: 'center',
-                          mb: 2
-                        }}>
-                          <Typography variant="h6" sx={{ fontWeight: 'bold' }}>{status}</Typography>
-                          <Typography variant="caption" sx={{
-                            bgcolor: 'action.hover',
-                            px: 1,
-                            py: 0.5,
-                            borderRadius: 1
+            {!project?.tasks?.length ? (
+              <Box sx={{ 
+                display: 'flex', 
+                flexDirection: 'column', 
+                alignItems: 'center', 
+                justifyContent: 'center',
+                py: 8,
+                bgcolor: 'background.paper',
+                borderRadius: 2,
+                border: 1,
+                borderColor: 'divider'
+              }}>
+                <Typography variant="h6" color="text.secondary" gutterBottom>
+                  No tasks yet
+                </Typography>
+                <Typography variant="body2" color="text.secondary">
+                  Get started by adding your first task using the button above
+                </Typography>
+              </Box>
+            ) : (
+              <DragDropContext onDragEnd={onDragEnd}>
+                <Box 
+                  sx={{ 
+                    display: 'flex', 
+                    gap: 3,
+                    overflowX: 'auto',
+                    pb: 2,
+                    '&::-webkit-scrollbar': {
+                      height: 8,
+                    },
+                    '&::-webkit-scrollbar-track': {
+                      backgroundColor: 'background.paper',
+                      borderRadius: 4,
+                    },
+                    '&::-webkit-scrollbar-thumb': {
+                      backgroundColor: 'grey.300',
+                      borderRadius: 4,
+                      '&:hover': {
+                        backgroundColor: 'grey.400',
+                      },
+                    },
+                  }}
+                >
+                  {statusColumns.map((status) => (
+                    <Droppable droppableId={status} key={status}>
+                      {(provided, snapshot) => (
+                        <Paper
+                          {...provided.droppableProps}
+                          ref={provided.innerRef}
+                          elevation={0}
+                          sx={{
+                            p: 2,
+                            width: 320,
+                            minWidth: 320,
+                            minHeight: '500px',
+                            bgcolor: snapshot.isDraggingOver ? 'grey.50' : 'background.default',
+                            borderRadius: 3,
+                            border: 1,
+                            borderColor: 'divider',
+                            transition: 'background-color 0.2s ease'
+                          }}
+                        >
+                          <Box sx={{
+                            display: 'flex',
+                            justifyContent: 'space-between',
+                            alignItems: 'center',
+                            mb: 2
                           }}>
-                            {project.tasks.filter(t => t.status === status).length}
-                          </Typography>
-                        </Box>
+                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                              <Box
+                                sx={{
+                                  width: 3,
+                                  height: 24,
+                                  borderRadius: 1,
+                                  bgcolor: status === 'To Do' ? 'info.main' : 
+                                          status === 'In Progress' ? 'warning.main' : 'success.main'
+                                }}
+                              />
+                              <Typography variant="subtitle1" sx={{ fontWeight: 600 }}>
+                                {status}
+                              </Typography>
+                            </Box>
+                            <Chip
+                              label={project?.tasks?.filter(t => t.status === status)?.length || 0}
+                              size="small"
+                              sx={{
+                                bgcolor: 'background.paper',
+                                fontWeight: 600,
+                                '& .MuiChip-label': { px: 2 }
+                              }}
+                            />
+                          </Box>
 
-                        {project.tasks
-                          .filter((task) => task.status === status)
-                          .map((task, index) => (
+                        {project?.tasks
+                          ?.filter((task) => task.status === status)
+                          ?.map((task, index) => (
                             <Draggable key={task.id} draggableId={task.id} index={index}>
-                              {(provided) => (
+                              {(provided, snapshot) => (
                                 <Paper
                                   {...provided.draggableProps}
                                   {...provided.dragHandleProps}
                                   ref={provided.innerRef}
+                                  elevation={snapshot.isDragging ? 8 : 1}
                                   sx={{
                                     p: 2,
                                     mb: 2,
                                     borderRadius: 2,
-                                    boxShadow: 1,
+                                    bgcolor: 'background.paper',
+                                    border: 1,
+                                    borderColor: snapshot.isDragging ? 'primary.main' : 'transparent',
+                                    transition: 'all 0.2s ease',
                                     '&:hover': {
-                                      boxShadow: 2,
+                                      transform: 'translateY(-2px)',
+                                      boxShadow: 4,
                                       cursor: 'grab'
                                     }
                                   }}
                                 >
-                                  <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
+                                  <Box sx={{ display: 'flex', alignItems: 'center', mb: 1.5 }}>
                                     <Avatar
                                       sx={{
-                                        width: 24,
-                                        height: 24,
-                                        mr: 1,
-                                        bgcolor: task.priority === 'High' ? 'error.main' : 'primary.main'
+                                        width: 28,
+                                        height: 28,
+                                        mr: 1.5,
+                                        bgcolor: task.priority === 'High' ? 'error.light' : 
+                                                task.priority === 'Medium' ? 'warning.light' : 'success.light',
+                                        color: task.priority === 'High' ? 'error.dark' : 
+                                               task.priority === 'Medium' ? 'warning.dark' : 'success.dark',
+                                        fontSize: '0.875rem',
+                                        fontWeight: 600
                                       }}
                                     >
                                       {task.assignee?.charAt(0)}
@@ -309,7 +425,8 @@ const ProjectDetailComponent: React.FC = () => {
                                     <Typography
                                       variant="subtitle2"
                                       sx={{
-                                        fontWeight: 'medium',
+                                        fontWeight: 600,
+                                        color: 'text.primary',
                                         flexGrow: 1
                                       }}
                                     >
@@ -319,8 +436,14 @@ const ProjectDetailComponent: React.FC = () => {
 
                                   <Typography
                                     variant="body2"
-                                    color="text.secondary"
-                                    sx={{ mb: 2 }}
+                                    sx={{ 
+                                      mb: 2,
+                                      color: 'text.secondary',
+                                      display: '-webkit-box',
+                                      WebkitLineClamp: 2,
+                                      WebkitBoxOrient: 'vertical',
+                                      overflow: 'hidden'
+                                    }}
                                   >
                                     {task.description}
                                   </Typography>
@@ -329,34 +452,52 @@ const ProjectDetailComponent: React.FC = () => {
                                     <Chip
                                       label={task.priority}
                                       size="small"
-                                      color={task.priority === 'High' ? 'error' : 'default'}
-                                      icon={<Flag />}
+                                      icon={<Flag sx={{ fontSize: '0.875rem !important' }} />}
+                                      sx={{
+                                        bgcolor: task.priority === 'High' ? 'error.50' : 
+                                                task.priority === 'Medium' ? 'warning.50' : 'success.50',
+                                        color: task.priority === 'High' ? 'error.700' : 
+                                               task.priority === 'Medium' ? 'warning.700' : 'success.700',
+                                        '& .MuiChip-icon': {
+                                          color: 'inherit'
+                                        },
+                                        fontWeight: 500
+                                      }}
                                     />
                                     <Box sx={{ flexGrow: 1 }} />
-                                    <IconButton size="small">
-                                      <Comment fontSize="small" />
+                                    {task.dueDate && (
+                                      <Chip
+                                        icon={<AccessTime fontSize="small" />}
+                                        label={new Date(task.dueDate).toLocaleDateString()}
+                                        size="small"
+                                        sx={{ 
+                                          bgcolor: 'grey.50',
+                                          color: 'text.secondary'
+                                        }}
+                                      />
+                                    )}
+                                    <IconButton 
+                                      size="small" 
+                                      sx={{ 
+                                        color: 'text.secondary',
+                                        '&:hover': { color: 'primary.main' }
+                                      }}
+                                    >
+                                      <Comment sx={{ fontSize: '1.25rem' }} />
                                     </IconButton>
-                                    <Typography variant="caption" sx={{
-                                      color: 'text.secondary',
-                                      display: 'flex',
-                                      alignItems: 'center',
-                                      gap: 0.5
-                                    }}>
-                                      <AccessTime fontSize="small" />
-                                      {new Date(task.dueDate).toLocaleDateString()}
-                                    </Typography>
                                   </Box>
                                 </Paper>
                               )}
                             </Draggable>
                           ))}
-                        {provided.placeholder}
-                      </Paper>
-                    )}
-                  </Droppable>
-                ))}
-              </Box>
-            </DragDropContext>
+                          {provided.placeholder}
+                        </Paper>
+                      )}
+                    </Droppable>
+                  ))}
+                </Box>
+              </DragDropContext>
+            )}
           </Box>
         )}
 

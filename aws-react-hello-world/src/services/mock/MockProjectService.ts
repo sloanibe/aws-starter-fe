@@ -1,6 +1,17 @@
 import { Project, ProjectStatus } from '../../models/Project';
 import { ProjectService } from '../ProjectService';
 import { mockProjects } from '../../data/mock/mockProjects';
+import { ProjectDetail } from '../../models/ProjectDetail';
+
+// Get the mock project details array
+let mockProjectDetails: ProjectDetail[] = [];
+try {
+  const existingDetails = localStorage.getItem('mockProjectDetails');
+  mockProjectDetails = existingDetails ? JSON.parse(existingDetails) : [];
+} catch (e) {
+  console.error('Error loading mock project details:', e);
+  mockProjectDetails = [];
+}
 
 console.log('Imported mock projects:', mockProjects);
 
@@ -35,6 +46,37 @@ export const useMockProjectService = (): ProjectService => {
       updatedAt: new Date().toISOString()
     };
     mockProjects.push(newProject);
+
+    // Create corresponding project details
+    const newProjectDetails: ProjectDetail = {
+      id: newProject.id,
+      name: newProject.name,
+      description: newProject.description,
+      status: newProject.status,
+      color: newProject.color,
+      progress: newProject.progress,
+      tasks: [],
+      members: newProject.members,
+      activities: [{
+        id: `activity-${Date.now()}`,
+        user: 'System',
+        action: 'created project',
+        timestamp: newProject.createdAt
+      }],
+      createdAt: newProject.createdAt,
+      updatedAt: newProject.updatedAt
+    };
+
+    // Add to mockProjectDetails array
+    mockProjectDetails.push(newProjectDetails);
+    
+    // Save to localStorage
+    try {
+      localStorage.setItem('mockProjectDetails', JSON.stringify(mockProjectDetails));
+    } catch (e) {
+      console.error('Error saving mock project details:', e);
+    }
+
     return Promise.resolve(newProject);
   };
 

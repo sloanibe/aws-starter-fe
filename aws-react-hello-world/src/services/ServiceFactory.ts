@@ -6,6 +6,8 @@ import { useMockProjectService } from './mock/MockProjectService';
 import { ApiProjectService } from './api/ApiProjectService';
 import { ProjectService } from './ProjectService';
 import { ProjectDetailService } from './ProjectDetailService';
+import { TaskService } from './TaskService';
+import { ApiTaskService } from './api/ApiTaskService';
 import { useMockProjectDetailService } from './mock/MockProjectDetailService';
 import { ApiProjectDetailService } from './api/ApiProjectDetailService';
 
@@ -31,4 +33,8 @@ export const useProjectDetailService = (): ProjectDetailService => {
   return apiConfig.useMockApi
     ? useMockProjectDetailService()
     : new ApiProjectDetailService();
+};
+
+export const useTaskService = (): TaskService => {
+  return new ApiTaskService();
 };

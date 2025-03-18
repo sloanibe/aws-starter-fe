@@ -55,7 +55,7 @@ export class ApiProjectService implements ProjectService {
   }
 
   async updateProject(id: string, project: Partial<Project>): Promise<Project | null> {
-    const response = await fetch(`${API_BASE_URL}/api/projects/${id}`, {
+    const response = await fetch(`${API_BASE_URL}/projects/${id}`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',

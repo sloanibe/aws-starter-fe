@@ -11,6 +11,7 @@ export const apiConfig = {
     users: '/users',
     projects: '/projects',
     projectMembers: '/project-members',
+    projectDetails: '/project-details',
     tasks: '/tasks',
     taskUpdates: '/task-updates'
   }
