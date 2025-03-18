@@ -68,7 +68,7 @@ const Dashboard: React.FC = () => {
       console.error('Error fetching projects:', error);
       setProjects([]);
     });
-  }, [projectService]);
+  }, []); // Remove projectService from dependencies to prevent infinite loop
 
   const handleProjectClick = (projectId: string) => {
     navigate(`/projects/${projectId}`);
