@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { forwardRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { styled, ThemeProvider } from '@mui/material/styles';
@@ -216,7 +216,7 @@ const Section = styled(ContentSection)(({ theme }) => ({
   }
 }));
 
-const Resume: React.FC = () => {
+const Resume = forwardRef<HTMLDivElement>((props, ref) => {
   const navigate = useNavigate();
 
   const handleBack = () => {
@@ -231,7 +231,7 @@ const Resume: React.FC = () => {
           <ArrowBackIcon />
           Back
         </BackButton>
-        <ResumeDocument>
+        <ResumeDocument ref={ref} id="resume-content">
       <ResumeHeader>
         <TopBanner />
         <NameSection>
@@ -339,6 +339,6 @@ const Resume: React.FC = () => {
     </ResumeWrapper>
     </ThemeProvider>
   );
-};
+});
 
 export default Resume;

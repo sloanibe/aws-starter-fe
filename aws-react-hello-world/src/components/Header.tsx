@@ -1,4 +1,5 @@
 import React, { useState, useRef, useCallback } from 'react';
+import generatePDF from 'react-to-pdf';
 import { useNavigate } from 'react-router-dom';
 import {
   AppBar, Toolbar, IconButton, Avatar, Typography, Box,
@@ -151,11 +152,34 @@ const Header: React.FC<HeaderProps> = ({
               Resume
             </Button>
             {window.location.pathname === '/resume' && (
-              <Tooltip title="Print Resume">
-                <IconButton color="inherit" onClick={() => window.print()}>
-                  <Print />
-                </IconButton>
-              </Tooltip>
+              <>
+                <Tooltip title="Export to PDF">
+                  <IconButton 
+                    color="inherit" 
+                    onClick={() => {
+                      const getTargetElement = () => document.getElementById('resume-content');
+                      generatePDF(getTargetElement, {
+                        filename: 'resume.pdf',
+                        page: { margin: 20 },
+                        overrides: {
+                          // see https://html2canvas.hertzen.com/configuration
+                          canvas: {
+                            useCORS: true,
+                            scale: 2
+                          }
+                        }
+                      });
+                    }}
+                  >
+                    <Description />
+                  </IconButton>
+                </Tooltip>
+                <Tooltip title="Print Resume">
+                  <IconButton color="inherit" onClick={() => window.print()}>
+                    <Print />
+                  </IconButton>
+                </Tooltip>
+              </>
             )}
 
             <Tooltip title="Filter projects">

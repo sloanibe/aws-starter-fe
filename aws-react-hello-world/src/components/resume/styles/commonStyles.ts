@@ -47,18 +47,21 @@ export const ContactBar = styled('div')(({ theme }) => ({
 
 export const ListItem = styled('div')(({ theme }) => ({
   ...theme.typography.body1,
-  padding: theme.spacing(0.25, 0), // Reduced vertical padding
-  lineHeight: 1.2, // Tighter line height
+  padding: 0,
+  lineHeight: 1.1, // Even tighter line height
+  marginBottom: '2px', // Minimal space between items
+  fontSize: '0.9rem', // Slightly smaller font
 }));
 
 export const BulletedList = styled('div')(({ theme }) => ({
+  marginTop: theme.spacing(0.5),
   '& > *': {
     position: 'relative',
-    paddingLeft: theme.spacing(3),
+    paddingLeft: theme.spacing(2),
     '&::before': {
       content: '"•"',
       position: 'absolute',
-      left: theme.spacing(1),
+      left: theme.spacing(0.5),
     }
   }
 }));
