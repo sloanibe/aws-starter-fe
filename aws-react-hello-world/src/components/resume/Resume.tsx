@@ -181,11 +181,20 @@ const LeftColumn = styled('div')(({ theme }) => ({
   }
 }));
 
+const RightColumnHeader = styled('div')(({ theme }) => ({
+  backgroundColor: theme.palette.grey[800],
+  padding: theme.spacing(1, 2),
+  '& .MuiSectionHeader': {
+    color: '#ffffff',
+    borderBottom: '2px solid #ffffff'
+  }
+}));
+
 const RightColumn = styled('div')(({ theme }) => ({
   flex: 2,
   display: 'flex',
   flexDirection: 'column',
-  gap: theme.spacing(3),
+  gap: theme.spacing(1), // Reduced gap
   '& .MuiSectionHeader': {
     color: theme.palette.grey[500],
     borderBottom: `2px solid ${theme.palette.grey[500]}`
@@ -271,8 +280,10 @@ const Resume: React.FC = () => {
         </LeftColumn>
 
         <RightColumn>
-          <Section>
-            <SectionHeader>SENIOR SOFTWARE ENGINEER/FULL STACK DEVELOPER</SectionHeader>
+          <RightColumnHeader>
+            <SectionHeader style={{ marginBottom: 0 }}>SENIOR SOFTWARE ENGINEER/FULL STACK DEVELOPER</SectionHeader>
+          </RightColumnHeader>
+          <Section style={{ paddingTop: 0 }}>
             <div style={{ whiteSpace: 'pre-wrap' }}>{summary.content}</div>
           </Section>
 

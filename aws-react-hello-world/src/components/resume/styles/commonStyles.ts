@@ -47,7 +47,8 @@ export const ContactBar = styled('div')(({ theme }) => ({
 
 export const ListItem = styled('div')(({ theme }) => ({
   ...theme.typography.body1,
-  padding: theme.spacing(0.5, 0),
+  padding: theme.spacing(0.25, 0), // Reduced vertical padding
+  lineHeight: 1.2, // Tighter line height
 }));
 
 export const BulletedList = styled('div')(({ theme }) => ({
