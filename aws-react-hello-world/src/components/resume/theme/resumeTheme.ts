@@ -34,9 +34,9 @@ export const resumeTheme: Theme = createTheme({
       styleOverrides: {
         root: {
           '& li': {
-            fontSize: '0.9rem',
-            lineHeight: 1.5,
-            marginBottom: '0.5rem',
+            fontSize: '0.85rem',
+            lineHeight: 1.3,
+            marginBottom: '0.25rem',
             paddingLeft: '1.5rem',
             position: 'relative',
             '&::before': {
@@ -72,24 +72,24 @@ export const resumeTheme: Theme = createTheme({
   typography: {
     fontFamily: '"Arial", "Helvetica", sans-serif',
     h1: {
-      fontSize: '24px',
+      fontSize: '22px',
       fontWeight: 700,
       textAlign: 'center',
     },
     h3: {
-      fontSize: '16px',
+      fontSize: '14px',
       fontWeight: 600,
       textTransform: 'uppercase',
       letterSpacing: '0.5px',
     },
     body1: {
-      fontSize: '14px',
-      lineHeight: 1.6,
-    },
-    body2: {
       fontSize: '13px',
       lineHeight: 1.4,
+    },
+    body2: {
+      fontSize: '12px',
+      lineHeight: 1.3,
     }
   },
-  spacing: (factor: number) => `${8 * factor}px`
+  spacing: (factor: number) => `${6 * factor}px`
 });
