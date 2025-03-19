@@ -7,7 +7,8 @@ import {
 } from '@mui/material';
 import {
   Notifications, Search, AccountCircle, Settings,
-  ExitToApp, FilterList, MenuBook, Close, Description
+  ExitToApp, FilterList, MenuBook, Close, Description,
+  Print
 } from '@mui/icons-material';
 import Documentation from './Documentation';
 
@@ -149,6 +150,13 @@ const Header: React.FC<HeaderProps> = ({
             >
               Resume
             </Button>
+            {window.location.pathname === '/resume' && (
+              <Tooltip title="Print Resume">
+                <IconButton color="inherit" onClick={() => window.print()}>
+                  <Print />
+                </IconButton>
+              </Tooltip>
+            )}
 
             <Tooltip title="Filter projects">
               <IconButton color="inherit" onClick={handleFilterMenuOpen}>

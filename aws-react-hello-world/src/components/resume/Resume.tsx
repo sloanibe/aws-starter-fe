@@ -20,10 +20,9 @@ import { professionalCompetencies } from './ResumeData/skills';
 import { summary } from './ResumeData/summary';
 
 // Basic containers with borders to visualize layout
+
+
 const BackButton = styled('button')(({ theme }) => ({
-  position: 'absolute',
-  top: theme.spacing(2),
-  left: theme.spacing(2),
   backgroundColor: 'transparent',
   border: 'none',
   cursor: 'pointer',
