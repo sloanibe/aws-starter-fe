@@ -32,8 +32,14 @@ const BackButton = styled('button')(({ theme }) => ({
   color: theme.palette.grey[700],
   padding: theme.spacing(1),
   borderRadius: '4px',
+  position: 'absolute',
+  top: theme.spacing(1),
+  left: theme.spacing(2),
   '&:hover': {
     backgroundColor: 'rgba(0, 0, 0, 0.04)'
+  },
+  '@media print': {
+    display: 'none'
   }
 }));
 
@@ -45,9 +51,12 @@ const ResumeWrapper = styled('div')(({ theme }) => ({  // Outer wrapper for cent
   justifyContent: 'center',
   alignItems: 'flex-start',
   backgroundColor: theme.palette.background.default,
-  padding: theme.spacing(2.5, 0),
+  padding: `${Number(theme.spacing(5).toString().replace('px', '')) + 25}px 0 ${theme.spacing(2.5)}`, // Add top padding to account for header
   isolation: 'isolate', // Creates a new stacking context
-  overflow: 'auto' // Enable scrolling
+  overflow: 'auto', // Enable scrolling
+  '@media print': {
+    padding: theme.spacing(2.5, 0) // Reset padding for print
+  }
 }));
 
 const ResumeContainer = styled('div')({  // Main container
@@ -74,7 +83,7 @@ const ResumeDocument = styled('div')(({ theme }) => ({
 const TopBanner = styled('div')(({ theme }) => ({
   width: '100%',
   height: theme.spacing(2),
-  backgroundColor: theme.palette.primary.main,
+  backgroundColor: theme.palette.primary.main, // Same as ContactBar
   marginBottom: 0 // Remove gap between banner and name section
 }));
 
