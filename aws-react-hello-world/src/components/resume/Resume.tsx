@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { styled, ThemeProvider } from '@mui/material/styles';
 import { resumeTheme } from './theme/resumeTheme';
-import { CssBaseline, List, ListItem as MuiListItem } from '@mui/material';
+import { CssBaseline, List, ListItem as MuiListItem, Link } from '@mui/material';
 import {
   SectionHeader,
   ContentSection,
@@ -244,22 +244,26 @@ const Resume = forwardRef<HTMLDivElement>((props, ref) => {
           <div>{personalInfo.contactInfo.location}</div>
           <div>{personalInfo.contactInfo.phone}</div>
           <div>
-            <a 
+            <Link
               href={`mailto:${personalInfo.contactInfo.email}`}
-              style={{ color: 'inherit', textDecoration: 'none' }}
+              color="inherit"
+              underline="hover"
+              component="a"
             >
               {personalInfo.contactInfo.email}
-            </a>
+            </Link>
           </div>
           <div>
-            <a 
-              href={personalInfo.contactInfo.linkedIn.url}
+            <Link
+              href={personalInfo.contactInfo.linkedIn.url.startsWith('http') ? personalInfo.contactInfo.linkedIn.url : `https://${personalInfo.contactInfo.linkedIn.url}`}
               target="_blank"
               rel="noopener noreferrer"
-              style={{ color: 'inherit', textDecoration: 'none' }}
+              color="inherit"
+              underline="hover"
+              component="a"
             >
               {personalInfo.contactInfo.linkedIn.text}
-            </a>
+            </Link>
           </div>
           {personalInfo.contactInfo.relocate && <div>Willing to relocate</div>}
         </ContactInfo>
@@ -276,22 +280,24 @@ const Resume = forwardRef<HTMLDivElement>((props, ref) => {
                 <div>{edu.location}</div>
                 {edu.diplomaPath && (
                   <div style={{ marginTop: '0.5rem' }}>
-                    <a
+                    <Link
                       href={edu.diplomaPath}
                       download="CalPoly_CS_Diploma.pdf"
                       rel="noopener"
-                      style={{ 
-                        color: '#90caf9', // Light blue that stands out on dark background
+                      component="a"
+                      sx={{ 
+                        color: '#90caf9',
                         textDecoration: 'underline',
                         fontSize: '0.9rem',
                         fontWeight: 500,
                         display: 'inline-flex',
                         alignItems: 'center',
-                        gap: '0.25rem'
+                        gap: '0.25rem',
+                        cursor: 'pointer'
                       }}
                     >
                       eDiploma
-                    </a>
+                    </Link>
                   </div>
                 )}
               </div>
