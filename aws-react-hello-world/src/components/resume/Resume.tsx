@@ -114,7 +114,6 @@ const NameSection = styled('div')(({ theme }) => ({
   backgroundColor: theme.palette.grey[100],
   padding: theme.spacing(2),
   paddingBottom: theme.spacing(3),
-  marginBottom: theme.spacing(2),
   borderBottom: `1px solid ${theme.palette.grey[300]}`,
   '& h1': {
     margin: 0
@@ -125,7 +124,7 @@ const Header = styled('div')(({ theme }) => ({
   display: 'flex',
   flexDirection: 'column',
   alignItems: 'stretch',
-  marginBottom: theme.spacing(3)
+  marginBottom: 0
 }));
 
 const ContactInfo = styled(StyledContactBar)(({ theme }) => ({
