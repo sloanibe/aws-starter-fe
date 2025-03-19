@@ -1,9 +1,10 @@
-import React, { forwardRef } from 'react';
+import React, { forwardRef, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { styled, ThemeProvider } from '@mui/material/styles';
 import { resumeTheme } from './theme/resumeTheme';
-import { CssBaseline, List, ListItem as MuiListItem, Link } from '@mui/material';
+import { CssBaseline, List, ListItem as MuiListItem, Link, Button } from '@mui/material';
+import { usePDF } from 'react-to-pdf';
 import {
   SectionHeader,
   ContentSection,
@@ -15,8 +16,7 @@ import profileImage from '../../assets/sloanimage.jpg';
 import { education } from './ResumeData/education';
 import { certifications } from './ResumeData/certifications';
 import { professionalCompetencies } from './ResumeData/professionalCompetencies';
-import { summary } from './ResumeData/summary';
-import { professionalExperience } from './ResumeData/experience';
+import { professionalExperience, Experience } from './ResumeData/experience';
 
 // Basic containers with borders to visualize layout
 
@@ -68,12 +68,45 @@ const ResumeContainer = styled('div')(({ theme }) => ({  // Main container
   height: 'fit-content' // Allow container to grow with content
 }));
 
+
+
+
+const Spacer = styled('div')<{ height: string }>(({ height }) => ({
+  height: 0,
+  width: '100%',
+  '@media print': {
+    height
+  }
+}));
+
+const ExperienceEntry = styled('div')(() => ({
+  display: 'block',
+  marginBottom: '2rem',
+  '& + &': {
+    marginTop: '2rem'
+  }
+}));
+
+const ExperienceWrapper = styled('div')(() => ({
+  display: 'block',
+  breakInside: 'avoid',
+  pageBreakInside: 'avoid'
+}));
+
+const Page = styled('div')(() => ({
+  width: '8.5in',
+  height: '11in',
+  padding: '0.5in',
+  pageBreakAfter: 'always',
+  overflow: 'hidden',
+  position: 'relative',
+  backgroundColor: '#fff'
+}));
+
 const ResumeDocument = styled('div')(({ theme }) => ({
   width: '100%',
   display: 'flex',
   flexDirection: 'column',
-  padding: '0 40px 40px',
-  gap: 0, // Remove gap between sections
   margin: '0 auto',
   maxWidth: '1000px',
   backgroundColor: theme.palette.background.default
@@ -130,7 +163,7 @@ const NameSection = styled('div')(({ theme }) => ({
   }
 }));
 
-const ResumeHeader = styled('div')(({ theme }) => ({
+const ResumeHeader = styled('div')(() => ({
   display: 'flex',
   flexDirection: 'column',
   alignItems: 'stretch',
@@ -210,14 +243,23 @@ const RightColumn = styled('div')(({ theme }) => ({
   }
 }));
 
-const Section = styled(ContentSection)(({ theme }) => ({
+const Section = styled(ContentSection)(() => ({
   '& + &': {
-    marginTop: theme.spacing(2)
+    marginTop: '16px'
   }
 }));
 
 const Resume = forwardRef<HTMLDivElement>((props, ref) => {
   const navigate = useNavigate();
+  const { toPDF, targetRef } = usePDF({
+    filename: 'resume.pdf',
+    method: 'save',
+    page: {
+      format: [8.5, 11],
+      orientation: 'portrait',
+      margin: 36 // 0.5 inch in points
+    }
+  });
 
   const handleBack = () => {
     navigate('/dashboard');
@@ -225,147 +267,134 @@ const Resume = forwardRef<HTMLDivElement>((props, ref) => {
   return (
     <ThemeProvider theme={resumeTheme}>
       <CssBaseline />
+      <Button onClick={() => toPDF()} style={{ margin: '1rem' }}>
+        Download PDF
+      </Button>
       <ResumeWrapper>
-        <ResumeContainer>
-        <BackButton onClick={handleBack}>
-          <ArrowBackIcon />
-          Back
-        </BackButton>
-        <ResumeDocument ref={ref} id="resume-content">
-      <ResumeHeader>
-        <TopBanner />
-        <NameSection>
-          <NameWrapper>
-            <ProfileImage src={profileImage} alt="Profile" />
-            <ResumeHeading>{personalInfo.name}</ResumeHeading>
-          </NameWrapper>
-        </NameSection>
-        <ContactInfo>
-          <div>{personalInfo.contactInfo.location}</div>
-          <div>{personalInfo.contactInfo.phone}</div>
-          <div>
-            <Link
-              href={`mailto:${personalInfo.contactInfo.email}`}
-              color="inherit"
-              underline="hover"
-              component="a"
-            >
-              {personalInfo.contactInfo.email}
-            </Link>
-          </div>
-          <div>
-            <Link
-              href={personalInfo.contactInfo.linkedIn.url.startsWith('http') ? personalInfo.contactInfo.linkedIn.url : `https://${personalInfo.contactInfo.linkedIn.url}`}
-              target="_blank"
-              rel="noopener noreferrer"
-              color="inherit"
-              underline="hover"
-              component="a"
-            >
-              {personalInfo.contactInfo.linkedIn.text}
-            </Link>
-          </div>
-          {personalInfo.contactInfo.relocate && <div>Willing to relocate</div>}
-        </ContactInfo>
-      </ResumeHeader>
-
-      <TwoColumnSection>
-        <LeftColumn>
-          <Section>
-            <SectionHeader>EDUCATION</SectionHeader>
-            {education.map((edu, index) => (
-              <div key={index}>
-                <div>{edu.degree}</div>
-                <div>{edu.institution}</div>
-                <div>{edu.location}</div>
-              </div>
-            ))}
-          </Section>
-
-          <Section>
-            <SectionHeader>CERTIFICATIONS & TRAINING</SectionHeader>
-            {certifications.map((cert, index) => (
-              <div key={index}>
-                <div>{cert.name}</div>
-                {cert.issuer && <div>{cert.issuer}</div>}
-                {cert.dateAchieved && <div>{cert.dateAchieved}</div>}
-              </div>
-            ))}
-          </Section>
-
-          <Section>
-            <SectionHeader>PROFESSIONAL COMPETENCIES</SectionHeader>
-            <List sx={{
-              '& .MuiListItem-root': {
-                fontSize: '0.85rem',
-                lineHeight: 1.3,
-                marginBottom: '0.2rem',
-                paddingTop: '0.1rem',
-                paddingBottom: '0.1rem',
-                minHeight: 'unset'
-              }
-            }}>
-              {professionalCompetencies.map((skill, index) => (
-                <MuiListItem key={index}>{skill}</MuiListItem>
-              ))}
-            </List>
-          </Section>
-
-          <Section>
-            <SectionHeader>REFERENCES</SectionHeader>
-            <div>References available upon request</div>
-          </Section>
-        </LeftColumn>
-
-        <RightColumn>
-          <RightColumnHeader>
-            <SectionHeader style={{ marginBottom: 0 }}>SENIOR SOFTWARE ENGINEER/FULL STACK DEVELOPER</SectionHeader>
-          </RightColumnHeader>
-          <Section style={{ paddingTop: 0 }}>
-            <div style={{ whiteSpace: 'pre-wrap' }}>{summary.content}</div>
-          </Section>
-
-          <RightColumnHeader>
-            <SectionHeader style={{ marginBottom: 0 }}>PROFESSIONAL EXPERIENCE</SectionHeader>
-          </RightColumnHeader>
-          <Section style={{ paddingTop: 0 }}>
-            {professionalExperience.map((exp, index: number) => (
-              <div key={index}>
-                <div style={{ marginBottom: '0.5rem' }}>
-                  <strong>{exp.title}</strong> - {exp.company}
-                  <div>{exp.location}</div>
-                  <div>{exp.startDate} - {exp.endDate || 'Present'}</div>
+        <ResumeContainer ref={targetRef}>
+          <BackButton onClick={handleBack}>
+            <ArrowBackIcon />
+            Back
+          </BackButton>
+          <ResumeDocument ref={ref} id="resume-content">
+            <ResumeHeader>
+              <TopBanner />
+              <NameSection>
+                <NameWrapper>
+                  <ProfileImage src={profileImage} alt="Profile" />
+                  <ResumeHeading>{personalInfo.name}</ResumeHeading>
+                </NameWrapper>
+              </NameSection>
+              <ContactInfo>
+                <div>{personalInfo.contactInfo.location}</div>
+                <div>{personalInfo.contactInfo.phone}</div>
+                <div>
+                  <Link
+                    href={`mailto:${personalInfo.contactInfo.email}`}
+                    color="inherit"
+                    underline="hover"
+                    component="a"
+                  >
+                    {personalInfo.contactInfo.email}
+                  </Link>
                 </div>
-                <List>
-                  {exp.responsibilities.map((resp: string, i: number) => (
-                    <MuiListItem key={i}>{resp}</MuiListItem>
+                <div>
+                  <Link
+                    href={personalInfo.contactInfo.linkedIn.url.startsWith('http') ? personalInfo.contactInfo.linkedIn.url : `https://${personalInfo.contactInfo.linkedIn.url}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    color="inherit"
+                    underline="hover"
+                    component="a"
+                  >
+                    {personalInfo.contactInfo.linkedIn.text}
+                  </Link>
+                </div>
+                {personalInfo.contactInfo.relocate && <div>Willing to relocate</div>}
+              </ContactInfo>
+            </ResumeHeader>
+
+            <TwoColumnSection>
+              <LeftColumn>
+                <Section>
+                  <SectionHeader>EDUCATION</SectionHeader>
+                  {education.map((edu, index) => (
+                    <div key={index} style={{ marginBottom: '1rem' }}>
+                      <strong>{edu.degree}</strong>
+                      <div>{edu.school}</div>
+                      <div>{edu.date}</div>
+                    </div>
                   ))}
-                </List>
-              </div>
-            ))}
-          </Section>
-        </RightColumn>
-      </TwoColumnSection>
+                </Section>
 
-      <SingleColumnSection>
-        <Section>
-          <SectionHeader>PROFESSIONAL EXPERIENCE (continued)</SectionHeader>
-          <div>Additional professional experiences here</div>
-        </Section>
+                <Section>
+                  <SectionHeader>CERTIFICATIONS</SectionHeader>
+                  {certifications.map((cert, index) => (
+                    <div key={index} style={{ marginBottom: '1rem' }}>
+                      <strong>{cert.name}</strong>
+                      <div>{cert.issuer}</div>
+                      <div>{cert.date}</div>
+                    </div>
+                  ))}
+                </Section>
 
-        <Section>
-          <SectionHeader>ADDITIONAL EXPERIENCE</SectionHeader>
-          <div>Additional experience content here</div>
-        </Section>
+                <Section>
+                  <SectionHeader>PROFESSIONAL COMPETENCIES</SectionHeader>
+                  <List>
+                    {professionalCompetencies.map((comp, index) => (
+                      <MuiListItem key={index}>{comp}</MuiListItem>
+                    ))}
+                  </List>
+                </Section>
+              </LeftColumn>
 
-        <Section>
-          <SectionHeader>TECHNICAL SKILLS</SectionHeader>
-          <div>Technical skills content here</div>
-        </Section>
-      </SingleColumnSection>
-        </ResumeDocument>
-      </ResumeContainer>
-    </ResumeWrapper>
+              <RightColumn>
+                <RightColumnHeader>
+                  <SectionHeader style={{ marginBottom: 0 }}>PROFESSIONAL EXPERIENCE</SectionHeader>
+                </RightColumnHeader>
+                <Section style={{ paddingTop: 0 }}>
+                  {professionalExperience.map((exp, index: number) => (
+                    <React.Fragment key={index}>
+                      {exp.company === 'Vinfolio' && <Spacer height="400px" />}
+                      <ExperienceWrapper>
+                        <ExperienceEntry>
+                          <div style={{ marginBottom: '0.5rem' }}>
+                            <strong>{exp.title}</strong> - {exp.company}
+                            <div>{exp.location}</div>
+                            <div>{exp.startDate} - {exp.endDate || 'Present'}</div>
+                          </div>
+                          <List>
+                            {exp.responsibilities.map((resp: string, i: number) => (
+                              <MuiListItem key={i}>{resp}</MuiListItem>
+                            ))}
+                          </List>
+                        </ExperienceEntry>
+                      </ExperienceWrapper>
+                    </React.Fragment>
+                  ))}
+                </Section>
+              </RightColumn>
+            </TwoColumnSection>
+
+            <SingleColumnSection>
+              <Section>
+                <SectionHeader>PROFESSIONAL EXPERIENCE (continued)</SectionHeader>
+                <div>Additional professional experiences here</div>
+              </Section>
+
+              <Section>
+                <SectionHeader>ADDITIONAL EXPERIENCE</SectionHeader>
+                <div>Additional experience content here</div>
+              </Section>
+
+              <Section>
+                <SectionHeader>TECHNICAL SKILLS</SectionHeader>
+                <div>Technical skills content here</div>
+              </Section>
+            </SingleColumnSection>
+          </ResumeDocument>
+        </ResumeContainer>
+      </ResumeWrapper>
     </ThemeProvider>
   );
 });
