@@ -76,7 +76,7 @@ const TopBanner = styled('div')(({ theme }) => ({
   width: '100%',
   height: theme.spacing(2),
   backgroundColor: theme.palette.primary.main,
-  marginBottom: theme.spacing(1)
+  marginBottom: 0 // Remove gap between banner and name section
 }));
 
 const ProfileImage = styled('img')(({ theme }) => ({
