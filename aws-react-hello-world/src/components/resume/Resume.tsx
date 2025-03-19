@@ -17,6 +17,8 @@ import { education } from './ResumeData/education';
 import { certifications } from './ResumeData/certifications';
 import { professionalCompetencies } from './ResumeData/professionalCompetencies';
 import { professionalExperience, Experience } from './ResumeData/experience';
+import { additionalExperience } from './ResumeData/additionalExperience';
+import { technicalSkills } from './ResumeData/technicalSkills';
 
 // Basic containers with borders to visualize layout
 
@@ -180,6 +182,19 @@ const TwoColumnSection = styled('div')(({ theme }) => ({
   gap: theme.spacing(4),
   marginTop: 0,
   marginBottom: 0
+}));
+
+const TechnicalSkillsSection = styled('div')(({ theme }) => ({
+  marginBottom: theme.spacing(3),
+  '& > div': {
+    marginBottom: theme.spacing(1)
+  }
+}));
+
+const AdditionalExperienceItem = styled('div')(({ theme }) => ({
+  marginBottom: theme.spacing(2),
+  breakInside: 'avoid',
+  pageBreakInside: 'avoid'
 }));
 
 const SingleColumnSection = styled('div')(({ theme }) => ({
@@ -388,8 +403,36 @@ const Resume = forwardRef<HTMLDivElement>((props, ref) => {
               </Section>
 
               <Section>
+                <SectionHeader>PROFESSIONAL EXPERIENCE</SectionHeader>
+              </Section>
+
+              <Section>
+                <SectionHeader>ADDITIONAL EXPERIENCE</SectionHeader>
+                {additionalExperience.map((exp, index) => (
+                  <AdditionalExperienceItem key={index}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                      <div>
+                        <strong>{exp.title}</strong>
+                        <div>{exp.company} - {exp.location}</div>
+                      </div>
+                      <div style={{ whiteSpace: 'nowrap' }}>
+                        {exp.startDate} - {exp.endDate}
+                      </div>
+                    </div>
+                  </AdditionalExperienceItem>
+                ))}
+              </Section>
+
+              <Section>
                 <SectionHeader>TECHNICAL SKILLS</SectionHeader>
-                <div>Technical skills content here</div>
+                <TechnicalSkillsSection>
+                  {technicalSkills.map((category, index) => (
+                    <div key={index}>
+                      <strong>{category.category}:</strong>{' '}
+                      {category.skills.join(' | ')}
+                    </div>
+                  ))}
+                </TechnicalSkillsSection>
               </Section>
             </SingleColumnSection>
           </ResumeDocument>
