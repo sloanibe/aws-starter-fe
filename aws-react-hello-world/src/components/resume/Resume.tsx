@@ -98,7 +98,8 @@ const NameWrapper = styled('div')(({ theme }) => ({
     width: '100%',
     textAlign: 'center',
     paddingLeft: '90px',
-    paddingRight: '90px'
+    paddingRight: '90px',
+    fontSize: '2.5rem' // Increase name font size
   },
   '& img': {
     position: 'absolute',
@@ -152,7 +153,7 @@ const LeftColumn = styled('div')(({ theme }) => ({
   flexDirection: 'column',
   gap: theme.spacing(3),
   minWidth: '250px',
-  backgroundColor: theme.palette.grey[300],
+  backgroundColor: theme.palette.grey[800], // Darker grey to match Word document
   color: '#ffffff',
   padding: theme.spacing(0, 2, 2, 2), // Remove top padding to touch contact section
   '& > div': {
