@@ -410,10 +410,11 @@ const Resume = forwardRef<HTMLDivElement>((props, ref) => {
               </RightColumn>
             </TwoColumnSection>
 
-            <SingleColumnSection>
-
-              <Section>
-                <SectionHeader>TECHNICAL SKILLS</SectionHeader>
+            <div style={{ marginTop: '20px' }}>
+              <RightColumnHeader>
+                <SectionHeader style={{ marginBottom: 0 }}>TECHNICAL SKILLS</SectionHeader>
+              </RightColumnHeader>
+              <Section style={{ paddingTop: 0 }}>
                 <TechnicalSkillsSection>
                   {technicalSkills.map((category, index) => (
                     <div key={index}>
@@ -423,7 +424,7 @@ const Resume = forwardRef<HTMLDivElement>((props, ref) => {
                   ))}
                 </TechnicalSkillsSection>
               </Section>
-            </SingleColumnSection>
+            </div>
           </ResumeDocument>
         </ResumeContainer>
       </ResumeWrapper>
