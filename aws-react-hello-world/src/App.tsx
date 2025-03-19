@@ -3,7 +3,7 @@ import './App.css'
 import './Documentation.css'
 import './components/tasks/TaskStyles.css'
 import packageJson from '../package.json'
-import Documentation from './components/Documentation'
+import Header from './components/Header'
 import Dashboard from './components/Dashboard';
 import ProjectDetailComponent from './components/ProjectDetail';
 import Login from './components/auth/Login';
@@ -41,8 +41,7 @@ const theme = createTheme({
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Resume from './components/resume/Resume';
 
-function App() {
-  const [showDocs, setShowDocs] = useState<boolean>(false);
+const AppContent = () => {
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
 
   const updateAuthState = useCallback((state: boolean) => {
@@ -56,61 +55,34 @@ function App() {
   }, []);
 
   return (
+    <div className="container">
+      {isAuthenticated && <Header />}
+      {/* Show header only when authenticated or on resume page */}
+      
+      {/* Error message container removed as it's now handled in TaskApp */}
+      
+      <div className="app-content">
+        <Routes>
+          <Route path="/" element={isAuthenticated ? <Dashboard /> : <Login onLoginSuccess={() => updateAuthState(true)} />} />
+          <Route path="/login" element={<Login onLoginSuccess={() => updateAuthState(true)} />} />
+          <Route path="/dashboard" element={isAuthenticated ? <Dashboard /> : <Login onLoginSuccess={() => updateAuthState(true)} />} />
+          <Route path="/projects/:projectId" element={isAuthenticated ? <ProjectDetailComponent /> : <Login onLoginSuccess={() => updateAuthState(true)} />} />
+          <Route path="/resume" element={isAuthenticated ? <Resume /> : <Login onLoginSuccess={() => updateAuthState(true)} />} />
+        </Routes>
+      </div>
+    </div>
+  );
+};
+
+function App() {
+  return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
       <Router>
-        <div className="container">
-          {isAuthenticated && (
-            <div className="app-header">
-              <div className="app-title-section">
-                <h1>AWS Starter Project</h1>
-                <div className="version-info">Version {packageJson.version}</div>
-              </div>
-              <div className="header-actions">
-                <button 
-                  className={`toggle-docs-button ${showDocs ? 'active' : ''}`}
-                  onClick={() => setShowDocs(!showDocs)}
-                >
-                  {showDocs ? 'Hide Documentation' : 'Documentation'}
-                </button>
-                <button
-                  className="logout-button"
-                  onClick={() => {
-                    authService.logout();
-                    setIsAuthenticated(false);
-                  }}
-                >
-                  Logout
-                </button>
-                <div className="api-status">
-                  <div className="status-indicator online"></div>
-                  <span>API: <a href="https://tylsa7bs12.execute-api.us-west-1.amazonaws.com/prod/api/health" target="_blank" rel="noopener noreferrer">AWS API Gateway</a></span>
-                </div>
-              </div>
-            </div>
-          )}
-          
-          {/* Error message container removed as it's now handled in TaskApp */}
-          
-          <div className="app-content">
-            <Routes>
-              <Route path="/" element={isAuthenticated ? <Dashboard /> : <Login onLoginSuccess={() => updateAuthState(true)} />} />
-              <Route path="/login" element={<Login onLoginSuccess={() => updateAuthState(true)} />} />
-              <Route path="/dashboard" element={isAuthenticated ? <Dashboard /> : <Login onLoginSuccess={() => updateAuthState(true)} />} />
-              <Route path="/projects/:projectId" element={isAuthenticated ? <ProjectDetailComponent /> : <Login onLoginSuccess={() => updateAuthState(true)} />} />
-              <Route path="/resume" element={<Resume />} />
-            </Routes>
-
-            {showDocs && (
-              <div className="docs-container">
-                <Documentation />
-              </div>
-            )}
-          </div>
-        </div>
+        <AppContent />
       </Router>
     </ThemeProvider>
-  )
+  );
 }
 
 export default App

@@ -121,7 +121,7 @@ const NameSection = styled('div')(({ theme }) => ({
   }
 }));
 
-const Header = styled('div')(({ theme }) => ({
+const ResumeHeader = styled('div')(({ theme }) => ({
   display: 'flex',
   flexDirection: 'column',
   alignItems: 'stretch',
@@ -204,7 +204,7 @@ const Resume: React.FC = () => {
           Back
         </BackButton>
         <ResumeDocument>
-      <Header>
+      <ResumeHeader>
         <TopBanner />
         <NameSection>
           <NameWrapper>
@@ -219,7 +219,7 @@ const Resume: React.FC = () => {
           <div>{personalInfo.contactInfo.linkedIn}</div>
           {personalInfo.contactInfo.relocate && <div>Willing to relocate</div>}
         </ContactInfo>
-      </Header>
+      </ResumeHeader>
 
       <TwoColumnSection>
         <LeftColumn>

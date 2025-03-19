@@ -2,6 +2,11 @@ import { createTheme, Theme } from '@mui/material/styles';
 
 // Create a theme instance specifically for the resume component
 export const resumeTheme: Theme = createTheme({
+  palette: {
+    primary: {
+      main: '#1976d2', // Match app theme primary color
+    },
+  },
   components: {
     MuiCssBaseline: {
       styleOverrides: {
