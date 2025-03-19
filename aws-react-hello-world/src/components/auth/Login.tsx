@@ -103,9 +103,8 @@ const Login: React.FC<LoginProps> = ({ onLoginSuccess }) => {
               width: 100,
               height: 100,
               borderRadius: '50%',
-              border: '4px solid white',
+              border: '2px solid #e0e0e0',
               boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
-              backgroundColor: 'white',
               zIndex: 2
             }}
           />
