@@ -278,28 +278,6 @@ const Resume = forwardRef<HTMLDivElement>((props, ref) => {
                 <div>{edu.degree}</div>
                 <div>{edu.institution}</div>
                 <div>{edu.location}</div>
-                {edu.diplomaPath && (
-                  <div style={{ marginTop: '0.5rem' }}>
-                    <Link
-                      href={edu.diplomaPath}
-                      download="CalPoly_CS_Diploma.pdf"
-                      rel="noopener"
-                      component="a"
-                      sx={{ 
-                        color: '#90caf9',
-                        textDecoration: 'underline',
-                        fontSize: '0.9rem',
-                        fontWeight: 500,
-                        display: 'inline-flex',
-                        alignItems: 'center',
-                        gap: '0.25rem',
-                        cursor: 'pointer'
-                      }}
-                    >
-                      eDiploma
-                    </Link>
-                  </div>
-                )}
               </div>
             ))}
           </Section>
