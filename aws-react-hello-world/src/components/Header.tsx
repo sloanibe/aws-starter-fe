@@ -162,10 +162,16 @@ const Header: React.FC<HeaderProps> = ({
                         filename: 'resume.pdf',
                         page: { margin: 20 },
                         overrides: {
-                          // see https://html2canvas.hertzen.com/configuration
+                          pdf: {
+                            compress: true,
+                            pdfOptions: {
+                              preserveLinks: true
+                            }
+                          },
                           canvas: {
                             useCORS: true,
-                            scale: 2
+                            scale: 2,
+                            logging: true
                           }
                         }
                       });
