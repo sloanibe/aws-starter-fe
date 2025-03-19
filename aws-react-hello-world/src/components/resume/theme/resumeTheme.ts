@@ -14,7 +14,7 @@ export const resumeTheme: Theme = createTheme({
       styleOverrides: {
         root: {
           background: 'transparent',
-          padding: '16px'
+          padding: 0 // Remove default padding
         }
       }
     },
@@ -23,8 +23,8 @@ export const resumeTheme: Theme = createTheme({
         h2: {
           background: 'transparent',
           color: '#ffffff',
-          padding: '8px 16px',
-          marginBottom: '12px',
+          padding: 0,
+          marginBottom: 0,
           borderBottom: '1px solid currentColor'
         }
       }
