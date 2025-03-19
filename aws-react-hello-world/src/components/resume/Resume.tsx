@@ -3,14 +3,12 @@ import { useNavigate } from 'react-router-dom';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { styled, ThemeProvider } from '@mui/material/styles';
 import { resumeTheme } from './theme/resumeTheme';
-import { CssBaseline } from '@mui/material';
+import { CssBaseline, List, ListItem as MuiListItem } from '@mui/material';
 import {
   SectionHeader,
   ContentSection,
   ResumeHeading,
-  ContactBar as StyledContactBar,
-  ListItem,
-  BulletedList
+  ContactBar as StyledContactBar
 } from './styles/commonStyles';
 import { personalInfo } from './ResumeData/personalInfo';
 import profileImage from '../../assets/sloanimage.jpg';
@@ -18,6 +16,7 @@ import { education } from './ResumeData/education';
 import { certifications } from './ResumeData/certifications';
 import { professionalCompetencies } from './ResumeData/skills';
 import { summary } from './ResumeData/summary';
+import { professionalExperience } from './ResumeData/experience';
 
 // Basic containers with borders to visualize layout
 
@@ -59,15 +58,15 @@ const ResumeWrapper = styled('div')(({ theme }) => ({  // Outer wrapper for cent
   }
 }));
 
-const ResumeContainer = styled('div')({  // Main container
+const ResumeContainer = styled('div')(({ theme }) => ({  // Main container
   width: '100%',
   maxWidth: '1200px',
-  margin: '0 20px',
-  backgroundColor: '#ffffff',
+  margin: `0 ${theme.spacing(2.5)}`,
+  backgroundColor: theme.palette.background.paper,
   boxShadow: '0 0 10px rgba(0, 0, 0, 0.1)',
   position: 'relative',
   height: 'fit-content' // Allow container to grow with content
-});
+}));
 
 const ResumeDocument = styled('div')(({ theme }) => ({
   width: '100%',
@@ -194,10 +193,20 @@ const RightColumn = styled('div')(({ theme }) => ({
   flex: 2,
   display: 'flex',
   flexDirection: 'column',
-  gap: theme.spacing(1), // Reduced gap
+  gap: theme.spacing(1),
   '& .MuiSectionHeader': {
     color: theme.palette.grey[500],
     borderBottom: `2px solid ${theme.palette.grey[500]}`
+  },
+  '& .MuiList-root': {
+    marginTop: '0.5rem',
+    '& .MuiListItem-root': {
+      fontSize: '0.9rem',
+      lineHeight: 1.5,
+      marginBottom: '0.5rem',
+      paddingLeft: '1.5rem',
+      position: 'relative'
+    }
   }
 }));
 
@@ -266,11 +275,11 @@ const Resume: React.FC = () => {
 
           <Section>
             <SectionHeader>PROFESSIONAL COMPETENCIES</SectionHeader>
-            <BulletedList>
+            <List>
               {professionalCompetencies.map((skill, index) => (
-                <ListItem key={index}>{skill}</ListItem>
+                <MuiListItem key={index}>{skill}</MuiListItem>
               ))}
-            </BulletedList>
+            </List>
           </Section>
 
           <Section>
@@ -287,9 +296,24 @@ const Resume: React.FC = () => {
             <div style={{ whiteSpace: 'pre-wrap' }}>{summary.content}</div>
           </Section>
 
-          <Section>
-            <SectionHeader>PROFESSIONAL EXPERIENCE</SectionHeader>
-            <div>Contractor UCSB experience here</div>
+          <RightColumnHeader>
+            <SectionHeader style={{ marginBottom: 0 }}>PROFESSIONAL EXPERIENCE</SectionHeader>
+          </RightColumnHeader>
+          <Section style={{ paddingTop: 0 }}>
+            {professionalExperience.map((exp, index: number) => (
+              <div key={index}>
+                <div style={{ marginBottom: '0.5rem' }}>
+                  <strong>{exp.title}</strong> - {exp.company}
+                  <div>{exp.location}</div>
+                  <div>{exp.startDate} - {exp.endDate || 'Present'}</div>
+                </div>
+                <List>
+                  {exp.responsibilities.map((resp: string, i: number) => (
+                    <MuiListItem key={i}>{resp}</MuiListItem>
+                  ))}
+                </List>
+              </div>
+            ))}
           </Section>
         </RightColumn>
       </TwoColumnSection>
