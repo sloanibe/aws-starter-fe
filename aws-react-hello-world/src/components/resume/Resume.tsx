@@ -388,40 +388,29 @@ const Resume = forwardRef<HTMLDivElement>((props, ref) => {
                     </React.Fragment>
                   ))}
                 </Section>
+
+                <RightColumnHeader>
+                  <SectionHeader style={{ marginBottom: 0 }}>ADDITIONAL EXPERIENCE</SectionHeader>
+                </RightColumnHeader>
+                <Section style={{ paddingTop: 0 }}>
+                  {additionalExperience.map((exp, index) => (
+                    <AdditionalExperienceItem key={index}>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                        <div>
+                          <strong>{exp.title}</strong>
+                          <div>{exp.company} - {exp.location}</div>
+                        </div>
+                        <div style={{ whiteSpace: 'nowrap' }}>
+                          {exp.startDate} - {exp.endDate}
+                        </div>
+                      </div>
+                    </AdditionalExperienceItem>
+                  ))}
+                </Section>
               </RightColumn>
             </TwoColumnSection>
 
             <SingleColumnSection>
-              <Section>
-                <SectionHeader>PROFESSIONAL EXPERIENCE (continued)</SectionHeader>
-                <div>Additional professional experiences here</div>
-              </Section>
-
-              <Section>
-                <SectionHeader>ADDITIONAL EXPERIENCE</SectionHeader>
-                <div>Additional experience content here</div>
-              </Section>
-
-              <Section>
-                <SectionHeader>PROFESSIONAL EXPERIENCE</SectionHeader>
-              </Section>
-
-              <Section>
-                <SectionHeader>ADDITIONAL EXPERIENCE</SectionHeader>
-                {additionalExperience.map((exp, index) => (
-                  <AdditionalExperienceItem key={index}>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-                      <div>
-                        <strong>{exp.title}</strong>
-                        <div>{exp.company} - {exp.location}</div>
-                      </div>
-                      <div style={{ whiteSpace: 'nowrap' }}>
-                        {exp.startDate} - {exp.endDate}
-                      </div>
-                    </div>
-                  </AdditionalExperienceItem>
-                ))}
-              </Section>
 
               <Section>
                 <SectionHeader>TECHNICAL SKILLS</SectionHeader>
