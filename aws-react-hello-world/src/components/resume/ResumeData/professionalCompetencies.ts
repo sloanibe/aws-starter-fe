@@ -1,20 +1,18 @@
 export const professionalCompetencies: string[] = [
-    'Technical Design',
-    'Project Management',
+    'Database design',
+    'Data Migration',
     'Transaction Processing',
     'Web Programming',
-    'API Development',
-    'UML/Database Modeling',
-    'JavaScript',
+    'API Design',
+    'UML (Unified Modeling Language)',
     'Continuous Integration & Deployment',
     'Unit Testing',
     'Integration Testing',
-    'Black Box/White Box Testing',
+    'User Acceptance Testing',
     'Performance Optimization',
-    'Security Management',
-    'Agile/Scrum',
+    'Identity Management',
+    'Scalability',
     'Microservices',
     'Amazon Cloud Services (AWS)',
-    'Full Stack Development',
-    'User Interface development'
+    'GUI development (Graphical User Interface development)'
 ];

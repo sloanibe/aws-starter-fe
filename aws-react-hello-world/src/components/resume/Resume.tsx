@@ -274,6 +274,26 @@ const Resume = forwardRef<HTMLDivElement>((props, ref) => {
                 <div>{edu.degree}</div>
                 <div>{edu.institution}</div>
                 <div>{edu.location}</div>
+                {edu.diplomaPath && (
+                  <div style={{ marginTop: '0.5rem' }}>
+                    <a
+                      href={edu.diplomaPath}
+                      download="CalPoly_CS_Diploma.pdf"
+                      rel="noopener"
+                      style={{ 
+                        color: '#90caf9', // Light blue that stands out on dark background
+                        textDecoration: 'underline',
+                        fontSize: '0.9rem',
+                        fontWeight: 500,
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        gap: '0.25rem'
+                      }}
+                    >
+                      eDiploma
+                    </a>
+                  </div>
+                )}
               </div>
             ))}
           </Section>
@@ -291,7 +311,16 @@ const Resume = forwardRef<HTMLDivElement>((props, ref) => {
 
           <Section>
             <SectionHeader>PROFESSIONAL COMPETENCIES</SectionHeader>
-            <List>
+            <List sx={{
+              '& .MuiListItem-root': {
+                fontSize: '0.85rem',
+                lineHeight: 1.3,
+                marginBottom: '0.2rem',
+                paddingTop: '0.1rem',
+                paddingBottom: '0.1rem',
+                minHeight: 'unset'
+              }
+            }}>
               {professionalCompetencies.map((skill, index) => (
                 <MuiListItem key={index}>{skill}</MuiListItem>
               ))}
