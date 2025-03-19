@@ -94,6 +94,7 @@ const NameWrapper = styled('div')(({ theme }) => ({
   width: '100%',
   position: 'relative',
   minHeight: '90px',
+  marginTop: theme.spacing(2),
   '& h1': {
     width: '100%',
     textAlign: 'center',
@@ -114,6 +115,7 @@ const NameSection = styled('div')(({ theme }) => ({
   alignItems: 'center',
   backgroundColor: theme.palette.grey[100],
   padding: theme.spacing(2),
+  paddingTop: theme.spacing(4),
   paddingBottom: theme.spacing(3),
   borderBottom: `1px solid ${theme.palette.grey[300]}`,
   '& h1': {
