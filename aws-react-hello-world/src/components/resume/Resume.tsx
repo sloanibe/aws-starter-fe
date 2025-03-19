@@ -66,7 +66,7 @@ const ResumeDocument = styled('div')(({ theme }) => ({
   display: 'flex',
   flexDirection: 'column',
   padding: '0 40px 40px',
-  gap: theme.spacing(3),
+  gap: 0, // Remove gap between sections
   margin: '0 auto',
   maxWidth: '1000px',
   backgroundColor: theme.palette.background.default
@@ -135,7 +135,8 @@ const ContactInfo = styled(StyledContactBar)(({ theme }) => ({
 const TwoColumnSection = styled('div')(({ theme }) => ({
   display: 'flex',
   gap: theme.spacing(4),
-  marginBottom: theme.spacing(4)
+  marginTop: 0,
+  marginBottom: 0
 }));
 
 const SingleColumnSection = styled('div')(({ theme }) => ({
@@ -153,7 +154,7 @@ const LeftColumn = styled('div')(({ theme }) => ({
   minWidth: '250px',
   backgroundColor: theme.palette.grey[300],
   color: '#ffffff',
-  padding: theme.spacing(2),
+  padding: theme.spacing(0, 2, 2, 2), // Remove top padding to touch contact section
   '& > div': {
     backgroundColor: 'transparent'
   },
