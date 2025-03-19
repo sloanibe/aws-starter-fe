@@ -1,0 +1,1 @@
+// EducationSection component placeholder

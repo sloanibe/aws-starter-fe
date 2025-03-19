@@ -1,0 +1,1 @@
+// EducationCard component placeholder

@@ -1,0 +1,1 @@
+// CertCard component placeholder

@@ -39,6 +39,7 @@ const theme = createTheme({
 });
 
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import Resume from './components/resume/Resume';
 
 function App() {
   const [showDocs, setShowDocs] = useState<boolean>(false);
@@ -97,6 +98,7 @@ function App() {
               <Route path="/login" element={<Login onLoginSuccess={() => updateAuthState(true)} />} />
               <Route path="/dashboard" element={isAuthenticated ? <Dashboard /> : <Login onLoginSuccess={() => updateAuthState(true)} />} />
               <Route path="/projects/:projectId" element={isAuthenticated ? <ProjectDetailComponent /> : <Login onLoginSuccess={() => updateAuthState(true)} />} />
+              <Route path="/resume" element={<Resume />} />
             </Routes>
 
             {showDocs && (

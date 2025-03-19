@@ -7,7 +7,7 @@ import {
 } from '@mui/material';
 import {
   Notifications, Search, AccountCircle, Settings,
-  ExitToApp, FilterList, MenuBook, Close
+  ExitToApp, FilterList, MenuBook, Close, Description
 } from '@mui/icons-material';
 import Documentation from './Documentation';
 
@@ -135,6 +135,19 @@ const Header: React.FC<HeaderProps> = ({
               }}
             >
               Documentation
+            </Button>
+            <Button
+              color="inherit"
+              startIcon={<Description />}
+              onClick={() => navigate('/resume')}
+              sx={{
+                borderRadius: 2,
+                '&:hover': {
+                  bgcolor: 'action.hover'
+                }
+              }}
+            >
+              Resume
             </Button>
 
             <Tooltip title="Filter projects">

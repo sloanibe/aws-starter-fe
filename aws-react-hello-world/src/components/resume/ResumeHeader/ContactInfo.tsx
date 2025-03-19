@@ -1,0 +1,1 @@
+// ContactInfo component placeholder

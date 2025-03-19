@@ -1,0 +1,1 @@
+// CertSection component placeholder

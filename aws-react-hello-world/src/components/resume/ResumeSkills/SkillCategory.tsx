@@ -1,0 +1,1 @@
+// SkillCategory component placeholder
