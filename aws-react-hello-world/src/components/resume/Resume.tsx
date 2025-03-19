@@ -14,7 +14,7 @@ import { personalInfo } from './ResumeData/personalInfo';
 import profileImage from '../../assets/sloanimage.jpg';
 import { education } from './ResumeData/education';
 import { certifications } from './ResumeData/certifications';
-import { professionalCompetencies } from './ResumeData/skills';
+import { professionalCompetencies } from './ResumeData/professionalCompetencies';
 import { summary } from './ResumeData/summary';
 import { professionalExperience } from './ResumeData/experience';
 
@@ -243,8 +243,24 @@ const Resume = forwardRef<HTMLDivElement>((props, ref) => {
         <ContactInfo>
           <div>{personalInfo.contactInfo.location}</div>
           <div>{personalInfo.contactInfo.phone}</div>
-          <div>{personalInfo.contactInfo.email}</div>
-          <div>{personalInfo.contactInfo.linkedIn}</div>
+          <div>
+            <a 
+              href={`mailto:${personalInfo.contactInfo.email}`}
+              style={{ color: 'inherit', textDecoration: 'none' }}
+            >
+              {personalInfo.contactInfo.email}
+            </a>
+          </div>
+          <div>
+            <a 
+              href={personalInfo.contactInfo.linkedIn.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              style={{ color: 'inherit', textDecoration: 'none' }}
+            >
+              {personalInfo.contactInfo.linkedIn.text}
+            </a>
+          </div>
           {personalInfo.contactInfo.relocate && <div>Willing to relocate</div>}
         </ContactInfo>
       </ResumeHeader>
