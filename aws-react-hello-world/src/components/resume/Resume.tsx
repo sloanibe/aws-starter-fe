@@ -336,8 +336,7 @@ const Resume = forwardRef<HTMLDivElement>((props, ref) => {
                   {education.map((edu, index) => (
                     <div key={index} style={{ marginBottom: '1rem' }}>
                       <strong>{edu.degree}</strong>
-                      <div>{edu.school}</div>
-                      <div>{edu.date}</div>
+                      <div>{edu.institution} - {edu.location}</div>
                     </div>
                   ))}
                 </Section>
@@ -411,7 +410,7 @@ const Resume = forwardRef<HTMLDivElement>((props, ref) => {
             </TwoColumnSection>
 
             <div style={{ marginTop: '20px' }}>
-              <RightColumnHeader>
+              <RightColumnHeader style={{ marginBottom: '15px' }}>
                 <SectionHeader style={{ marginBottom: 0 }}>TECHNICAL SKILLS</SectionHeader>
               </RightColumnHeader>
               <Section style={{ paddingTop: 0 }}>
