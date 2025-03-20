@@ -562,11 +562,22 @@ const Resume = forwardRef<HTMLDivElement>((props, ref) => {
                             <div>{exp.location}</div>
                             <div>{exp.startDate} - {exp.endDate || 'Present'}</div>
                           </div>
-                          <List>
+                          <div style={{ marginTop: '4px' }}>
                             {exp.responsibilities.map((resp: string, i: number) => (
-                              <MuiListItem key={i}>{resp}</MuiListItem>
+                              <div 
+                                key={i} 
+                                style={{ 
+                                  display: 'flex',
+                                  marginBottom: '6px', 
+                                  lineHeight: 1.3, 
+                                  fontSize: '0.95rem'
+                                }}
+                              >
+                                <div style={{ width: '20px', flexShrink: 0 }}>•</div>
+                                <div>{resp}</div>
+                              </div>
                             ))}
-                          </List>
+                          </div>
                         </ExperienceEntry>
                       </ExperienceWrapper>
                     </React.Fragment>
