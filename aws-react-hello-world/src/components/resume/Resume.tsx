@@ -518,6 +518,32 @@ const Resume = forwardRef<HTMLDivElement>((props, ref) => {
                     </List>
                   </div>
                 </Section>
+
+                <Section>
+                  <SectionHeader>WEB PORTFOLIO</SectionHeader>
+                  <div style={{ marginTop: '12px' }}>
+                    <div style={{ marginBottom: '0.5rem' }}>
+                      <a 
+                        href="https://sloandev.com" 
+                        target="_blank" 
+                        rel="noopener noreferrer"
+                        style={{ 
+                          color: '#ffffff', 
+                          textDecoration: 'none', 
+                          fontWeight: 'bold',
+                          display: 'flex',
+                          alignItems: 'center'
+                        }}
+                      >
+                        sloandev.com
+                        <span style={{ marginLeft: '4px', fontSize: '0.8rem' }}>↗</span>
+                      </a>
+                      <div style={{ fontSize: '0.9rem', marginTop: '4px' }}>
+                        Personal website showcasing web development skills
+                      </div>
+                    </div>
+                  </div>
+                </Section>
               </LeftColumn>
 
               <RightColumn>
