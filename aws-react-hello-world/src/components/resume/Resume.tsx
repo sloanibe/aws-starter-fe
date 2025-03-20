@@ -1,4 +1,4 @@
-import React, { forwardRef, useRef } from 'react';
+import React, { forwardRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { styled, ThemeProvider } from '@mui/material/styles';
@@ -57,7 +57,9 @@ const ResumeWrapper = styled('div')(({ theme }) => ({  // Outer wrapper for cent
   isolation: 'isolate', // Creates a new stacking context
   overflow: 'auto', // Enable scrolling
   '@media print': {
-    padding: theme.spacing(2.5, 0) // Reset padding for print
+    padding: 0, // Reset padding for print
+    height: 'auto',
+    overflow: 'visible'
   }
 }));
 
@@ -68,7 +70,13 @@ const ResumeContainer = styled('div')(({ theme }) => ({  // Main container
   backgroundColor: theme.palette.background.paper,
   boxShadow: '0 0 10px rgba(0, 0, 0, 0.1)',
   position: 'relative',
-  height: 'fit-content' // Allow container to grow with content
+  height: 'fit-content', // Allow container to grow with content
+  '@media print': {
+    width: '100%',
+    maxWidth: '100%',
+    margin: 0,
+    boxShadow: 'none'
+  }
 }));
 
 
@@ -78,7 +86,28 @@ const Spacer = styled('div')<{ height: string }>(({ height }) => ({
   height: 0,
   width: '100%',
   '@media print': {
-    height
+    height,
+    display: 'block',
+    pageBreakBefore: 'always',
+    breakBefore: 'page'
+  }
+}));
+
+const PageBreakBefore = styled('div')(() => ({
+  display: 'none',
+  '@media print': {
+    display: 'block',
+    pageBreakBefore: 'always',
+    breakBefore: 'page'
+  }
+}));
+
+const PageBreakAfter = styled('div')(() => ({
+  display: 'none',
+  '@media print': {
+    display: 'block',
+    pageBreakAfter: 'always',
+    breakAfter: 'page'
   }
 }));
 
@@ -87,13 +116,23 @@ const ExperienceEntry = styled('div')(() => ({
   marginBottom: '2rem',
   '& + &': {
     marginTop: '2rem'
+  },
+  '@media print': {
+    marginBottom: '1rem',
+    '& + &': {
+      marginTop: '1rem'
+    }
   }
 }));
 
 const ExperienceWrapper = styled('div')(() => ({
   display: 'block',
   breakInside: 'avoid',
-  pageBreakInside: 'avoid'
+  pageBreakInside: 'avoid',
+  '@media print': {
+    pageBreakInside: 'avoid',
+    marginBottom: '0.5rem'
+  }
 }));
 
 const Page = styled('div')(() => ({
@@ -103,7 +142,11 @@ const Page = styled('div')(() => ({
   pageBreakAfter: 'always',
   overflow: 'hidden',
   position: 'relative',
-  backgroundColor: '#fff'
+  backgroundColor: '#fff',
+  '@media print': {
+    width: '100%',
+    height: 'auto'
+  }
 }));
 
 const ResumeDocument = styled('div')(({ theme }) => ({
@@ -112,7 +155,11 @@ const ResumeDocument = styled('div')(({ theme }) => ({
   flexDirection: 'column',
   margin: '0 auto',
   maxWidth: '1000px',
-  backgroundColor: theme.palette.background.default
+  backgroundColor: theme.palette.background.default,
+  '@media print': {
+    maxWidth: '100%',
+    margin: 0
+  }
 }));
 
 const TopBanner = styled('div')(({ theme }) => ({
@@ -178,7 +225,12 @@ const TwoColumnSection = styled('div')(({ theme }) => ({
   display: 'flex',
   gap: theme.spacing(4),
   marginTop: 0,
-  marginBottom: 0
+  marginBottom: 0,
+  '@media print': {
+    gap: theme.spacing(2),
+    marginTop: 0,
+    marginBottom: 0
+  }
 }));
 
 const TechnicalSkillsSection = styled('div')(({ theme }) => ({
@@ -191,7 +243,10 @@ const TechnicalSkillsSection = styled('div')(({ theme }) => ({
 const AdditionalExperienceItem = styled('div')(({ theme }) => ({
   marginBottom: theme.spacing(2),
   breakInside: 'avoid',
-  pageBreakInside: 'avoid'
+  pageBreakInside: 'avoid',
+  '@media print': {
+    marginBottom: theme.spacing(1)
+  }
 }));
 
 const SummarySection = styled('div')(({ theme }) => ({
@@ -206,6 +261,18 @@ const SummarySection = styled('div')(({ theme }) => ({
   },
   '& li': {
     marginBottom: theme.spacing(0.5)
+  },
+  '@media print': {
+    padding: theme.spacing(1),
+    marginBottom: theme.spacing(1),
+    '& ul': {
+      paddingLeft: theme.spacing(1),
+      marginTop: theme.spacing(0.5),
+      marginBottom: theme.spacing(0.5)
+    },
+    '& li': {
+      marginBottom: theme.spacing(0.25)
+    }
   }
 }));
 
@@ -287,6 +354,7 @@ const Section = styled(ContentSection)(() => ({
 
 const Resume = forwardRef<HTMLDivElement>((props, ref) => {
   const navigate = useNavigate();
+  // Separate PDF generation from print functionality
   const { toPDF, targetRef } = usePDF({
     filename: 'resume.pdf',
     method: 'save',
@@ -294,8 +362,22 @@ const Resume = forwardRef<HTMLDivElement>((props, ref) => {
       format: [8.5, 11],
       orientation: 'portrait',
       margin: 36 // 0.5 inch in points
+    },
+    overrides: {
+      pdf: {
+        compress: true
+        // Remove pdfOptions as it's causing TypeScript errors
+      },
+      canvas: {
+        useCORS: true,
+        scale: 2,
+        logging: true
+      }
     }
   });
+  
+  // Create a mutable ref object that can be used for printing
+  const printRefObject = { current: null as HTMLDivElement | null };
 
   const handleBack = () => {
     navigate('/dashboard');
@@ -312,7 +394,40 @@ const Resume = forwardRef<HTMLDivElement>((props, ref) => {
             <ArrowBackIcon />
             Back
           </BackButton>
-          <ResumeDocument ref={ref} id="resume-content">
+          <ResumeDocument ref={(node) => {
+              // Assign to both refs
+              if (typeof ref === 'function') ref(node);
+              printRefObject.current = node;
+            }} 
+            id="resume-content">
+            {/* Hidden element to force page size in print */}
+            <style type="text/css" media="print">{`
+              @page { size: letter portrait; margin: 0.5in; }
+              body { width: 100% !important; height: auto !important; }
+              #resume-content { height: auto !important; overflow: visible !important; }
+              
+              /* Reduce font sizes for print */
+              #resume-content * {
+                font-size: 90% !important;
+              }
+              
+              /* Make section headers slightly larger than body text */
+              #resume-content .MuiSectionHeader {
+                font-size: 95% !important;
+              }
+              
+              /* Reduce spacing between elements */
+              #resume-content p, #resume-content div, #resume-content li {
+                margin-bottom: 0.3rem !important;
+                line-height: 1.3 !important;
+              }
+              
+              /* Reduce padding and margins */
+              #resume-content .MuiSection-root, #resume-content section {
+                padding: 0.5rem !important;
+                margin-bottom: 0.5rem !important;
+              }
+            `}</style>
             <ResumeHeader>
               <TopBanner />
               <NameSection>
@@ -354,6 +469,7 @@ const Resume = forwardRef<HTMLDivElement>((props, ref) => {
               <SummaryTitle>SENIOR SOFTWARE ENGINEER/FULL STACK DEVELOPER</SummaryTitle>
               <div dangerouslySetInnerHTML={{ __html: summary.content.replace(/\n\n• /g, '<br/>• ').replace(/\n\n/g, '<br/><br/>') }} />
             </SummarySection>
+            <PageBreakAfter />
 
             <TwoColumnSection>
               <LeftColumn>
@@ -395,7 +511,8 @@ const Resume = forwardRef<HTMLDivElement>((props, ref) => {
                 <Section style={{ paddingTop: 0 }}>
                   {professionalExperience.map((exp, index: number) => (
                     <React.Fragment key={index}>
-                      {exp.company === 'Vinfolio' && <Spacer height="400px" />}
+                      {exp.company === 'Vinfolio' && <Spacer height="600px" />}
+                      {exp.company === 'Trov' && <PageBreakAfter />}
                       <ExperienceWrapper>
                         <ExperienceEntry>
                           <div style={{ marginBottom: '0.5rem' }}>
@@ -414,6 +531,7 @@ const Resume = forwardRef<HTMLDivElement>((props, ref) => {
                   ))}
                 </Section>
 
+                <PageBreakBefore />
                 <RightColumnHeader>
                   <SectionHeader style={{ marginBottom: 0 }}>ADDITIONAL EXPERIENCE</SectionHeader>
                 </RightColumnHeader>
@@ -436,6 +554,7 @@ const Resume = forwardRef<HTMLDivElement>((props, ref) => {
             </TwoColumnSection>
 
             <div style={{ marginTop: '20px' }}>
+              <PageBreakBefore />
               <RightColumnHeader style={{ marginBottom: '15px' }}>
                 <SectionHeader style={{ marginBottom: 0 }}>TECHNICAL SKILLS</SectionHeader>
               </RightColumnHeader>

@@ -200,6 +200,110 @@ button:hover {
   flex-direction: column;
 }
 
+/* Print styles for resume */
+@media print {
+  @page {
+    size: letter portrait;
+    margin: 0.5in;
+  }
+  
+  body, html {
+    margin: 0 !important;
+    padding: 0 !important;
+    height: auto !important;
+    width: 100% !important;
+    overflow: visible !important;
+    background-color: #ffffff !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+  
+  .container {
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    min-height: auto !important;
+    overflow: visible !important;
+  }
+  
+  .app-header, 
+  .app-bar,
+  .back-button,
+  .download-button,
+  button {
+    display: none !important;
+  }
+  
+  #resume-content {
+    width: 100% !important;
+    height: auto !important;
+    overflow: visible !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    display: block !important;
+  }
+  
+  /* Force page breaks */
+  .page-break-before {
+    page-break-before: always !important;
+    break-before: page !important;
+    display: block !important;
+    height: 0 !important;
+  }
+  
+  .page-break-after {
+    page-break-after: always !important;
+    break-after: page !important;
+    display: block !important;
+    height: 0 !important;
+  }
+  
+  /* Avoid breaking inside elements */
+  .no-break-inside {
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
+  }
+  
+  /* Ensure background colors print */
+  * {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+  
+  /* Compact print layout */
+  body {
+    font-size: 90% !important;
+  }
+  
+  /* Reduce margins and padding */
+  #resume-content * {
+    margin: 0.1rem 0 !important;
+    padding-top: 0.1rem !important;
+    padding-bottom: 0.1rem !important;
+  }
+  
+  /* Adjust line height for compact text */
+  p, li, div {
+    line-height: 1.3 !important;
+  }
+  
+  /* Make experience entries more compact */
+  .experience-entry {
+    margin-bottom: 0.3rem !important;
+  }
+  
+  /* Reduce spacing between sections */
+  .section-header {
+    margin-bottom: 0.2rem !important;
+  }
+  
+  /* Reduce padding in columns */
+  .left-column, .right-column {
+    padding: 0.3rem !important;
+  }
+}
+
 .messages-list {
   background-color: #f8f9fa;
   padding: 20px;

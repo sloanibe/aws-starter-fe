@@ -2,14 +2,28 @@ import { createTheme, Theme } from '@mui/material/styles';
 
 // Create a theme instance specifically for the resume component
 export const resumeTheme: Theme = createTheme({
-
   components: {
     MuiCssBaseline: {
-      styleOverrides: {
-        body: {
-          backgroundColor: '#ffffff'
+      styleOverrides: `
+        @media print {
+          @page {
+            size: letter portrait;
+            margin: 0.5in;
+          }
+          body {
+            -webkit-print-color-adjust: exact !important;
+            print-color-adjust: exact !important;
+            color-adjust: exact !important;
+            background-color: #ffffff !important;
+          }
+          .MuiAppBar-root, .MuiToolbar-root, button {
+            display: none !important;
+          }
         }
-      }
+        body {
+          background-color: #ffffff;
+        }
+      `
     },
     MuiPaper: {
       styleOverrides: {

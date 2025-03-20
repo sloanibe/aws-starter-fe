@@ -7,13 +7,27 @@ export const SectionHeader = styled('h3')(({ theme }) => ({
   padding: theme.spacing(0.5, 2),
   margin: 0,
   marginBottom: theme.spacing(1),
-  borderBottom: '1px solid currentColor'
+  borderBottom: '1px solid currentColor',
+  '@media print': {
+    padding: theme.spacing(0.25, 1),
+    marginBottom: theme.spacing(0.5),
+    fontSize: '12px',
+    lineHeight: 1.2
+  }
 }));
 
 export const ContentSection = styled('div')(({ theme }) => ({
   padding: theme.spacing(1),
   '& + &': {
     marginTop: theme.spacing(1),
+  },
+  '@media print': {
+    padding: theme.spacing(0.5),
+    '& + &': {
+      marginTop: theme.spacing(0.5),
+    },
+    pageBreakInside: 'avoid',
+    breakInside: 'avoid'
   }
 }));
 
@@ -22,6 +36,10 @@ export const ResumeHeading = styled('h1')(({ theme }) => ({
   color: theme.palette.text.primary,
   margin: theme.spacing(1, 0),
   textAlign: 'left',
+  '@media print': {
+    fontSize: '22px',
+    marginBottom: '8px'
+  }
 }));
 
 export const ContactBar = styled('div')(({ theme }) => ({
@@ -43,6 +61,13 @@ export const ContactBar = styled('div')(({ theme }) => ({
       marginRight: theme.spacing(2),
       color: theme.palette.grey[500],
     }
+  },
+  '@media print': {
+    backgroundColor: `${theme.palette.primary.main} !important`,
+    WebkitPrintColorAdjust: 'exact',
+    printColorAdjust: 'exact',
+    fontSize: '10px',
+    padding: theme.spacing(0.5, 1)
   }
 }));
 
@@ -52,6 +77,10 @@ export const ListItem = styled('div')(({ theme }) => ({
   lineHeight: 1.1, // Even tighter line height
   marginBottom: '1px', // Minimal space between items
   fontSize: '0.9rem', // Slightly smaller font
+  '@media print': {
+    fontSize: '9px',
+    lineHeight: 1.2
+  }
 }));
 
 export const BulletedList = styled('div')(({ theme }) => ({
@@ -63,6 +92,18 @@ export const BulletedList = styled('div')(({ theme }) => ({
       content: '"•"',
       position: 'absolute',
       left: theme.spacing(0.5),
+    }
+  },
+  '@media print': {
+    marginTop: 0,
+    '& > *': {
+      pageBreakInside: 'avoid',
+      breakInside: 'avoid',
+      paddingLeft: theme.spacing(1.5),
+      marginBottom: '1px',
+      '&::before': {
+        left: theme.spacing(0.25),
+      }
     }
   }
 }));

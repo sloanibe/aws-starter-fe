@@ -163,10 +163,8 @@ const Header: React.FC<HeaderProps> = ({
                         page: { margin: 20 },
                         overrides: {
                           pdf: {
-                            compress: true,
-                            pdfOptions: {
-                              preserveLinks: true
-                            }
+                            compress: true
+                            // Remove pdfOptions as it's causing TypeScript errors
                           },
                           canvas: {
                             useCORS: true,
@@ -181,7 +179,89 @@ const Header: React.FC<HeaderProps> = ({
                   </IconButton>
                 </Tooltip>
                 <Tooltip title="Print Resume">
-                  <IconButton color="inherit" onClick={() => window.print()}>
+                  <IconButton 
+                    color="inherit" 
+                    onClick={() => {
+                      // Create an iframe for printing to avoid conflicts with react-to-pdf
+                      const iframe = document.createElement('iframe');
+                      iframe.style.display = 'none';
+                      document.body.appendChild(iframe);
+                      
+                      // Get the resume content
+                      const resumeContent = document.getElementById('resume-content');
+                      
+                      if (resumeContent && iframe.contentWindow) {
+                        // Write the content to the iframe
+                        iframe.contentWindow.document.open();
+                        iframe.contentWindow.document.write(`
+                          <!DOCTYPE html>
+                          <html>
+                          <head>
+                            <title>Resume Print</title>
+                            <style>
+                              @page { size: letter portrait; margin: 0.4in; }
+                              body { margin: 0; padding: 0; font-size: 90% !important; }
+                              * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+                              
+                              /* Force page breaks */
+                              .page-break-before { page-break-before: always !important; break-before: page !important; display: block !important; height: 0 !important; }
+                              .page-break-after { page-break-after: always !important; break-after: page !important; display: block !important; height: 0 !important; }
+                              
+                              /* Ensure content is properly sized for print */
+                              #resume-content { height: auto !important; overflow: visible !important; }
+                              
+                              /* Avoid breaking inside elements */
+                              .no-break-inside { page-break-inside: avoid !important; break-inside: avoid !important; }
+                              
+                              /* Ensure spacers create page breaks */
+                              [class*="Spacer-"] { height: 0 !important; page-break-before: always !important; break-before: page !important; display: block !important; }
+                              
+                              /* Compact print layout */
+                              #resume-content * {
+                                font-size: 90% !important;
+                                margin: 0.1rem 0 !important;
+                                padding-top: 0.1rem !important;
+                                padding-bottom: 0.1rem !important;
+                              }
+                              
+                              /* Adjust line height for compact text */
+                              p, li, div { line-height: 1.3 !important; }
+                              
+                              /* Make experience entries more compact */
+                              .experience-entry { margin-bottom: 0.3rem !important; }
+                              
+                              /* Reduce spacing between sections */
+                              .section-header { margin-bottom: 0.2rem !important; }
+                              
+                              /* Reduce padding in columns */
+                              .left-column, .right-column { padding: 0.3rem !important; }
+                            </style>
+                            <link rel="stylesheet" href="${window.location.origin}/static/css/main.css">
+                            <link rel="stylesheet" href="${window.location.origin}/index.css">
+                          </head>
+                          <body>
+                            ${resumeContent.outerHTML}
+                          </body>
+                          </html>
+                        `);
+                        iframe.contentWindow.document.close();
+                        
+                        // Print the iframe
+                        setTimeout(() => {
+                          iframe.contentWindow?.focus();
+                          iframe.contentWindow?.print();
+                          
+                          // Remove the iframe after printing
+                          iframe.contentWindow?.addEventListener('afterprint', () => {
+                            document.body.removeChild(iframe);
+                          });
+                        }, 500);
+                      } else {
+                        console.error('Resume content not found');
+                        window.print(); // Fallback to regular print
+                      }
+                    }}
+                  >
                     <Print />
                   </IconButton>
                 </Tooltip>
