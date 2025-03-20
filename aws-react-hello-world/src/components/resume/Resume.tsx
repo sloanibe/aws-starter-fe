@@ -123,31 +123,27 @@ const TopBanner = styled('div')(({ theme }) => ({
 }));
 
 const ProfileImage = styled('img')(({ theme }) => ({
-  width: '90px',
-  height: '90px',
+  width: '120px',
+  height: '120px',
   borderRadius: '50%',
   objectFit: 'cover',
   border: '2px solid #e0e0e0',
-  marginRight: theme.spacing(3)
+  marginRight: theme.spacing(2)
 }));
 
 const NameWrapper = styled('div')(({ theme }) => ({
-  display: 'flex',
+  display: 'inline-flex',
   alignItems: 'center',
-  width: '100%',
+  justifyContent: 'center',
   position: 'relative',
-  minHeight: '90px',
-  marginTop: theme.spacing(2),
+  minHeight: '120px',
+  marginTop: theme.spacing(1),
   '& h1': {
-    width: '100%',
-    textAlign: 'center',
-    paddingLeft: '90px',
-    paddingRight: '90px',
+    textAlign: 'left',
     fontSize: '2.5rem' // Increase name font size
   },
   '& img': {
-    position: 'absolute',
-    left: 0
+    marginRight: '20px'
   }
 }));
 
@@ -158,8 +154,8 @@ const NameSection = styled('div')(({ theme }) => ({
   alignItems: 'center',
   backgroundColor: theme.palette.grey[100],
   padding: theme.spacing(2),
-  paddingTop: theme.spacing(4),
-  paddingBottom: theme.spacing(3),
+  paddingTop: theme.spacing(2),
+  paddingBottom: theme.spacing(2),
   borderBottom: `1px solid ${theme.palette.grey[300]}`,
   '& h1': {
     margin: 0

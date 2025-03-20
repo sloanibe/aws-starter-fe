@@ -12,7 +12,7 @@ interface PersonalInfo {
 }
 
 export const personalInfo: PersonalInfo = {
-    name: 'MARK R. SLOAN',
+    name: 'MARK SLOAN',
     contactInfo: {
         location: 'Wildomar, CA 92595',
         phone: '+1 951 584 4480',

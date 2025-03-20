@@ -21,6 +21,7 @@ export const ResumeHeading = styled('h1')(({ theme }) => ({
   ...theme.typography.h1,
   color: theme.palette.text.primary,
   margin: theme.spacing(1, 0),
+  textAlign: 'left',
 }));
 
 export const ContactBar = styled('div')(({ theme }) => ({
