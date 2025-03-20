@@ -299,11 +299,11 @@ const LeftColumn = styled('div')(({ theme }) => ({
   flex: 1,
   display: 'flex',
   flexDirection: 'column',
-  gap: theme.spacing(3),
+  gap: theme.spacing(1.5), // Reduced gap between sections
   minWidth: '250px',
   backgroundColor: theme.palette.grey[800], // Darker grey to match Word document
   color: '#ffffff',
-  padding: theme.spacing(0, 2, 2, 2), // Remove top padding to touch contact section
+  padding: theme.spacing(0, 1.5, 1.5, 1.5), // Reduced padding
   '& > div': {
     backgroundColor: 'transparent'
   },
@@ -311,8 +311,8 @@ const LeftColumn = styled('div')(({ theme }) => ({
     color: '#ffffff',
     backgroundColor: 'transparent',
     borderBottom: '2px solid #ffffff',
-    padding: theme.spacing(1, 0),
-    marginBottom: theme.spacing(2)
+    padding: theme.spacing(0.5, 0), // Reduced vertical padding
+    marginBottom: theme.spacing(1) // Reduced bottom margin
   },
   '& .MuiListItem': {
     color: '#ffffff'
@@ -326,6 +326,13 @@ const RightColumnHeader = styled('div')(({ theme }) => ({
     color: '#ffffff',
     borderBottom: '2px solid #ffffff'
   }
+}));
+
+const CompetencyListItem = styled(MuiListItem)(({ theme }) => ({
+  padding: '1px 16px', // Slightly more vertical padding
+  marginBottom: '2px !important', // Small margin between items
+  minHeight: 'auto', // Reduce minimum height
+  lineHeight: 1.2, // Slightly increased line height
 }));
 
 const RightColumn = styled('div')(({ theme }) => ({
@@ -496,9 +503,9 @@ const Resume = forwardRef<HTMLDivElement>((props, ref) => {
 
                 <Section>
                   <SectionHeader>PROFESSIONAL COMPETENCIES</SectionHeader>
-                  <List>
+                  <List dense style={{ padding: 0 }}>
                     {professionalCompetencies.map((comp, index) => (
-                      <MuiListItem key={index}>{comp}</MuiListItem>
+                      <CompetencyListItem key={index}>{comp}</CompetencyListItem>
                     ))}
                   </List>
                 </Section>

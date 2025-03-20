@@ -4,9 +4,9 @@ export const SectionHeader = styled('h3')(({ theme }) => ({
   ...theme.typography.h3,
   backgroundColor: 'transparent',
   color: theme.palette.text.secondary,
-  padding: theme.spacing(0.5, 2),
+  padding: theme.spacing(0.25, 2), // Reduced vertical padding
   margin: 0,
-  marginBottom: theme.spacing(1),
+  marginBottom: theme.spacing(0.5), // Reduced bottom margin
   borderBottom: '1px solid currentColor',
   '@media print': {
     padding: theme.spacing(0.25, 1),
@@ -17,9 +17,9 @@ export const SectionHeader = styled('h3')(({ theme }) => ({
 }));
 
 export const ContentSection = styled('div')(({ theme }) => ({
-  padding: theme.spacing(1),
+  padding: theme.spacing(0.5), // Reduced padding
   '& + &': {
-    marginTop: theme.spacing(1),
+    marginTop: theme.spacing(0.75), // Reduced margin between sections
   },
   '@media print': {
     padding: theme.spacing(0.5),
@@ -84,10 +84,11 @@ export const ListItem = styled('div')(({ theme }) => ({
 }));
 
 export const BulletedList = styled('div')(({ theme }) => ({
-  marginTop: theme.spacing(0.25),
+  marginTop: theme.spacing(0.1), // Reduced top margin
   '& > *': {
     position: 'relative',
-    paddingLeft: theme.spacing(2),
+    paddingLeft: theme.spacing(1.75), // Reduced left padding
+    marginBottom: '1px', // Minimal space between items
     '&::before': {
       content: '"•"',
       position: 'absolute',
