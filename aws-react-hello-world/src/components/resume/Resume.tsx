@@ -312,7 +312,10 @@ const LeftColumn = styled('div')(({ theme }) => ({
     backgroundColor: 'transparent',
     borderBottom: '2px solid #ffffff',
     padding: theme.spacing(0.5, 0), // Reduced vertical padding
-    marginBottom: theme.spacing(1) // Reduced bottom margin
+    marginBottom: theme.spacing(0.5), // Small margin for the border
+  },
+  '& .MuiSectionHeader + *': {
+    marginTop: theme.spacing(2) // Force more space after headers in left column
   },
   '& .MuiListItem': {
     color: '#ffffff'
@@ -482,32 +485,38 @@ const Resume = forwardRef<HTMLDivElement>((props, ref) => {
               <LeftColumn>
                 <Section>
                   <SectionHeader>EDUCATION</SectionHeader>
-                  {education.map((edu, index) => (
-                    <div key={index} style={{ marginBottom: '1rem' }}>
-                      <strong>{edu.degree}</strong>
-                      <div>{edu.institution} - {edu.location}</div>
-                    </div>
-                  ))}
+                  <div style={{ marginTop: '12px' }}>
+                    {education.map((edu, index) => (
+                      <div key={index} style={{ marginBottom: '1rem' }}>
+                        <strong>{edu.degree}</strong>
+                        <div>{edu.institution} - {edu.location}</div>
+                      </div>
+                    ))}
+                  </div>
                 </Section>
 
                 <Section>
                   <SectionHeader>CERTIFICATIONS</SectionHeader>
-                  {certifications.map((cert, index) => (
-                    <div key={index} style={{ marginBottom: '1rem' }}>
-                      <strong>{cert.name}</strong>
-                      <div>{cert.issuer}</div>
-                      <div>{cert.date}</div>
-                    </div>
-                  ))}
+                  <div style={{ marginTop: '12px' }}>
+                    {certifications.map((cert, index) => (
+                      <div key={index} style={{ marginBottom: '1rem' }}>
+                        <strong>{cert.name}</strong>
+                        <div>{cert.issuer}</div>
+                        <div>{cert.date}</div>
+                      </div>
+                    ))}
+                  </div>
                 </Section>
 
                 <Section>
                   <SectionHeader>PROFESSIONAL COMPETENCIES</SectionHeader>
-                  <List dense style={{ padding: 0 }}>
-                    {professionalCompetencies.map((comp, index) => (
-                      <CompetencyListItem key={index}>{comp}</CompetencyListItem>
-                    ))}
-                  </List>
+                  <div style={{ marginTop: '12px' }}>
+                    <List dense style={{ padding: 0 }}>
+                      {professionalCompetencies.map((comp, index) => (
+                        <CompetencyListItem key={index}>{comp}</CompetencyListItem>
+                      ))}
+                    </List>
+                  </div>
                 </Section>
               </LeftColumn>
 
