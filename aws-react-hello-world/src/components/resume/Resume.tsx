@@ -385,9 +385,6 @@ const Resume = forwardRef<HTMLDivElement>((props, ref) => {
   return (
     <ThemeProvider theme={resumeTheme}>
       <CssBaseline />
-      <Button onClick={() => toPDF()} style={{ margin: '1rem' }}>
-        Download PDF
-      </Button>
       <ResumeWrapper>
         <ResumeContainer ref={targetRef}>
           <BackButton onClick={handleBack}>
