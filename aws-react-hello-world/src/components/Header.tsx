@@ -154,8 +154,9 @@ const Header: React.FC<HeaderProps> = ({
             {window.location.pathname === '/resume' && (
               <>
                 <Tooltip title="Export to PDF">
-                  <IconButton 
+                  <Button 
                     color="inherit" 
+                    endIcon={<Description />}
                     onClick={() => {
                       const getTargetElement = () => document.getElementById('resume-content');
                       generatePDF(getTargetElement, {
@@ -174,9 +175,15 @@ const Header: React.FC<HeaderProps> = ({
                         }
                       });
                     }}
+                    sx={{
+                      borderRadius: 2,
+                      '&:hover': {
+                        bgcolor: 'action.hover'
+                      }
+                    }}
                   >
-                    <Description />
-                  </IconButton>
+                    PDF
+                  </Button>
                 </Tooltip>
                 <Tooltip title="Print Resume">
                   <IconButton 
