@@ -254,13 +254,16 @@ const SummarySection = styled('div')(({ theme }) => ({
   backgroundColor: theme.palette.background.paper,
   padding: theme.spacing(2),
   marginBottom: theme.spacing(2),
+  fontSize: '1.05rem', // Increased font size for summary text
+  lineHeight: 1.4, // Improved line height for readability
   '& ul': {
     paddingLeft: theme.spacing(2),
     marginTop: theme.spacing(1),
     marginBottom: theme.spacing(1)
   },
   '& li': {
-    marginBottom: theme.spacing(0.5)
+    marginBottom: theme.spacing(0.5),
+    fontSize: '1.05rem' // Consistent font size for list items
   },
   '@media print': {
     padding: theme.spacing(1),
@@ -280,7 +283,7 @@ const SummaryTitle = styled('div')(({ theme }) => ({
   width: '100%',
   textAlign: 'center',
   fontWeight: 'bold',
-  fontSize: '1.2rem',
+  fontSize: '1.3rem', // Increased font size for title
   marginBottom: theme.spacing(2),
   textTransform: 'uppercase'
 }));
@@ -337,7 +340,7 @@ const RightColumn = styled('div')(({ theme }) => ({
   '& .MuiList-root': {
     marginTop: '0.5rem',
     '& .MuiListItem-root': {
-      fontSize: '0.9rem',
+      fontSize: '1rem',
       lineHeight: 1.5,
       marginBottom: '0.5rem',
       paddingLeft: '1.5rem',

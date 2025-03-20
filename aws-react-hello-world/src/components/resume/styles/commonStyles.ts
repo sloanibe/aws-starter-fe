@@ -74,9 +74,9 @@ export const ContactBar = styled('div')(({ theme }) => ({
 export const ListItem = styled('div')(({ theme }) => ({
   ...theme.typography.body1,
   padding: 0,
-  lineHeight: 1.1, // Even tighter line height
+  lineHeight: 1.2, // Slightly increased line height
   marginBottom: '1px', // Minimal space between items
-  fontSize: '0.9rem', // Slightly smaller font
+  fontSize: '1rem', // Increased font size for web view
   '@media print': {
     fontSize: '9px',
     lineHeight: 1.2
