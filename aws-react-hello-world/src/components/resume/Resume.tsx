@@ -19,6 +19,7 @@ import { professionalCompetencies } from './ResumeData/professionalCompetencies'
 import { professionalExperience, Experience } from './ResumeData/experience';
 import { additionalExperience } from './ResumeData/additionalExperience';
 import { technicalSkills } from './ResumeData/technicalSkills';
+import { summary } from './ResumeData/summary';
 
 // Basic containers with borders to visualize layout
 
@@ -197,6 +198,30 @@ const AdditionalExperienceItem = styled('div')(({ theme }) => ({
   pageBreakInside: 'avoid'
 }));
 
+const SummarySection = styled('div')(({ theme }) => ({
+  width: '100%',
+  backgroundColor: theme.palette.background.paper,
+  padding: theme.spacing(2),
+  marginBottom: theme.spacing(2),
+  '& ul': {
+    paddingLeft: theme.spacing(2),
+    marginTop: theme.spacing(1),
+    marginBottom: theme.spacing(1)
+  },
+  '& li': {
+    marginBottom: theme.spacing(0.5)
+  }
+}));
+
+const SummaryTitle = styled('div')(({ theme }) => ({
+  width: '100%',
+  textAlign: 'center',
+  fontWeight: 'bold',
+  fontSize: '1.2rem',
+  marginBottom: theme.spacing(2),
+  textTransform: 'uppercase'
+}));
+
 const SingleColumnSection = styled('div')(({ theme }) => ({
   display: 'flex',
   flexDirection: 'column',
@@ -328,6 +353,11 @@ const Resume = forwardRef<HTMLDivElement>((props, ref) => {
                 {personalInfo.contactInfo.relocate && <div>Willing to relocate</div>}
               </ContactInfo>
             </ResumeHeader>
+            
+            <SummarySection>
+              <SummaryTitle>SENIOR SOFTWARE ENGINEER/FULL STACK DEVELOPER</SummaryTitle>
+              <div dangerouslySetInnerHTML={{ __html: summary.content.replace(/\n\n• /g, '<br/>• ').replace(/\n\n/g, '<br/><br/>') }} />
+            </SummarySection>
 
             <TwoColumnSection>
               <LeftColumn>
