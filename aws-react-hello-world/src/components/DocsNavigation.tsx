@@ -28,22 +28,27 @@ function DocsNavigation({ onSelectDoc }: DocsNavigationProps) {
     'frontend-development': true,
     'testing': true
   });
-  
+
+  // Define the documentation structure with categories
+  // Define individual docs (top-level docs)
+  const individualDocs: DocItem[] = [
+    { id: 'index', title: 'Documentation Home', path: '/docs/index.md' }
+  ];
+
   // Handle document selection
   const handleDocSelect = (doc: DocItem) => {
     setActiveDoc(doc.id);
     onSelectDoc(doc.path);
   };
-  
+
   // Toggle category expansion
   const toggleCategory = (categoryId: string) => {
-    setExpandedCategories({
-      ...expandedCategories,
-      [categoryId]: !expandedCategories[categoryId]
-    });
+    setExpandedCategories(prev => ({
+      ...prev,
+      [categoryId]: !prev[categoryId]
+    }));
   };
 
-  // Define the documentation structure with categories
   const docCategories: DocCategory[] = [
     {
       id: 'application-architecture',
@@ -84,6 +89,7 @@ function DocsNavigation({ onSelectDoc }: DocsNavigationProps) {
       items: [
         { id: 'api-design', title: 'API Design Principles', path: '/docs/backend-development/api-design.md' },
         { id: 'data-models', title: 'Data Models', path: '/docs/backend-development/data-models.md' },
+        { id: 'mongodb-data-model', title: 'MongoDB Data Model for Project Management System', path: '/docs/backend-development/mongodb-data-model.md' },
         { id: 'mongodb-integration', title: 'MongoDB Integration in Spring Boot', path: '/docs/backend-development/mongodb-integration.md' }
       ]
     },
@@ -104,6 +110,7 @@ function DocsNavigation({ onSelectDoc }: DocsNavigationProps) {
       title: 'Frontend Development',
       path: '/docs/frontend-development/index.md',
       items: [
+        { id: 'resume-component-technical-documentation', title: 'Resume Component Technical Documentation', path: '/docs/frontend-development/resume-component-technical-documentation.md' },
         { id: 'api-integration', title: 'API Integration', path: '/docs/frontend-development/api-integration.md' }
       ]
     },
@@ -120,17 +127,6 @@ function DocsNavigation({ onSelectDoc }: DocsNavigationProps) {
   ];
 
 
-
-
-
-
-
-
-
-  // Individual docs (not in categories)
-  const individualDocs: DocItem[] = [
-    { id: 'index', title: 'Documentation Home', path: '/docs/index.md' }
-  ];
 
   return (
     <div className="docs-navigation">
