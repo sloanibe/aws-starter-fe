@@ -1,18 +1,24 @@
-import { Certification } from '../../../models/ResumeTypes';
+export interface Certification {
+    name: string;
+    issuer: string;
+    dateAchieved?: string;
+}
 
 export const certifications: Certification[] = [
     {
-        name: 'AWS Enterprise Architect (EE)',
-        issuer: 'Amazon Web Services',
-        dateAchieved: '2023'
+        name: 'Java - Enterprise JavaBeans (EJB) 2.0',
+        issuer: 'Brainbench'
     },
     {
-        name: 'Worklight Programming',
-        issuer: 'IBM Mobile Application Development',
-        dateAchieved: 'San Jose, CA'
+        name: 'Weblogic Programming',
+        issuer: 'BEA Systems - San Jose, CA'
     },
     {
-        name: 'PowerBuilder',
-        issuer: 'San Francisco, CA'
+        name: 'Weblogic 6.0 Administration',
+        issuer: 'BEA Systems - San Jose, CA'
+    },
+    {
+        name: 'PeopleTools',
+        issuer: 'PeopleSoft - San Francisco, CA'
     }
 ];

@@ -502,7 +502,7 @@ const Resume = forwardRef<HTMLDivElement>((props, ref) => {
                       <div key={index} style={{ marginBottom: '1rem' }}>
                         <strong>{cert.name}</strong>
                         <div>{cert.issuer}</div>
-                        <div>{cert.date}</div>
+                        {cert.dateAchieved && <div>{cert.dateAchieved}</div>}
                       </div>
                     ))}
                   </div>
