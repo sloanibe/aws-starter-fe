@@ -42,7 +42,7 @@ public class EmailService {
         }
     }
 
-    public void sendGuestVisitNotification(String guestEmail, String guestName) {
+    public void sendGuestVisitNotification(String guestEmail, String guestName, String guestCompany) {
         try {
             SendTemplatedEmailRequest emailRequest = SendTemplatedEmailRequest.builder()
                     .destination(Destination.builder().toAddresses(senderEmail).build())
@@ -51,9 +51,10 @@ public class EmailService {
                     .templateData(String.format(
                             "{\"guestName\":\"%s\"," +
                             "\"guestEmail\":\"%s\"," +
+                            "\"guestCompany\":\"%s\"," +
                             "\"visitTime\":\"%s\"," +
                             "\"appUrl\":\"https://sloandev.net\"}",
-                            guestName, guestEmail, java.time.LocalDateTime.now()))
+                            guestName, guestEmail, guestCompany, java.time.LocalDateTime.now()))
                     .build();
 
             SendTemplatedEmailResponse response = sesClient.sendTemplatedEmail(emailRequest);

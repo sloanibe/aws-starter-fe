@@ -81,6 +81,7 @@ public class UserController extends BaseController {
     public ResponseEntity<UserEntity> loginAsGuest(@RequestBody Map<String, String> guestInfo) {
         String email = guestInfo.get("email");
         String name = guestInfo.get("name");
+        String organization = guestInfo.getOrDefault("organization", "Guest");
 
         // Create a temporary guest user object (not saved to database)
         UserEntity guestUser = new UserEntity();
@@ -89,14 +90,14 @@ public class UserController extends BaseController {
         guestUser.setDisplayName(name);
         guestUser.setCreatedAt(LocalDateTime.now());
         guestUser.setLastLogin(LocalDateTime.now());
-        guestUser.setOrganization("Guest");
+        guestUser.setOrganization(organization);
         guestUser.setId("guest-" + System.currentTimeMillis()); // Temporary ID
 
         try {
             // Only send notification to admin (verified email) since we're in SES sandbox mode
-            log.info("Attempting to send guest visit notification - Name: {}, Email: {}", name, email);
-            emailService.sendGuestVisitNotification(email, name);
-            log.info("Successfully sent guest visit notification for: {} ({})", name, email);
+            log.info("Attempting to send guest visit notification - Name: {}, Email: {}, Organization: {}", name, email, organization);
+            emailService.sendGuestVisitNotification(email, name, organization);
+            log.info("Successfully sent guest visit notification for: {} ({}) from {}", name, email, organization);
         } catch (Exception e) {
             // Log the error but don't prevent login
             log.error("Failed to send guest notification: {} - Stack trace: {}", e.getMessage(), e.getStackTrace());

@@ -147,6 +147,7 @@ Resources:
                     <ul>
                       <li><strong>Name:</strong> {{guestName}}</li>
                       <li><strong>Email:</strong> {{guestEmail}}</li>
+                      <li><strong>Company:</strong> {{guestCompany}}</li>
                       <li><strong>Visit Time:</strong> {{visitTime}}</li>
                     </ul>
                   </div>
@@ -166,6 +167,7 @@ Resources:
           Guest Details:
           - Name: {{guestName}}
           - Email: {{guestEmail}}
+          - Company: {{guestCompany}}
           - Visit Time: {{visitTime}}
 
           View dashboard at: {{appUrl}}
