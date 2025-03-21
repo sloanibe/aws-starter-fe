@@ -4,10 +4,11 @@ export const apiConfig = {
   useMockApi: false,
   
   // Base URL for API calls
-  // Use local API for development, production API for production
+  // In development, use the local proxy defined in vite.config.ts
+  // In production, use the actual API endpoint
   apiBaseUrl: import.meta.env.DEV 
-    ? 'http://localhost:8080/api'  // Development API endpoint
-    : 'https://vab90wx4u0.execute-api.us-west-1.amazonaws.com/prod/api', // Production API endpoint
+    ? '/api'  // This will be proxied by Vite to the production API
+    : 'https://vab90wx4u0.execute-api.us-west-1.amazonaws.com/prod/api',
   
   // API endpoints
   endpoints: {
