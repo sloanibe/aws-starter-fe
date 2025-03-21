@@ -40,6 +40,7 @@ const theme = createTheme({
 
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Resume from './components/resume/Resume';
+import FigmaWireframe from './components/figma/FigmaWireframe';
 
 const AppContent = () => {
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
@@ -68,6 +69,7 @@ const AppContent = () => {
           <Route path="/dashboard" element={isAuthenticated ? <Dashboard /> : <Login onLoginSuccess={() => updateAuthState(true)} />} />
           <Route path="/projects/:projectId" element={isAuthenticated ? <ProjectDetailComponent /> : <Login onLoginSuccess={() => updateAuthState(true)} />} />
           <Route path="/resume" element={isAuthenticated ? <Resume /> : <Login onLoginSuccess={() => updateAuthState(true)} />} />
+          <Route path="/figma" element={isAuthenticated ? <FigmaWireframe /> : <Login onLoginSuccess={() => updateAuthState(true)} />} />
         </Routes>
       </div>
     </div>

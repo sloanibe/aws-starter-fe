@@ -9,7 +9,7 @@ import {
 import {
   Notifications, Search, AccountCircle, Settings,
   ExitToApp, FilterList, MenuBook, Close, Description,
-  Print
+  Print, DesignServices
 } from '@mui/icons-material';
 import Documentation from './Documentation';
 
@@ -150,6 +150,19 @@ const Header: React.FC<HeaderProps> = ({
               }}
             >
               Resume
+            </Button>
+            <Button
+              color="inherit"
+              startIcon={<DesignServices />}
+              onClick={() => navigate('/figma')}
+              sx={{
+                borderRadius: 2,
+                '&:hover': {
+                  bgcolor: 'action.hover'
+                }
+              }}
+            >
+              Figma
             </Button>
             {window.location.pathname === '/resume' && (
               <>

@@ -15,13 +15,12 @@ export const professionalExperience: Experience[] = [
     startDate: '2019',
     endDate: '8/24',
     responsibilities: [
-      'Develop and deploy scalable software solutions for a customer-facing credit monitoring platform, leading the migration from legacy JQuery/SOAP systems to a modern React/REST API stack to boost performance and maintainability',
+      'Develop and deploy scalable software solutions for a customer-facing credit monitoring platform as part of the company\'s Vanguard team that led the migration from legacy JQuery/SOAP systems to a modern React/REST API stack to boost performance and maintainability',
       'Developed and integrated Java-based RESTful APIs to support new features and improve system interoperability, ensuring seamless integration with third-party services and internal components',
-      'Established and maintained CI/CD pipelines using Jenkins and Maven, Kubernetes for Java applications, automating build, test, and deployment processes',
+      'Part of a team tasked with updating the credit monitoring site to meet accessibility standards as laid out by WCAG 2.1 AA compliance requirements',
       'Mentor and guide junior developers, ensuring high code quality through comprehensive reviews and promoting best practices in full-stack development and ADA compliance',
       'Collaborate with multiple stakeholders, including architecture, product, UI/UX, and remote teams, to translate complex business requirements into effective software solutions',
       'Design and optimize system architectures to enhance reliability and performance, manage end-to-end release processes, including documentation, and create Docker images',
-      'Implemented and maintained event driven software architecture with RabbitMQ in Java backend',
       'Implement comprehensive testing strategies using Junit, Jest, Serenity to ensure code integrity',
       'Participated in the production release process using Grafana, Spotfire, Splunk to monitor integrity of production releases'
     ]
