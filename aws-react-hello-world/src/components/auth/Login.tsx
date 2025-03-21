@@ -88,7 +88,7 @@ const Login: React.FC<LoginProps> = ({ onLoginSuccess }) => {
         sx={{
           position: 'relative',
           zIndex: 1,
-          maxWidth: 450,
+          maxWidth: { xs: 450, md: 800 },
           width: '100%',
           background: 'rgba(255, 255, 255, 0.9)',
           backdropFilter: 'blur(10px)',
@@ -123,7 +123,7 @@ const Login: React.FC<LoginProps> = ({ onLoginSuccess }) => {
             display: 'flex', 
             flexDirection: 'column', 
             alignItems: 'center',
-            mb: { xs: 2, sm: 4 },
+            mb: { xs: 2, sm: 3, md: 4 },
             mt: { xs: 1, sm: 2 }
           }}>
             <Typography 
@@ -175,54 +175,112 @@ const Login: React.FC<LoginProps> = ({ onLoginSuccess }) => {
             variant="body1" 
             color="text.secondary" 
             textAlign="center" 
-            sx={{ mb: { xs: 1, sm: 2 } }}
+            sx={{ mb: { xs: 1, sm: 2 }, maxWidth: { md: '80%', lg: '70%' }, mx: 'auto' }}
           >
             This is my full-stack development sandbox where I experiment with modern enterprise technologies.
             It's a work in progress designed to showcase state-of-the-art trends in enterprise software architecture.
           </Typography>
 
-          <Typography
-            variant="body2"
-            color="text.secondary"
-            textAlign="center"
-            component="div"
-            sx={{ mb: { xs: 2, sm: 3 } }}
-          >
-            <Box component="ul" sx={{ 
-              listStyle: 'none', 
-              p: 0,
-              m: 0,
-              '& li': { 
-                mb: { xs: 0.25, sm: 0.5 },
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                gap: 1
-              }
+          <Box sx={{ 
+            display: 'flex', 
+            flexDirection: { xs: 'column', md: 'row' },
+            justifyContent: 'center',
+            alignItems: { xs: 'center', md: 'flex-start' },
+            mb: { xs: 2, sm: 3 },
+            width: '100%',
+            gap: { md: 4 }
+          }}>
+            {/* Current Technologies */}
+            <Box sx={{ 
+              flex: { md: 1 },
+              width: '100%',
+              maxWidth: { md: '50%' }
             }}>
-              <li>🚀 React with TypeScript & Material UI</li>
-              <li>☁️ AWS (SES, API Gateway, EC2)</li>
-              <li>🔒 Spring Boot Backend with JWT Auth</li>
-              <li>📧 Email Notifications with AWS SES</li>
-              <li>🌐 RESTful API Architecture</li>
-              <li>🧩 Microservices with Service Discovery</li>
+              <Typography
+                variant="subtitle2"
+                color="primary.dark"
+                textAlign={{ xs: 'center', md: 'left' }}
+                sx={{ mb: { xs: 0.5, sm: 1 }, fontWeight: 'bold', pl: { md: 2 } }}
+              >
+                Current Technologies:
+              </Typography>
+              <Typography
+                variant="body2"
+                color="text.secondary"
+                component="div"
+                sx={{ mb: { xs: 2, md: 0 } }}
+              >
+                <Box component="ul" sx={{ 
+                  listStyle: 'none', 
+                  p: 0,
+                  m: 0,
+                  '& li': { 
+                    mb: { xs: 0.25, sm: 0.5 },
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: { xs: 'center', md: 'flex-start' },
+                    gap: 1
+                  }
+                }}>
+                  <li>🚀 React with TypeScript & Material UI</li>
+                  <li>☁️ AWS (SES, API Gateway, EC2)</li>
+                  <li>🔒 Spring Boot Backend with JWT Auth</li>
+                  <li>📧 Email Notifications with AWS SES</li>
+                  <li>🌐 RESTful API Architecture</li>
+                  <li>🧩 Microservices with Service Discovery</li>
+                </Box>
+              </Typography>
             </Box>
-          </Typography>
-          
-          <Typography
-            variant="subtitle2"
-            color="primary.dark"
-            textAlign="center"
-            sx={{ mb: { xs: 0.5, sm: 1 }, fontWeight: 'bold' }}
-          >
-            Coming Soon:
-          </Typography>
+            
+            {/* Coming Soon */}
+            <Box sx={{ 
+              flex: { md: 1 },
+              width: '100%',
+              maxWidth: { md: '50%' }
+            }}>
+              <Typography
+                variant="subtitle2"
+                color="primary.dark"
+                textAlign={{ xs: 'center', md: 'left' }}
+                sx={{ mb: { xs: 0.5, sm: 1 }, fontWeight: 'bold', pl: { md: 2 } }}
+              >
+                Coming Soon:
+              </Typography>
+              <Typography
+                variant="body2"
+                color="text.secondary"
+                component="div"
+              >
+                <Box component="ul" sx={{ 
+                  listStyle: 'none', 
+                  p: 0,
+                  m: 0,
+                  '& li': { 
+                    mb: { xs: 0.25, sm: 0.5 },
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: { xs: 'center', md: 'flex-start' },
+                    gap: 1,
+                    fontStyle: 'italic',
+                    opacity: 0.85
+                  }
+                }}>
+                  <li>🔄 Real-time Collaboration Features</li>
+                  <li>🧠 AI-Powered Insights & Recommendations</li>
+                  <li>📊 Advanced Analytics Dashboard</li>
+                  <li>🔐 Enhanced Security & Compliance</li>
+                  <li>🧩 Advanced Microservices Architecture with Eureka/Consul</li>
+                </Box>
+              </Typography>
+            </Box>
+          </Box>
           
           <Box
             sx={{
               display: 'flex',
               justifyContent: 'center',
               mb: { xs: 1.5, sm: 2 },
+              width: '100%'
             }}
           >
             <Box
@@ -230,7 +288,7 @@ const Login: React.FC<LoginProps> = ({ onLoginSuccess }) => {
                 backgroundColor: 'rgba(25, 118, 210, 0.08)',
                 borderRadius: 1,
                 p: { xs: 1, sm: 1.5 },
-                maxWidth: '95%',
+                maxWidth: { xs: '95%', md: '80%' },
                 border: '1px dashed rgba(25, 118, 210, 0.3)',
               }}
             >
@@ -251,41 +309,17 @@ const Login: React.FC<LoginProps> = ({ onLoginSuccess }) => {
               </Typography>
             </Box>
           </Box>
-          
-          <Typography
-            variant="body2"
-            color="text.secondary"
-            textAlign="center"
-            component="div"
-            sx={{ mb: { xs: 2, sm: 3 } }}
-          >
-            <Box component="ul" sx={{ 
-              listStyle: 'none', 
-              p: 0,
-              m: 0,
-              '& li': { 
-                mb: { xs: 0.25, sm: 0.5 },
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                gap: 1,
-                fontStyle: 'italic',
-                opacity: 0.85
-              }
-            }}>
-              <li>🔄 Real-time Collaboration Features</li>
-              <li>🧠 AI-Powered Insights & Recommendations</li>
-              <li>📊 Advanced Analytics Dashboard</li>
-              <li>🔐 Enhanced Security & Compliance</li>
-              <li>🧩 Advanced Microservices Architecture with Eureka/Consul</li>
-            </Box>
-          </Typography>
 
           <Typography 
             variant="body2" 
             color="primary.main" 
-            textAlign="center" 
-            sx={{ mb: { xs: 1, sm: 2 }, fontWeight: 'medium' }}
+            textAlign="center"
+            sx={{ 
+              mb: { xs: 1, sm: 2 }, 
+              fontWeight: 'medium',
+              maxWidth: { md: '80%' },
+              mx: 'auto'
+            }}
           >
             Sign in below to explore the features! ✨
           </Typography>
@@ -293,8 +327,13 @@ const Login: React.FC<LoginProps> = ({ onLoginSuccess }) => {
           <Typography 
             variant="body2" 
             color="text.secondary" 
-            textAlign="center" 
-            sx={{ mb: { xs: 2, sm: 4 }, fontStyle: 'italic' }}
+            textAlign="center"
+            sx={{ 
+              mb: { xs: 2, sm: 4 }, 
+              fontStyle: 'italic',
+              maxWidth: { md: '80%' },
+              mx: 'auto'
+            }}
           >
             In the upcoming weeks, this site will be updated with more demos that showcase current trends in
             enterprise software development, cloud architecture, microservices with service discovery, and modern UI/UX patterns.
@@ -307,80 +346,113 @@ const Login: React.FC<LoginProps> = ({ onLoginSuccess }) => {
               display: 'flex',
               flexDirection: 'column',
               gap: { xs: 2, sm: 3 },
+              maxWidth: { md: '80%' },
+              mx: 'auto',
+              width: '100%'
             }}
           >
-            <TextField
-              fullWidth
-              label="Name"
-              variant="outlined"
-              value={name}
-              onChange={(e: React.ChangeEvent<HTMLInputElement>) => setName(e.target.value)}
-              required
-              disabled={isLoading}
-              placeholder="Enter your name"
-              InputProps={{
-                startAdornment: (
-                  <InputAdornment position="start">
-                    <PersonIcon color="primary" />
-                  </InputAdornment>
-                ),
-              }}
-              sx={{
-                '& .MuiOutlinedInput-root': {
-                  '&:hover fieldset': {
-                    borderColor: theme.palette.primary.main,
-                  },
-                },
-              }}
-            />
-            <TextField
-              fullWidth
-              label="Email"
-              variant="outlined"
-              type="email"
-              value={email}
-              onChange={(e: React.ChangeEvent<HTMLInputElement>) => setEmail(e.target.value)}
-              required
-              disabled={isLoading}
-              placeholder="Enter your email"
-              InputProps={{
-                startAdornment: (
-                  <InputAdornment position="start">
-                    <EmailIcon color="primary" />
-                  </InputAdornment>
-                ),
-              }}
-              sx={{
-                '& .MuiOutlinedInput-root': {
-                  '&:hover fieldset': {
-                    borderColor: theme.palette.primary.main,
-                  },
-                },
-              }}
-            />
-            <TextField
-              fullWidth
-              label="Company (Optional)"
-              variant="outlined"
-              value={company}
-              onChange={(e: React.ChangeEvent<HTMLInputElement>) => setCompany(e.target.value)}
-              disabled={isLoading}
-              placeholder="Enter your company name"
-              InputProps={{
-                startAdornment: (
-                  <InputAdornment position="start">
-                    <BusinessIcon color="primary" />
-                  </InputAdornment>
-                ),
-              }}
-              sx={{
-                '& .MuiOutlinedInput-root': {
-                  '&:hover fieldset': {
-                    borderColor: theme.palette.primary.main,
-                  },
-                },
-              }}
-            />
+            {/* Two-column layout for larger screens */}
+            <Box sx={{ 
+              display: 'flex', 
+              flexDirection: { xs: 'column', md: 'row' },
+              gap: { xs: 2, md: 3 },
+              width: '100%'
+            }}>
+              {/* First column */}
+              <Box sx={{ flex: { md: 1 }, width: '100%' }}>
+                <TextField
+                  fullWidth
+                  label="Name"
+                  variant="outlined"
+                  value={name}
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => setName(e.target.value)}
+                  required
+                  disabled={isLoading}
+                  placeholder="Enter your name"
+                  InputProps={{
+                    startAdornment: (
+                      <InputAdornment position="start">
+                        <PersonIcon color="primary" />
+                      </InputAdornment>
+                    ),
+                  }}
+                  sx={{
+                    mb: { md: 3 },
+                    '& .MuiOutlinedInput-root': {
+                      '&:hover fieldset': {
+                        borderColor: theme.palette.primary.main,
+                      },
+                    },
+                  }}
+                />
+                <TextField
+                  fullWidth
+                  label="Email"
+                  variant="outlined"
+                  type="email"
+                  value={email}
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => setEmail(e.target.value)}
+                  required
+                  disabled={isLoading}
+                  placeholder="Enter your email"
+                  InputProps={{
+                    startAdornment: (
+                      <InputAdornment position="start">
+                        <EmailIcon color="primary" />
+                      </InputAdornment>
+                    ),
+                  }}
+                  sx={{
+                    '& .MuiOutlinedInput-root': {
+                      '&:hover fieldset': {
+                        borderColor: theme.palette.primary.main,
+                      },
+                    },
+                  }}
+                />
+              </Box>
+              
+              {/* Second column */}
+              <Box sx={{ flex: { md: 1 }, width: '100%' }}>
+                <TextField
+                  fullWidth
+                  label="Company (Optional)"
+                  variant="outlined"
+                  value={company}
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => setCompany(e.target.value)}
+                  disabled={isLoading}
+                  placeholder="Enter your company name"
+                  InputProps={{
+                    startAdornment: (
+                      <InputAdornment position="start">
+                        <BusinessIcon color="primary" />
+                      </InputAdornment>
+                    ),
+                  }}
+                  sx={{
+                    mb: { md: 3 },
+                    '& .MuiOutlinedInput-root': {
+                      '&:hover fieldset': {
+                        borderColor: theme.palette.primary.main,
+                      },
+                    },
+                  }}
+                />
+                
+                {/* Empty space to balance the layout */}
+                <Box sx={{ 
+                  display: { xs: 'none', md: 'flex' },
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  height: '56px', // Approximate height of a TextField
+                  opacity: 0.7
+                }}>
+                  <Typography variant="body2" color="text.secondary" sx={{ fontStyle: 'italic' }}>
+                    All fields are securely processed
+                  </Typography>
+                </Box>
+              </Box>
+            </Box>
 
             {error && (
               <Alert 
@@ -388,6 +460,9 @@ const Login: React.FC<LoginProps> = ({ onLoginSuccess }) => {
                 variant="filled"
                 sx={{ 
                   borderRadius: 1,
+                  maxWidth: { md: '80%' },
+                  mx: 'auto',
+                  width: '100%'
                 }}
               >
                 {error}
@@ -402,12 +477,17 @@ const Login: React.FC<LoginProps> = ({ onLoginSuccess }) => {
               type="submit"
               disabled={isLoading}
               sx={{
+                mt: { xs: 1, md: 2 },
                 py: 1.5,
+                fontWeight: 'bold',
+                borderRadius: 2,
                 textTransform: 'none',
-                fontWeight: 'medium',
-                boxShadow: 2,
+                fontSize: '1rem',
+                maxWidth: { md: '60%' },
+                mx: 'auto',
+                boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
                 '&:hover': {
-                  boxShadow: 4,
+                  boxShadow: '0 6px 16px rgba(0,0,0,0.2)',
                 },
               }}
             >
