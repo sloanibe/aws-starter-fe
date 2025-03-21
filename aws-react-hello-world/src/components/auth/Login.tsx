@@ -228,7 +228,7 @@ const Login: React.FC<LoginProps> = ({ onLoginSuccess }) => {
                   <li>🔒 Spring Boot Backend with JWT Auth</li>
                   <li>📧 Email Notifications with AWS SES</li>
                   <li>🌐 RESTful API Architecture</li>
-                  <li>🧩 Microservices with Service Discovery</li>
+                  <li>📱 Responsive Design & Mobile-First Approach</li>
                 </Box>
               </Typography>
             </Box>
@@ -298,15 +298,15 @@ const Login: React.FC<LoginProps> = ({ onLoginSuccess }) => {
                 color="primary.dark"
                 sx={{ display: 'block', fontWeight: 'medium', mb: { xs: 0.25, sm: 0.5 }, fontSize: { xs: '0.65rem', sm: '0.75rem' } }}
               >
-                💡 SPOTLIGHT: Microservices Architecture
+                💡 SPOTLIGHT: Cloud-Native Architecture
               </Typography>
               <Typography
                 variant="caption"
                 color="text.secondary"
                 sx={{ display: 'block', fontSize: { xs: '0.65rem', sm: '0.75rem' } }}
               >
-                Our implementation features distributed services with dynamic service discovery using Eureka/Consul,
-                allowing seamless scaling, resilience, and zero-downtime deployments in a cloud-native environment.
+                Our implementation leverages AWS cloud services with a Spring Boot backend,
+                providing a scalable foundation that will evolve into a microservices architecture in future releases.
               </Typography>
             </Box>
           </Box>
@@ -337,7 +337,7 @@ const Login: React.FC<LoginProps> = ({ onLoginSuccess }) => {
             }}
           >
             In the upcoming weeks, this site will be updated with more demos that showcase current trends in
-            enterprise software development, cloud architecture, microservices with service discovery, CI/CD with GitHub Actions, and modern UI/UX patterns.
+            enterprise software development, cloud architecture, CI/CD with GitHub Actions, modern UI/UX patterns, and planned microservices architecture.
           </Typography>
 
           <Box
