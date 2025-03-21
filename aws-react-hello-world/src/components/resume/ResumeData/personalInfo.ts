@@ -15,7 +15,7 @@ export const personalInfo: PersonalInfo = {
     name: 'MARK SLOAN',
     contactInfo: {
         location: 'Wildomar, CA 92595',
-        phone: '+1 951 584 4480',
+        phone: '+1 951 584 4460',
         email: 'sloanibe@gmail.com',
         linkedIn: { text: 'LinkedIn', url: 'https://www.linkedin.com/in/markrsloan/' },
         relocate: true
