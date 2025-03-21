@@ -60,7 +60,7 @@ const Login: React.FC<LoginProps> = ({ onLoginSuccess }) => {
         right: 0,
         bottom: 0,
         display: 'flex',
-        alignItems: 'center',
+        alignItems: 'flex-start', // Changed from 'center' to 'flex-start'
         justifyContent: 'center',
         background: '#1a1a1a',
         '&::before': {
@@ -78,7 +78,9 @@ const Login: React.FC<LoginProps> = ({ onLoginSuccess }) => {
           zIndex: 0
         },
         p: 2,
+        pt: { xs: 4, sm: 6 }, // Added padding top for small screens
         overflowY: 'auto',
+        minHeight: '100vh', // Ensure minimum height
       }}
     >
       <Card
@@ -93,40 +95,41 @@ const Login: React.FC<LoginProps> = ({ onLoginSuccess }) => {
           borderRadius: 3,
           border: '1px solid rgba(255, 255, 255, 0.2)',
           boxShadow: '0 8px 32px 0 rgba(31, 38, 135, 0.37)',
+          my: { xs: 4, sm: 6 }, // Add margin top and bottom
+          maxHeight: { xs: 'calc(100vh - 32px)', sm: 'calc(100vh - 64px)' }, // Limit max height based on viewport
+          overflowY: 'auto', // Enable scrolling within the card
         }}
       >
-        <Box sx={{ position: 'relative', mt: 6 }}>
+        <Box sx={{ position: 'relative', mt: { xs: 5, sm: 6 } }}>
           <Box
             component="img"
             src={sloanImage}
             alt="Profile"
             sx={{
               position: 'absolute',
-              top: -40,
+              top: { xs: -35, sm: -40 }, // Smaller top position on small screens
               left: '50%',
               transform: 'translateX(-50%)',
-              width: 100,
-              height: 100,
+              width: { xs: 80, sm: 100 }, // Smaller image on small screens
+              height: { xs: 80, sm: 100 }, // Smaller image on small screens
               borderRadius: '50%',
               border: '2px solid #e0e0e0',
               boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
               zIndex: 2
             }}
           />
-          <CardContent sx={{ p: 4, pt: 8, mt: 2 }}>
+          <CardContent sx={{ p: { xs: 3, sm: 4 }, pt: { xs: 6, sm: 8 }, mt: 2 }}>
           <Box sx={{ 
             display: 'flex', 
             flexDirection: 'column', 
             alignItems: 'center',
-            mb: 4,
-            mt: 2
+            mb: { xs: 2, sm: 4 },
+            mt: { xs: 1, sm: 2 }
           }}>
             <Typography 
-              variant="h4" 
-              component="h1" 
-              gutterBottom 
-              textAlign="center"
-              sx={{ 
+              variant="h5" 
+              sx={{
+                fontSize: { xs: '1.5rem', sm: '2.125rem' }, // Responsive font size
                 fontWeight: 'bold',
                 background: 'linear-gradient(45deg, #2196F3 30%, #21CBF3 90%)',
                 backgroundClip: 'text',
@@ -134,8 +137,12 @@ const Login: React.FC<LoginProps> = ({ onLoginSuccess }) => {
                 WebkitBackgroundClip: 'text',
                 WebkitTextFillColor: 'transparent',
               }}
+              component="h1" 
+              gutterBottom 
+              textAlign="center"
+
             >
-              Welcome to My Tech Playground! ✨
+              Welcome to My Tech Sandbox! ✨
             </Typography>
             
             <Box
@@ -168,7 +175,7 @@ const Login: React.FC<LoginProps> = ({ onLoginSuccess }) => {
             variant="body1" 
             color="text.secondary" 
             textAlign="center" 
-            sx={{ mb: 2 }}
+            sx={{ mb: { xs: 1, sm: 2 } }}
           >
             This is my full-stack development sandbox where I experiment with modern enterprise technologies.
             It's a work in progress designed to showcase state-of-the-art trends in enterprise software architecture.
@@ -179,14 +186,14 @@ const Login: React.FC<LoginProps> = ({ onLoginSuccess }) => {
             color="text.secondary"
             textAlign="center"
             component="div"
-            sx={{ mb: 3 }}
+            sx={{ mb: { xs: 2, sm: 3 } }}
           >
             <Box component="ul" sx={{ 
               listStyle: 'none', 
               p: 0,
               m: 0,
               '& li': { 
-                mb: 0.5,
+                mb: { xs: 0.25, sm: 0.5 },
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
@@ -206,7 +213,7 @@ const Login: React.FC<LoginProps> = ({ onLoginSuccess }) => {
             variant="subtitle2"
             color="primary.dark"
             textAlign="center"
-            sx={{ mb: 1, fontWeight: 'bold' }}
+            sx={{ mb: { xs: 0.5, sm: 1 }, fontWeight: 'bold' }}
           >
             Coming Soon:
           </Typography>
@@ -215,29 +222,29 @@ const Login: React.FC<LoginProps> = ({ onLoginSuccess }) => {
             sx={{
               display: 'flex',
               justifyContent: 'center',
-              mb: 2,
+              mb: { xs: 1.5, sm: 2 },
             }}
           >
             <Box
               sx={{
                 backgroundColor: 'rgba(25, 118, 210, 0.08)',
                 borderRadius: 1,
-                p: 1.5,
-                maxWidth: '90%',
+                p: { xs: 1, sm: 1.5 },
+                maxWidth: '95%',
                 border: '1px dashed rgba(25, 118, 210, 0.3)',
               }}
             >
               <Typography
                 variant="caption"
                 color="primary.dark"
-                sx={{ display: 'block', fontWeight: 'medium', mb: 0.5 }}
+                sx={{ display: 'block', fontWeight: 'medium', mb: { xs: 0.25, sm: 0.5 }, fontSize: { xs: '0.65rem', sm: '0.75rem' } }}
               >
                 💡 SPOTLIGHT: Microservices Architecture
               </Typography>
               <Typography
                 variant="caption"
                 color="text.secondary"
-                sx={{ display: 'block', fontSize: '0.75rem' }}
+                sx={{ display: 'block', fontSize: { xs: '0.65rem', sm: '0.75rem' } }}
               >
                 Our implementation features distributed services with dynamic service discovery using Eureka/Consul,
                 allowing seamless scaling, resilience, and zero-downtime deployments in a cloud-native environment.
@@ -250,14 +257,14 @@ const Login: React.FC<LoginProps> = ({ onLoginSuccess }) => {
             color="text.secondary"
             textAlign="center"
             component="div"
-            sx={{ mb: 3 }}
+            sx={{ mb: { xs: 2, sm: 3 } }}
           >
             <Box component="ul" sx={{ 
               listStyle: 'none', 
               p: 0,
               m: 0,
               '& li': { 
-                mb: 0.5,
+                mb: { xs: 0.25, sm: 0.5 },
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
@@ -278,7 +285,7 @@ const Login: React.FC<LoginProps> = ({ onLoginSuccess }) => {
             variant="body2" 
             color="primary.main" 
             textAlign="center" 
-            sx={{ mb: 2, fontWeight: 'medium' }}
+            sx={{ mb: { xs: 1, sm: 2 }, fontWeight: 'medium' }}
           >
             Sign in below to explore the features! ✨
           </Typography>
@@ -287,7 +294,7 @@ const Login: React.FC<LoginProps> = ({ onLoginSuccess }) => {
             variant="body2" 
             color="text.secondary" 
             textAlign="center" 
-            sx={{ mb: 4, fontStyle: 'italic' }}
+            sx={{ mb: { xs: 2, sm: 4 }, fontStyle: 'italic' }}
           >
             In the upcoming weeks, this site will be updated with more demos that showcase current trends in
             enterprise software development, cloud architecture, microservices with service discovery, and modern UI/UX patterns.
@@ -299,7 +306,7 @@ const Login: React.FC<LoginProps> = ({ onLoginSuccess }) => {
             sx={{
               display: 'flex',
               flexDirection: 'column',
-              gap: 3,
+              gap: { xs: 2, sm: 3 },
             }}
           >
             <TextField
