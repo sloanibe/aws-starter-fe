@@ -5,6 +5,7 @@ import { authService } from '../../services/auth/AuthService';
 import BusinessIcon from '@mui/icons-material/Business';
 import PersonIcon from '@mui/icons-material/Person';
 import EmailIcon from '@mui/icons-material/Email';
+import LightbulbIcon from '@mui/icons-material/Lightbulb';
 import {
   Box,
   Card,
@@ -329,7 +330,7 @@ const Login: React.FC<LoginProps> = ({ onLoginSuccess }) => {
             color="text.secondary" 
             textAlign="center"
             sx={{ 
-              mb: { xs: 2, sm: 4 }, 
+              mb: { xs: 2, sm: 3 }, 
               fontStyle: 'italic',
               maxWidth: { md: '80%' },
               mx: 'auto'
@@ -338,6 +339,30 @@ const Login: React.FC<LoginProps> = ({ onLoginSuccess }) => {
             In the upcoming weeks, this site will be updated with more demos that showcase current trends in
             enterprise software development, cloud architecture, microservices with service discovery, and modern UI/UX patterns.
           </Typography>
+
+          <Box
+            sx={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              mb: { xs: 2, sm: 4 },
+              backgroundColor: 'rgba(255, 193, 7, 0.1)',
+              borderRadius: 2,
+              p: 2,
+              maxWidth: { md: '80%' },
+              mx: 'auto',
+              border: '1px dashed rgba(255, 193, 7, 0.5)',
+            }}
+          >
+            <LightbulbIcon sx={{ color: 'warning.main', mr: 1.5, fontSize: '1.5rem' }} />
+            <Typography
+              variant="body2"
+              color="text.primary"
+              sx={{ fontWeight: 'medium' }}
+            >
+              Be sure to check out the documentation for my notes on various aspects of the design and implementation!
+            </Typography>
+          </Box>
 
           <Box
             component="form"
