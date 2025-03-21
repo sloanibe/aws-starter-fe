@@ -303,7 +303,7 @@ const LeftColumn = styled('div')(({ theme }) => ({
   minWidth: '250px',
   backgroundColor: theme.palette.grey[800], // Darker grey to match Word document
   color: '#ffffff',
-  padding: theme.spacing(0, 1.5, 1.5, 1.5), // Reduced padding
+  padding: theme.spacing(1.125, 1.5, 1.5, 1.5), // Fine-tuned top padding (reduced by 7px total)
   '& > div': {
     backgroundColor: 'transparent'
   },
@@ -332,10 +332,10 @@ const RightColumnHeader = styled('div')(({ theme }) => ({
 }));
 
 const CompetencyListItem = styled(MuiListItem)(({ theme }) => ({
-  padding: '1px 16px', // Slightly more vertical padding
-  marginBottom: '2px !important', // Small margin between items
+  padding: '0px 16px', // Minimal vertical padding
+  marginBottom: '1px !important', // Minimal margin between items
   minHeight: 'auto', // Reduce minimum height
-  lineHeight: 1.2, // Slightly increased line height
+  lineHeight: 1.1, // Compact line height
 }));
 
 const RightColumn = styled('div')(({ theme }) => ({
@@ -494,12 +494,11 @@ const Resume = forwardRef<HTMLDivElement>((props, ref) => {
                     ))}
                   </div>
                 </Section>
-
-                <Section>
+                <Section style={{ marginTop: '-10px' }}>
                   <SectionHeader>CERTIFICATIONS</SectionHeader>
-                  <div style={{ marginTop: '12px' }}>
+                  <div style={{ marginTop: '6px' }}>
                     {certifications.map((cert, index) => (
-                      <div key={index} style={{ marginBottom: '1rem' }}>
+                      <div key={index} style={{ marginBottom: '0.5rem' }}>
                         <strong>{cert.name}</strong>
                         <div>{cert.issuer}</div>
                         {cert.dateAchieved && <div>{cert.dateAchieved}</div>}
@@ -507,11 +506,10 @@ const Resume = forwardRef<HTMLDivElement>((props, ref) => {
                     ))}
                   </div>
                 </Section>
-
-                <Section>
+                <Section style={{ marginTop: '-5px' }}>
                   <SectionHeader>PROFESSIONAL COMPETENCIES</SectionHeader>
-                  <div style={{ marginTop: '12px' }}>
-                    <List dense style={{ padding: 0 }}>
+                  <div style={{ marginTop: '8px' }}>
+                    <List dense disablePadding style={{ padding: 0 }}>
                       {professionalCompetencies.map((comp, index) => (
                         <CompetencyListItem key={index}>{comp}</CompetencyListItem>
                       ))}
