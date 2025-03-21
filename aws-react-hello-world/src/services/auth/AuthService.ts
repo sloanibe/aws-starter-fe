@@ -17,7 +17,7 @@ export interface GuestUser {
 }
 
 class AuthService {
-  async loginAsGuest(email: string, name: string): Promise<GuestUser> {
+  async loginAsGuest(email: string, name: string, company?: string): Promise<GuestUser> {
     try {
       const response = await fetch(`${apiConfig.apiBaseUrl}${apiConfig.endpoints.users}/guest`, {
         method: 'POST',
@@ -28,7 +28,8 @@ class AuthService {
           email,
           name: name,
           displayName: name,
-          username: 'guest'
+          username: 'guest',
+          organization: company || ''
         })
       });
 

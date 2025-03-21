@@ -2,6 +2,9 @@ import React, { useState } from 'react';
 import sloanImage from '../../assets/sloanimage.jpg';
 import { useNavigate } from 'react-router-dom';
 import { authService } from '../../services/auth/AuthService';
+import BusinessIcon from '@mui/icons-material/Business';
+import PersonIcon from '@mui/icons-material/Person';
+import EmailIcon from '@mui/icons-material/Email';
 import {
   Box,
   Card,
@@ -11,6 +14,7 @@ import {
   Typography,
   Alert,
   useTheme,
+  InputAdornment,
 } from '@mui/material';
 
 interface LoginProps {
@@ -20,6 +24,7 @@ interface LoginProps {
 const Login: React.FC<LoginProps> = ({ onLoginSuccess }) => {
   const [email, setEmail] = useState('');
   const [name, setName] = useState('');
+  const [company, setCompany] = useState('');
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
@@ -32,7 +37,7 @@ const Login: React.FC<LoginProps> = ({ onLoginSuccess }) => {
 
     try {
       // Login as guest and send notification
-      const guestUser = await authService.loginAsGuest(email, name);
+      const guestUser = await authService.loginAsGuest(email, name, company);
       console.log('Guest login successful:', guestUser);
       // Store guest user in local storage
       localStorage.setItem('user', JSON.stringify(guestUser));
@@ -132,6 +137,31 @@ const Login: React.FC<LoginProps> = ({ onLoginSuccess }) => {
             >
               Welcome to My Tech Playground! ✨
             </Typography>
+            
+            <Box
+              sx={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                backgroundColor: 'rgba(33, 150, 243, 0.1)',
+                borderRadius: '16px',
+                px: 2,
+                py: 0.5,
+                border: '1px solid rgba(33, 150, 243, 0.3)',
+              }}
+            >
+              <Typography
+                variant="caption"
+                sx={{ 
+                  fontWeight: 'medium',
+                  color: 'primary.main',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 0.5
+                }}
+              >
+                <span style={{ fontSize: '10px' }}>⚡</span> EXPERIMENTAL <span style={{ fontSize: '10px' }}>⚡</span>
+              </Typography>
+            </Box>
           </Box>
           
           <Typography 
@@ -140,7 +170,8 @@ const Login: React.FC<LoginProps> = ({ onLoginSuccess }) => {
             textAlign="center" 
             sx={{ mb: 2 }}
           >
-            This is my full-stack development sandbox where I experiment with modern technologies:
+            This is my full-stack development sandbox where I experiment with modern enterprise technologies.
+            It's a work in progress designed to showcase state-of-the-art trends in enterprise software architecture.
           </Typography>
 
           <Typography
@@ -148,7 +179,7 @@ const Login: React.FC<LoginProps> = ({ onLoginSuccess }) => {
             color="text.secondary"
             textAlign="center"
             component="div"
-            sx={{ mb: 4 }}
+            sx={{ mb: 3 }}
           >
             <Box component="ul" sx={{ 
               listStyle: 'none', 
@@ -167,6 +198,79 @@ const Login: React.FC<LoginProps> = ({ onLoginSuccess }) => {
               <li>🔒 Spring Boot Backend with JWT Auth</li>
               <li>📧 Email Notifications with AWS SES</li>
               <li>🌐 RESTful API Architecture</li>
+              <li>🧩 Microservices with Service Discovery</li>
+            </Box>
+          </Typography>
+          
+          <Typography
+            variant="subtitle2"
+            color="primary.dark"
+            textAlign="center"
+            sx={{ mb: 1, fontWeight: 'bold' }}
+          >
+            Coming Soon:
+          </Typography>
+          
+          <Box
+            sx={{
+              display: 'flex',
+              justifyContent: 'center',
+              mb: 2,
+            }}
+          >
+            <Box
+              sx={{
+                backgroundColor: 'rgba(25, 118, 210, 0.08)',
+                borderRadius: 1,
+                p: 1.5,
+                maxWidth: '90%',
+                border: '1px dashed rgba(25, 118, 210, 0.3)',
+              }}
+            >
+              <Typography
+                variant="caption"
+                color="primary.dark"
+                sx={{ display: 'block', fontWeight: 'medium', mb: 0.5 }}
+              >
+                💡 SPOTLIGHT: Microservices Architecture
+              </Typography>
+              <Typography
+                variant="caption"
+                color="text.secondary"
+                sx={{ display: 'block', fontSize: '0.75rem' }}
+              >
+                Our implementation features distributed services with dynamic service discovery using Eureka/Consul,
+                allowing seamless scaling, resilience, and zero-downtime deployments in a cloud-native environment.
+              </Typography>
+            </Box>
+          </Box>
+          
+          <Typography
+            variant="body2"
+            color="text.secondary"
+            textAlign="center"
+            component="div"
+            sx={{ mb: 3 }}
+          >
+            <Box component="ul" sx={{ 
+              listStyle: 'none', 
+              p: 0,
+              m: 0,
+              '& li': { 
+                mb: 0.5,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: 1,
+                fontStyle: 'italic',
+                opacity: 0.85
+              }
+            }}>
+              <li>🔄 Real-time Collaboration Features</li>
+              <li>🧠 AI-Powered Insights & Recommendations</li>
+              <li>📊 Advanced Analytics Dashboard</li>
+              <li>🔐 Enhanced Security & Compliance</li>
+              <li>🧩 Advanced Microservices Architecture with Eureka/Consul</li>
             </Box>
           </Typography>
 
@@ -174,9 +278,19 @@ const Login: React.FC<LoginProps> = ({ onLoginSuccess }) => {
             variant="body2" 
             color="primary.main" 
             textAlign="center" 
-            sx={{ mb: 4, fontWeight: 'medium' }}
+            sx={{ mb: 2, fontWeight: 'medium' }}
           >
             Sign in below to explore the features! ✨
+          </Typography>
+          
+          <Typography 
+            variant="body2" 
+            color="text.secondary" 
+            textAlign="center" 
+            sx={{ mb: 4, fontStyle: 'italic' }}
+          >
+            In the upcoming weeks, this site will be updated with more demos that showcase current trends in
+            enterprise software development, cloud architecture, microservices with service discovery, and modern UI/UX patterns.
           </Typography>
 
           <Box
@@ -193,10 +307,17 @@ const Login: React.FC<LoginProps> = ({ onLoginSuccess }) => {
               label="Name"
               variant="outlined"
               value={name}
-              onChange={(e) => setName(e.target.value)}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) => setName(e.target.value)}
               required
               disabled={isLoading}
               placeholder="Enter your name"
+              InputProps={{
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <PersonIcon color="primary" />
+                  </InputAdornment>
+                ),
+              }}
               sx={{
                 '& .MuiOutlinedInput-root': {
                   '&:hover fieldset': {
@@ -211,10 +332,40 @@ const Login: React.FC<LoginProps> = ({ onLoginSuccess }) => {
               variant="outlined"
               type="email"
               value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) => setEmail(e.target.value)}
               required
               disabled={isLoading}
               placeholder="Enter your email"
+              InputProps={{
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <EmailIcon color="primary" />
+                  </InputAdornment>
+                ),
+              }}
+              sx={{
+                '& .MuiOutlinedInput-root': {
+                  '&:hover fieldset': {
+                    borderColor: theme.palette.primary.main,
+                  },
+                },
+              }}
+            />
+            <TextField
+              fullWidth
+              label="Company (Optional)"
+              variant="outlined"
+              value={company}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) => setCompany(e.target.value)}
+              disabled={isLoading}
+              placeholder="Enter your company name"
+              InputProps={{
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <BusinessIcon color="primary" />
+                  </InputAdornment>
+                ),
+              }}
               sx={{
                 '& .MuiOutlinedInput-root': {
                   '&:hover fieldset': {

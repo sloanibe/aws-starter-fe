@@ -57,14 +57,13 @@ export const professionalExperience: Experience[] = [
     startDate: '2007',
     endDate: '2016',
     responsibilities: [
+      'SIMON: One of the initial Principal Engineers assigned to a high-profile government contract to build a monitoring system for maritime traffic entering and leaving ports. Helped design and implement the SRI SIMON system, a distributed microservices platform, including a rules-based data entitlement module that intercepted outgoing SOAP messages and scrubbed data for users without proper permissions. Helped develop a custom service discovery module to keep services loosely coupled. Led the migration to JEE with JAX-WS and JPA, and developed a test-first BDD development process.',
       'Led complex software solutions, utilizing SOA and REST services to meet business requirements and enhance system performance.',
       'Translated requirements into scalable, high-quality software and mentored junior developers to uphold best coding practices and standards.',
       'Managed the full software development lifecycle, including architecture, implementation, testing, and deployment, while continuously improving processes and integrating new technologies.',
-      'Key Projects:',
       'Mobius: Developed a Swing GUI for Mobius to visualize knowledge structures and integrated Lisp with Java modules.',
       'ITL: Integrated discrete learning modules into ITL and designed a DSL with ANTLR for sequencing learning examples.',
       'uLanding: Architected and implemented the infrastructure for uLanding, a Web 2.0 social network app for college students, including web framework and database strategies.',
-      'SIMON: Contributed to designing and implementing the SRI SIMON system, a distributed SOA platform, including a rules-based data entitlement module for secure SOAP message handling and the migration to JEE with JAX-WS and JPA. Developed a test-first BDD development process.',
       'Rigel: Refactored a 3D terrain mapping application using NASA\'s Worldwind framework, transitioning from an Ant-based to a multi-module Maven build system, integrating CDI with JBoss Weld, and upgrading the UI from Swing to JavaFX 2.0.',
       'SURF: Spearheaded the creation of a microservices-based internal web application for SRI, implementing a front end with WebSockets, VUEJS, and Bootstrap and a back end with Spring Boot, Spring Cloud, and MySQL to enhance project staffing projections.'
     ]
