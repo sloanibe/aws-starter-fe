@@ -1,17 +1,24 @@
 import React from 'react';
 import {
   AppBar, Toolbar, IconButton, Typography, Box, Card, CardContent, 
-  CardMedia, Button, List, ListItem, ListItemText, ListItemIcon,
-  Divider, Paper, Avatar, Container, Fab
+  CardMedia, Button, Paper, Container
 } from '@mui/material';
 import {
   Menu, ArrowBack, Bookmark, MoreVert, PlayArrow, Pause, 
-  NavigateNext, FiberManualRecord, Add
+  NavigateNext, FiberManualRecord, Lightbulb
 } from '@mui/icons-material';
 
-const FigmaWireframe = () => {
+const FigmaWireframe: React.FC = () => {
   return (
-    <Box sx={{ display: 'flex', height: '100vh', overflow: 'hidden' }}>
+    <Box sx={{ 
+      display: 'flex', 
+      height: '100vh', 
+      width: '100%',
+      overflow: 'hidden', 
+      justifyContent: 'center', 
+      alignItems: 'center',
+      backgroundColor: '#f5f5f5'
+    }}>
       {/* Left Navigation Panel */}
       <Box sx={{ 
         width: 80, 
@@ -22,16 +29,6 @@ const FigmaWireframe = () => {
         pt: 2,
         boxShadow: '0px 0px 10px rgba(0,0,0,0.1)'
       }}>
-        {/* Add Button */}
-        <Fab 
-          size="small" 
-          color="primary" 
-          aria-label="add"
-          sx={{ mb: 3, bgcolor: '#f8f9fa', color: '#000', boxShadow: 'none' }}
-        >
-          <Add />
-        </Fab>
-        
         {/* Navigation Items */}
         {[1, 2, 3, 4].map((item) => (
           <Box 
@@ -59,33 +56,77 @@ const FigmaWireframe = () => {
         ))}
       </Box>
       
-      {/* Main Content */}
-      <Container maxWidth="sm" disableGutters sx={{ flexGrow: 1 }}>
+      {/* Main Content Container - Centered */}
+      <Container 
+        maxWidth="sm" 
+        sx={{ 
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          p: 2,
+          border: '1px solid #e0e0e0',
+          borderRadius: 2,
+          boxShadow: '0 4px 20px rgba(0,0,0,0.08)',
+          backgroundColor: 'white',
+          maxHeight: '90vh',
+          overflow: 'auto',
+          mx: 2
+        }}
+      >
       {/* App Bar */}
-      <AppBar position="static" color="default" elevation={0}>
-        <Toolbar>
-          <IconButton edge="start" color="inherit">
-            <Menu />
-          </IconButton>
-          <IconButton color="inherit">
-            <ArrowBack />
-          </IconButton>
-          <Typography variant="h6" style={{ flexGrow: 1 }}>
-            Title
-          </Typography>
-          <IconButton color="inherit">
-            <Bookmark />
-          </IconButton>
-          <IconButton color="inherit">
-            <MoreVert />
-          </IconButton>
+      <AppBar position="static" color="default" elevation={0} sx={{ width: '100%', borderRadius: '4px 4px 0 0' }}>
+        <Toolbar sx={{ justifyContent: 'center' }}>
+          <Box sx={{ display: 'flex', width: '100%', alignItems: 'center' }}>
+            <IconButton edge="start" color="inherit" size="small">
+              <Menu />
+            </IconButton>
+            <IconButton color="inherit" size="small">
+              <ArrowBack />
+            </IconButton>
+            <Typography variant="h6" sx={{ flexGrow: 1, textAlign: 'center' }}>
+              Figma Demo
+            </Typography>
+            <IconButton color="inherit" size="small">
+              <Bookmark />
+            </IconButton>
+            <IconButton color="inherit" size="small">
+              <MoreVert />
+            </IconButton>
+          </Box>
         </Toolbar>
       </AppBar>
 
       {/* Main Content */}
-      <Box p={2}>
+      <Box p={2} sx={{ width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+        {/* Figma Information Blurb */}
+        <Paper 
+          elevation={1} 
+          sx={{ 
+            p: 2, 
+            mb: 3, 
+            display: 'flex', 
+            flexDirection: 'column',
+            alignItems: 'center', 
+            justifyContent: 'center',
+            textAlign: 'center',
+            backgroundColor: 'rgba(103, 58, 183, 0.05)', 
+            border: '1px solid rgba(103, 58, 183, 0.2)',
+            borderRadius: 2
+          }}
+        >
+          <Lightbulb sx={{ color: '#673ab7', mb: 1, fontSize: 32 }} />
+          <Box sx={{ maxWidth: '90%' }}>
+            <Typography variant="subtitle2" sx={{ fontWeight: 'bold', color: '#673ab7', mb: 0.5 }}>
+              Figma Wireframe Demo
+            </Typography>
+            <Typography variant="body2" color="text.secondary">
+              This page was created to demonstrate UI/UX wireframing concepts using Figma, a collaborative interface design tool. 
+              The layout showcases typical mobile application patterns and design elements.
+            </Typography>
+          </Box>
+        </Paper>
         {/* Featured Article */}
-        <Card elevation={0} style={{ marginBottom: 24 }}>
+        <Card elevation={0} sx={{ marginBottom: 3, width: '100%', maxWidth: '500px' }}>
           <Box display="flex">
             <CardMedia
               style={{ 
@@ -137,15 +178,15 @@ const FigmaWireframe = () => {
         </Card>
 
         {/* Section Title */}
-        <Box display="flex" alignItems="center" mb={2}>
-          <Typography variant="h6" component="h2" style={{ flexGrow: 1 }}>
+        <Box display="flex" alignItems="center" justifyContent="center" mb={2} width="100%" maxWidth="500px">
+          <Typography variant="h6" component="h2" sx={{ flexGrow: 1, textAlign: 'center' }}>
             Section title
           </Typography>
           <NavigateNext />
         </Box>
 
         {/* List Item */}
-        <Card elevation={0} style={{ marginBottom: 16 }}>
+        <Card elevation={0} sx={{ marginBottom: 2, width: '100%', maxWidth: '500px' }}>
           <Box display="flex">
             <CardMedia
               style={{ 
@@ -190,14 +231,14 @@ const FigmaWireframe = () => {
       {/* Player Bar */}
       <Paper 
         elevation={4} 
-        style={{ 
-          position: 'fixed', 
-          bottom: 0, 
-          width: '100%', 
-          maxWidth: 600,
+        sx={{ 
+          width: '100%',
+          borderRadius: '0 0 4px 4px',
           display: 'flex',
           alignItems: 'center',
-          padding: 8
+          justifyContent: 'center',
+          padding: 1,
+          mt: 2
         }}
       >
         <Box 
