@@ -59,9 +59,9 @@ const Login: React.FC<LoginProps> = ({ onLoginSuccess }) => {
         top: 0,
         left: 0,
         right: 0,
-        bottom: 0,
+        bottom: 50, // Exact height of footer
         display: 'flex',
-        alignItems: 'flex-start', // Changed from 'center' to 'flex-start'
+        alignItems: 'center',
         justifyContent: 'center',
         background: '#1a1a1a',
         '&::before': {
@@ -81,7 +81,7 @@ const Login: React.FC<LoginProps> = ({ onLoginSuccess }) => {
         p: 2,
         pt: { xs: 4, sm: 6 }, // Added padding top for small screens
         overflowY: 'auto',
-        minHeight: '100vh', // Ensure minimum height
+        zIndex: 1, // Higher than 0 but lower than footer
       }}
     >
       <Card

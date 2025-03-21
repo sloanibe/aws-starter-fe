@@ -60,6 +60,7 @@ body, html {
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   background-color: #f0f4f8;
   color: #333;
+  min-height: 100vh;
 }
 
 .container {
@@ -72,6 +73,9 @@ body, html {
   display: flex;
   flex-direction: column;
   overflow-x: hidden;
+  position: relative;
+  /* Ensure content doesn't get hidden behind the footer */
+  padding-bottom: 50px;
 }
 
 .app-header {
@@ -103,10 +107,10 @@ body, html {
 
 .app-content {
   display: flex;
-  flex: 1;
-  height: calc(100vh - 70px);
+  flex: 1 0 auto;
   position: relative;
-  overflow: hidden;
+  overflow: auto;
+  min-height: calc(100vh - 120px); /* Subtract footer height */
 }
 
 .messages-section, .task-section {

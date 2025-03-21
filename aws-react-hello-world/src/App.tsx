@@ -7,6 +7,7 @@ import Header from './components/Header'
 import Dashboard from './components/Dashboard';
 import ProjectDetailComponent from './components/ProjectDetail';
 import Login from './components/auth/Login';
+import Footer from './components/Footer';
 import { authService } from './services/auth/AuthService';
 
 // Material UI imports
@@ -72,6 +73,9 @@ const AppContent = () => {
           <Route path="/figma" element={isAuthenticated ? <FigmaWireframe /> : <Login onLoginSuccess={() => updateAuthState(true)} />} />
         </Routes>
       </div>
+      
+      {/* Always show footer */}
+      <Footer />
     </div>
   );
 };
