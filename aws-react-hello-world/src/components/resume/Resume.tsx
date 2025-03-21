@@ -53,7 +53,7 @@ const ResumeWrapper = styled('div')(({ theme }) => ({  // Outer wrapper for cent
   justifyContent: 'center',
   alignItems: 'flex-start',
   backgroundColor: theme.palette.background.default,
-  padding: `${Number(theme.spacing(5).toString().replace('px', '')) + 25}px 0 ${theme.spacing(2.5)}`, // Add top padding to account for header
+  padding: `${Number(theme.spacing(5).toString().replace('px', '')) + 25}px 0 ${theme.spacing(8)}`, // Increased bottom padding from 2.5 to 8 to account for footer
   isolation: 'isolate', // Creates a new stacking context
   overflow: 'auto', // Enable scrolling
   '@media print': {
@@ -234,7 +234,7 @@ const TwoColumnSection = styled('div')(({ theme }) => ({
 }));
 
 const TechnicalSkillsSection = styled('div')(({ theme }) => ({
-  marginBottom: theme.spacing(3),
+  marginBottom: theme.spacing(8), // Increased from 3 to 8 to prevent footer overlap
   '& > div': {
     marginBottom: theme.spacing(1)
   }
@@ -604,7 +604,7 @@ const Resume = forwardRef<HTMLDivElement>((props, ref) => {
               </RightColumn>
             </TwoColumnSection>
 
-            <div style={{ marginTop: '20px' }}>
+            <div style={{ marginTop: '20px', marginBottom: '70px' }}>
               <PageBreakBefore />
               <RightColumnHeader style={{ marginBottom: '15px' }}>
                 <SectionHeader style={{ marginBottom: 0 }}>TECHNICAL SKILLS</SectionHeader>

@@ -6,7 +6,7 @@ export interface SkillCategory {
 export const technicalSkills: SkillCategory[] = [
   {
     category: 'Server Side',
-    skills: ['JSP', 'ASP', 'Servlets', 'Drools', 'Struts', 'REST', 'SOAP', 'JMS', 'JPA', 'Hibernate', 'AKKA', 'Spring Boot']
+    skills: ['JSP', 'ASP', 'Servlets', 'Drools', 'Struts', 'REST', 'SOAP', 'JMS', 'JPA', 'Hibernate', 'AKKA', 'Spring Boot','JEE','NODE']
   },
   {
     category: 'Client Side',
@@ -14,38 +14,28 @@ export const technicalSkills: SkillCategory[] = [
   },
   {
     category: 'Operating Systems',
-    skills: ['Unix', 'Windows', 'Linux', 'Mac OSX', 'NextStep Environment']
+    skills: ['Unix', 'Windows', 'Linux', 'Mac OSX', 'NextStep']
   },
   {
     category: 'Languages',
-    skills: ['Java 8', 'C#', 'C', 'C++', 'Objective C', 'Pascal', 'Visual Basic', 'Groovy', 'Scala', 'JavaScript', 'UML (Unified Modeling Language)', 'XML']
+    skills: ['Java', 'C#', 'C', 'C++', 'Objective C', 'Pascal', 'Visual Basic', 'Groovy', 'Scala', 'JavaScript', 'XML']
   },
   {
     category: 'App Servers',
     skills: ['Weblogic', 'JBoss', 'Tomcat', 'Glassfish', 'Wildfly']
   },
-  {
-    category: 'SOA Platforms',
-    skills: ['WSO2 Carbon', 'Tuscany', 'CXF', 'Axis2', 'NET', 'J2EE']
-  },
+
   {
     category: 'Database',
     skills: ['Oracle', 'MS SQL Server', 'MYSQL', 'Postgres']
   },
   {
     category: 'Cloud',
-    skills: ['AWS EC2', 'RD', 'Route59', 'Spring Cloud', 'Amazon Cloud Services (AWS)']
+    skills: ['AWS']
   },
   {
     category: 'DevOps',
     skills: ['Jenkins', 'Docker', 'Maven']
-  },
-  {
-    category: 'AI Coding Tools',
-    skills: ['GitHub', 'Copilot']
-  },
-  {
-    category: 'Automation Tool',
-    skills: ['ANT']
   }
+
 ];
