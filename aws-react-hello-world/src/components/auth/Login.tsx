@@ -224,7 +224,7 @@ const Login: React.FC<LoginProps> = ({ onLoginSuccess }) => {
                   }
                 }}>
                   <li>🚀 React with TypeScript & Material UI</li>
-                  <li>☁️ AWS (SES, API Gateway, EC2)</li>
+                  <li>☁️ AWS (SES, API Gateway, EC2, CloudFormation)</li>
                   <li>🔒 Spring Boot Backend with JWT Auth</li>
                   <li>📧 Email Notifications with AWS SES</li>
                   <li>🌐 RESTful API Architecture</li>
@@ -337,7 +337,7 @@ const Login: React.FC<LoginProps> = ({ onLoginSuccess }) => {
             }}
           >
             In the upcoming weeks, this site will be updated with more demos that showcase current trends in
-            enterprise software development, cloud architecture, microservices with service discovery, and modern UI/UX patterns.
+            enterprise software development, cloud architecture, microservices with service discovery, CI/CD with GitHub Actions, and modern UI/UX patterns.
           </Typography>
 
           <Box

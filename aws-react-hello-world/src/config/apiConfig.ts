@@ -4,7 +4,10 @@ export const apiConfig = {
   useMockApi: false,
   
   // Base URL for API calls
-  apiBaseUrl: 'https://vab90wx4u0.execute-api.us-west-1.amazonaws.com/prod/api',
+  // Use local API for development, production API for production
+  apiBaseUrl: import.meta.env.DEV 
+    ? 'http://localhost:8080/api'  // Development API endpoint
+    : 'https://vab90wx4u0.execute-api.us-west-1.amazonaws.com/prod/api', // Production API endpoint
   
   // API endpoints
   endpoints: {
