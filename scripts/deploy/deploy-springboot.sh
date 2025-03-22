@@ -10,6 +10,6 @@ echo "🔍 Checking EC2 infrastructure..."
 $PROJECT_ROOT/scripts/aws/manage-aws.sh status --service=ec2
 
 # Call the infrastructure deployment script
-echo "🚀 Deploying backend using infrastructure deployment script..."
-cd "$PROJECT_ROOT" && ./infrastructure/scripts/deploy/deploy-backend.sh
+echo "🚀 Deploying Spring Boot application using infrastructure deployment script..."
+cd "$PROJECT_ROOT" && ./infrastructure/scripts/deploy/deploy-springboot.sh
 

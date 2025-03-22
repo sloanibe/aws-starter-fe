@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AWS Starter Project Documentation</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/lunr.js/2.3.9/lunr.min.js"></script>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>AWS Starter Project Documentation</h1>
+            <div class="search-container">
+                <input type="text" id="search-input" placeholder="Search documentation...">
+                <button id="search-button">Search</button>
+            </div>
+        </header>
+        
+        <div class="content">
+            <div class="sidebar">
+                <h2>Documentation</h2>
+                <ul id="doc-list">
+                    <li><a href="#" data-doc="server-management-scripts/README.md">Server Management Scripts</a></li>
+                    <li><a href="#" data-doc="server-management-scripts/QUICK-REFERENCE.md">Quick Reference Guide</a></li>
+                    <li><a href="#" data-doc="server-management-scripts/AUTO-STOP.md">Auto-Stop Functionality</a></li>
+                </ul>
+            </div>
+            
+            <div class="main-content">
+                <div id="search-results" class="hidden">
+                    <h2>Search Results</h2>
+                    <div id="results-list"></div>
+                </div>
+                
+                <div id="doc-content">
+                    <div class="loading">Loading documentation...</div>
+                </div>
+            </div>
+        </div>
+        
+        <footer>
+            <p>&copy; 2025 AWS Starter Project</p>
+        </footer>
+    </div>
+    
+    <script src="search.js"></script>
+    <script src="docs.js"></script>
+</body>
+</html>

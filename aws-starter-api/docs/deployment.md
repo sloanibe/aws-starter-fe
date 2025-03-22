@@ -6,7 +6,7 @@
 - Deployment: Direct deployment to EC2 using rsync
 
 ## Deployment Process
-Our deployment process uses a bash script (`deploy-backend.sh`) that:
+Our deployment process uses a bash script (`deploy-springboot.sh`) that:
 1. Builds the Spring Boot jar using Maven
 2. Syncs the jar file to EC2 using rsync
 3. Stops any existing application instance
@@ -26,7 +26,7 @@ aws ec2 describe-instance-status --instance-ids i-01d80332e1a5ef33f
 ssh -i /home/msloan/aws-starter-mongo-key.pem ubuntu@3.101.153.60
 
 # Deploy application
-./deploy-backend.sh
+./deploy-springboot.sh
 ```
 
 ### Monitoring

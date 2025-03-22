@@ -32,7 +32,13 @@ function DocsNavigation({ onSelectDoc }: DocsNavigationProps) {
   // Define the documentation structure with categories
   // Define individual docs (top-level docs)
   const individualDocs: DocItem[] = [
-    { id: 'index', title: 'Documentation Home', path: '/docs/index.md' }
+    { id: 'index', title: 'Documentation Home', path: '/docs/index.md' },
+    { id: 'main-index', title: 'Main Documentation Index', path: '/docs/MAIN-INDEX.md' },
+    { id: 'topic-index', title: 'Alphabetical Topic Index', path: '/docs/TOPIC-INDEX.md' },
+    { id: 'category-index', title: 'Categorized Index', path: '/docs/INDEX.md' },
+    { id: 'server-main-index', title: 'Server Management Index', path: '/docs/server-management-scripts/MAIN-INDEX.md' },
+    { id: 'server-topic-index', title: 'Server Topic Index', path: '/docs/server-management-scripts/TOPIC-INDEX.md' },
+    { id: 'server-category-index', title: 'Server Categorized Index', path: '/docs/server-management-scripts/INDEX.md' }
   ];
 
   // Handle document selection

@@ -1,0 +1,245 @@
+/* General Styles */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    line-height: 1.6;
+    color: #333;
+    background-color: #f5f7f9;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+/* Header Styles */
+header {
+    background-color: #232f3e;
+    color: white;
+    padding: 20px;
+    border-radius: 5px 5px 0 0;
+    margin-bottom: 20px;
+}
+
+header h1 {
+    margin-bottom: 15px;
+}
+
+.search-container {
+    display: flex;
+    max-width: 600px;
+}
+
+#search-input {
+    flex: 1;
+    padding: 10px;
+    border: none;
+    border-radius: 4px 0 0 4px;
+    font-size: 16px;
+}
+
+#search-button {
+    padding: 10px 15px;
+    background-color: #ff9900;
+    color: white;
+    border: none;
+    border-radius: 0 4px 4px 0;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+#search-button:hover {
+    background-color: #e88a00;
+}
+
+/* Content Layout */
+.content {
+    display: flex;
+    background-color: white;
+    border-radius: 5px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+}
+
+/* Sidebar Styles */
+.sidebar {
+    width: 250px;
+    background-color: #f0f2f5;
+    padding: 20px;
+    border-right: 1px solid #e1e4e8;
+}
+
+.sidebar h2 {
+    margin-bottom: 15px;
+    font-size: 18px;
+    color: #232f3e;
+}
+
+.sidebar ul {
+    list-style: none;
+}
+
+.sidebar li {
+    margin-bottom: 10px;
+}
+
+.sidebar a {
+    color: #0066c0;
+    text-decoration: none;
+    display: block;
+    padding: 5px;
+    border-radius: 4px;
+    transition: background-color 0.2s;
+}
+
+.sidebar a:hover {
+    background-color: #e1e4e8;
+}
+
+.sidebar a.active {
+    background-color: #e1e4e8;
+    font-weight: bold;
+}
+
+/* Main Content Styles */
+.main-content {
+    flex: 1;
+    padding: 30px;
+    overflow: auto;
+}
+
+#doc-content {
+    max-width: 800px;
+}
+
+#doc-content h1 {
+    margin-bottom: 20px;
+    color: #232f3e;
+}
+
+#doc-content h2 {
+    margin: 25px 0 15px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid #e1e4e8;
+    color: #232f3e;
+}
+
+#doc-content h3 {
+    margin: 20px 0 10px;
+    color: #232f3e;
+}
+
+#doc-content p {
+    margin-bottom: 15px;
+}
+
+#doc-content code {
+    background-color: #f0f2f5;
+    padding: 2px 5px;
+    border-radius: 3px;
+    font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
+    font-size: 0.9em;
+}
+
+#doc-content pre {
+    background-color: #f0f2f5;
+    padding: 15px;
+    border-radius: 5px;
+    overflow-x: auto;
+    margin-bottom: 15px;
+}
+
+#doc-content pre code {
+    background-color: transparent;
+    padding: 0;
+}
+
+#doc-content ul, #doc-content ol {
+    margin-bottom: 15px;
+    padding-left: 25px;
+}
+
+#doc-content table {
+    border-collapse: collapse;
+    width: 100%;
+    margin-bottom: 15px;
+}
+
+#doc-content th, #doc-content td {
+    border: 1px solid #e1e4e8;
+    padding: 8px 12px;
+    text-align: left;
+}
+
+#doc-content th {
+    background-color: #f0f2f5;
+}
+
+/* Search Results Styles */
+#search-results {
+    margin-bottom: 30px;
+}
+
+#search-results.hidden {
+    display: none;
+}
+
+#search-results h2 {
+    margin-bottom: 15px;
+    color: #232f3e;
+}
+
+.result-item {
+    margin-bottom: 20px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid #e1e4e8;
+}
+
+.result-item:last-child {
+    border-bottom: none;
+}
+
+.result-item h3 {
+    margin-bottom: 5px;
+}
+
+.result-item a {
+    color: #0066c0;
+    text-decoration: none;
+}
+
+.result-item a:hover {
+    text-decoration: underline;
+}
+
+.result-item p {
+    margin-bottom: 5px;
+    color: #666;
+}
+
+.highlight {
+    background-color: #fff2cc;
+    padding: 2px 0;
+}
+
+/* Loading State */
+.loading {
+    text-align: center;
+    padding: 30px;
+    color: #666;
+}
+
+/* Footer Styles */
+footer {
+    text-align: center;
+    padding: 20px;
+    margin-top: 20px;
+    color: #666;
+    font-size: 14px;
+}

@@ -1,0 +1,278 @@
+{
+  "feature": "Calendar Reminder System",
+  "status": "Proposed",
+  "description": "A comprehensive calendar system with reminder notifications via email and SMS",
+  "components": {
+    "infrastructure": {
+      "aws": {
+        "services": {
+          "ses": {
+            "status": "Already configured",
+            "usage": "Email notifications for reminders",
+            "template": {
+              "name": "reminder-notification",
+              "variables": ["userName", "reminderTitle", "reminderMessage", "reminderTime", "actionUrl"],
+              "status": "To be created"
+            }
+          },
+          "sns": {
+            "status": "To be configured",
+            "usage": "SMS notifications for reminders",
+            "configuration": {
+              "messageType": "Transactional",
+              "region": "${AWS_REGION:us-west-1}"
+            }
+          }
+        }
+      },
+      "deploymentScript": {
+        "path": "infrastructure/scripts/deploy/deploy-sns.sh",
+        "status": "To be created"
+      }
+    },
+    "database": {
+      "collections": {
+        "remindersUser": {
+          "schema": {
+            "_id": "ObjectId",
+            "username": "String",
+            "email": "String",
+            "phoneNumber": "String",
+            "notificationPreferences": {
+              "email": "Boolean",
+              "sms": "Boolean"
+            }
+          },
+          "indexes": [
+            { "username": 1, "unique": true }
+          ]
+        },
+        "reminders": {
+          "schema": {
+            "_id": "ObjectId",
+            "userId": "ObjectId (reference to remindersUser)",
+            "title": "String",
+            "message": "String",
+            "reminderTime": "Date",
+            "endTime": "Date",
+            "allDay": "Boolean",
+            "category": "String",
+            "priority": "String",
+            "status": "String (pending, sent, acknowledged)",
+            "createdAt": "Date",
+            "updatedAt": "Date"
+          },
+          "indexes": [
+            { "userId": 1 },
+            { "reminderTime": 1 },
+            { "status": 1 }
+          ]
+        }
+      }
+    },
+    "backend": {
+      "dependencies": {
+        "added": [
+          "software.amazon.awssdk:sns:2.25.11",
+          "org.quartz-scheduler:quartz:2.3.2"
+        ]
+      },
+      "components": {
+        "config": {
+          "path": "aws-starter-api/src/main/java/com/example/awsstarterapi/config/AwsSnsConfig.java",
+          "status": "To be created"
+        },
+        "services": {
+          "reminderService": {
+            "path": "aws-starter-api/src/main/java/com/example/awsstarterapi/service/ReminderService.java",
+            "status": "To be created",
+            "methods": [
+              "createReminder",
+              "updateReminder",
+              "deleteReminder",
+              "getReminders",
+              "getRemindersByDateRange"
+            ]
+          },
+          "reminderNotificationService": {
+            "path": "aws-starter-api/src/main/java/com/example/awsstarterapi/service/ReminderNotificationService.java",
+            "status": "To be created",
+            "methods": [
+              "sendEmailNotification",
+              "sendSmsNotification",
+              "processUpcomingReminders"
+            ]
+          },
+          "schedulerService": {
+            "path": "aws-starter-api/src/main/java/com/example/awsstarterapi/service/SchedulerService.java",
+            "status": "To be created",
+            "description": "Quartz scheduler for processing reminders at regular intervals"
+          }
+        },
+        "models": {
+          "reminderUser": {
+            "path": "aws-starter-api/src/main/java/com/example/awsstarterapi/model/ReminderUser.java",
+            "status": "To be created"
+          },
+          "reminder": {
+            "path": "aws-starter-api/src/main/java/com/example/awsstarterapi/model/Reminder.java",
+            "status": "To be created"
+          }
+        },
+        "controllers": {
+          "reminderController": {
+            "path": "aws-starter-api/src/main/java/com/example/awsstarterapi/controller/ReminderController.java",
+            "status": "To be created",
+            "endpoints": [
+              "GET /api/users/reminders - Get all reminders for current user",
+              "POST /api/users/reminders - Create a new reminder",
+              "PUT /api/users/reminders/{id} - Update a reminder",
+              "DELETE /api/users/reminders/{id} - Delete a reminder",
+              "GET /api/users/reminder-settings - Get notification preferences",
+              "PUT /api/users/reminder-settings - Update notification preferences"
+            ]
+          }
+        },
+        "configuration": {
+          "path": "aws-starter-api/src/main/resources/application.yml",
+          "added": {
+            "aws.sns.enabled": "${AWS_SNS_ENABLED:true}",
+            "reminder.notification.scheduler.interval": "PT15M",
+            "reminder.notification.default-lead-time": "PT1H"
+          }
+        }
+      }
+    },
+    "frontend": {
+      "dependencies": {
+        "added": [
+          "react-big-calendar",
+          "moment",
+          "react-big-calendar/lib/css/react-big-calendar.css"
+        ]
+      },
+      "components": {
+        "reminderCalendar": {
+          "path": "aws-react-hello-world/src/components/reminders/ReminderCalendar.tsx",
+          "status": "To be created",
+          "features": [
+            "Month, week, and day views",
+            "Display reminders as events",
+            "Color-coding by priority/category",
+            "Click to add/edit reminders"
+          ]
+        },
+        "reminderForm": {
+          "path": "aws-react-hello-world/src/components/reminders/ReminderForm.tsx",
+          "status": "To be created",
+          "features": [
+            "Add/edit reminder details",
+            "Set notification preferences",
+            "Delete reminders"
+          ]
+        },
+        "reminderSettings": {
+          "path": "aws-react-hello-world/src/components/reminders/ReminderSettings.tsx",
+          "status": "To be created",
+          "features": [
+            "Configure default notification preferences",
+            "Manage phone number for SMS"
+          ]
+        },
+        "services": {
+          "reminderService": {
+            "path": "aws-react-hello-world/src/services/ReminderService.ts",
+            "status": "To be created",
+            "methods": [
+              "getReminders",
+              "createReminder",
+              "updateReminder",
+              "deleteReminder",
+              "getReminderSettings",
+              "updateReminderSettings"
+            ]
+          }
+        }
+      },
+      "routes": {
+        "added": [
+          "/reminders - Calendar view with reminders",
+          "/reminders/settings - User notification preferences"
+        ]
+      }
+    }
+  },
+  "implementation": {
+    "phases": {
+      "phase1": {
+        "description": "Basic calendar with reminder management (no notifications)",
+        "tasks": [
+          "Create MongoDB collections",
+          "Implement backend CRUD operations",
+          "Implement calendar UI with react-big-calendar",
+          "Add reminder creation/editing UI"
+        ]
+      },
+      "phase2": {
+        "description": "Email notification system",
+        "tasks": [
+          "Create SES template for reminders",
+          "Implement scheduler service",
+          "Implement email notification service",
+          "Add notification preferences to UI"
+        ]
+      },
+      "phase3": {
+        "description": "SMS notification system",
+        "tasks": [
+          "Configure AWS SNS",
+          "Implement SMS notification service",
+          "Add phone number management to UI",
+          "Test end-to-end SMS delivery"
+        ]
+      }
+    },
+    "estimatedEffort": {
+      "phase1": "3-4 days",
+      "phase2": "2-3 days",
+      "phase3": "2-3 days",
+      "total": "7-10 days"
+    }
+  },
+  "costEstimates": {
+    "aws": {
+      "ses": {
+        "emailVolume": "Low (hundreds per month)",
+        "estimatedCost": "$1-5/month"
+      },
+      "sns": {
+        "smsVolume": "Low (hundreds per month)",
+        "estimatedCost": "$1-5/month"
+      },
+      "lambda": {
+        "usage": "Within free tier",
+        "estimatedCost": "$0/month"
+      },
+      "apiGateway": {
+        "usage": "Low (thousands of requests per month)",
+        "estimatedCost": "$0-3/month"
+      },
+      "total": {
+        "estimatedMonthlyCost": "$2-13/month"
+      }
+    }
+  },
+  "nextSteps": {
+    "planning": {
+      "tasks": [
+        "Finalize data model design",
+        "Create detailed technical specifications",
+        "Prioritize implementation phases"
+      ]
+    },
+    "development": {
+      "startWith": "MongoDB collections and backend CRUD operations",
+      "followedBy": "Calendar UI implementation"
+    }
+  }
+}

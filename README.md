@@ -66,7 +66,7 @@ npm run deploy
 
 #### Backend
 ```bash
-./deploy-backend.sh
+./deploy-springboot.sh
 ```
 
 #### Infrastructure

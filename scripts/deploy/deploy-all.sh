@@ -23,6 +23,6 @@ echo "2. Deploying API Gateway..."
 # 3. Deploy Spring Boot application with monitoring
 echo "3. Deploying Spring Boot application..."
 cd "$PROJECT_ROOT"
-./infrastructure/scripts/deploy/deploy-backend.sh
+./infrastructure/scripts/deploy/deploy-springboot.sh
 
 echo "Deployment complete! The API is available at: https://api.sloandev.net/"

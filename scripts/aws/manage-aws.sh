@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Script to manage AWS infrastructure and services
-# Usage: ./manage-aws.sh [deploy|update|status|delete] [--service=all|api-gateway|ses|ec2] [--force] [--env=dev|prod]
+# Usage: ./manage-aws.sh [deploy|update|status|delete] [--service=all|api-gateway|ses|ec2|auto-stop] [--force] [--env=dev|prod]
 
 set -e
 
@@ -35,8 +35,8 @@ if [ -z "$ACTION" ]; then
     exit 1
 fi
 
-if [[ ! "$SERVICE" =~ ^(all|api-gateway|ses|ec2)$ ]]; then
-    echo "Error: Invalid service. Must be 'all', 'api-gateway', 'ses', or 'ec2'"
+if [[ ! "$SERVICE" =~ ^(all|api-gateway|ses|ec2|auto-stop)$ ]]; then
+    echo "Error: Invalid service. Must be 'all', 'api-gateway', 'ses', 'ec2', or 'auto-stop'"
     exit 1
 fi
 
@@ -206,6 +206,48 @@ manage_ec2() {
     esac
 }
 
+# Function to manage auto-stop functionality
+manage_auto_stop() {
+    local stack_name="aws-starter-auto-stop"
+    local template="$CLOUDFORMATION_DIR/auto-stop-lambda.yml"
+    
+    case $ACTION in
+        deploy|update)
+            if [[ "$ACTION" == "deploy" ]] && [[ "$FORCE" == "true" ]]; then
+                delete_stack_if_exists "$stack_name"
+            fi
+            
+            echo "Deploying/updating EC2 auto-stop functionality..."
+            aws cloudformation deploy \
+                --template-file "$template" \
+                --stack-name "$stack_name" \
+                --parameter-overrides Environment="$ENV" \
+                --capabilities CAPABILITY_IAM || {
+                    echo "⚠️ Auto-stop deployment failed. Checking stack status..."
+                    check_stack_status "$stack_name"
+                    exit 1
+                }
+            echo "✅ EC2 auto-stop functionality updated successfully"
+            echo "EC2 instances tagged with AutoStop=true will be automatically stopped at 11:30 PM PST and started at 7:30 AM PST"
+            ;;
+            
+        status)
+            echo "=== Auto-Stop Stack Status ==="
+            check_stack_status "$stack_name"
+            
+            echo -e "\n=== Auto-Stop Rules ==="
+            aws events list-rules --name-prefix "StopEC2" --query "Rules[].{Name:Name,Schedule:ScheduleExpression,State:State}" --output table
+            aws events list-rules --name-prefix "StartEC2" --query "Rules[].{Name:Name,Schedule:ScheduleExpression,State:State}" --output table
+            ;;
+            
+        delete)
+            echo "Deleting EC2 auto-stop functionality..."
+            delete_stack_if_exists "$stack_name"
+            echo "✅ EC2 auto-stop functionality deleted"
+            ;;
+    esac
+}
+
 # Main logic
 case $SERVICE in
     all)
@@ -213,6 +255,7 @@ case $SERVICE in
         manage_ec2
         manage_api_gateway
         manage_ses
+        manage_auto_stop
         ;;
     api-gateway)
         manage_api_gateway
@@ -222,5 +265,8 @@ case $SERVICE in
         ;;
     ec2)
         manage_ec2
+        ;;
+    auto-stop)
+        manage_auto_stop
         ;;
 esac

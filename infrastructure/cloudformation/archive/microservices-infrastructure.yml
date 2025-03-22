@@ -1,0 +1,158 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: 'AWS infrastructure for Microservices with Eureka, MySQL, and MongoDB'
+
+Parameters:
+  KeyName:
+    Description: Name of an existing EC2 KeyPair to enable SSH access
+    Type: AWS::EC2::KeyPair::KeyName
+    Default: aws-starter-key
+
+  LocalIpAddress:
+    Description: Your local IP address for SSH access (with /32)
+    Type: String
+    Default: 47.147.63.102/32
+
+  EnvironmentName:
+    Description: Environment name prefix
+    Type: String
+    Default: microservices-demo
+
+Resources:
+  # IAM Role for EC2 instances
+  MicroservicesRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: ec2.amazonaws.com
+            Action: sts:AssumeRole
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/CloudWatchAgentServerPolicy
+        - arn:aws:iam::aws:policy/AmazonSESFullAccess
+        - arn:aws:iam::aws:policy/AmazonSQSFullAccess
+
+  MicroservicesInstanceProfile:
+    Type: AWS::IAM::InstanceProfile
+    Properties:
+      Roles:
+        - !Ref MicroservicesRole
+
+  # Security Group
+  MicroservicesSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Security group for Microservices instance
+      SecurityGroupIngress:
+        # SSH access
+        - IpProtocol: tcp
+          FromPort: 22
+          ToPort: 22
+          CidrIp: !Ref LocalIpAddress
+        # Eureka Server
+        - IpProtocol: tcp
+          FromPort: 8761
+          ToPort: 8761
+          CidrIp: !Ref LocalIpAddress
+        # User Service
+        - IpProtocol: tcp
+          FromPort: 8081
+          ToPort: 8081
+          CidrIp: !Ref LocalIpAddress
+        # Reminder Service
+        - IpProtocol: tcp
+          FromPort: 8082
+          ToPort: 8082
+          CidrIp: !Ref LocalIpAddress
+        # Scheduler Service
+        - IpProtocol: tcp
+          FromPort: 8083
+          ToPort: 8083
+          CidrIp: !Ref LocalIpAddress
+        # Notification Service
+        - IpProtocol: tcp
+          FromPort: 8084
+          ToPort: 8084
+          CidrIp: !Ref LocalIpAddress
+        # MySQL
+        - IpProtocol: tcp
+          FromPort: 3306
+          ToPort: 3306
+          CidrIp: !Ref LocalIpAddress
+        # MongoDB
+        - IpProtocol: tcp
+          FromPort: 27017
+          ToPort: 27017
+          CidrIp: !Ref LocalIpAddress
+
+  # EC2 Instance
+  MicroservicesInstance:
+    Type: AWS::EC2::Instance
+    Properties:
+      InstanceType: t2.small  # Increased to small for running multiple services
+      ImageId: ami-0a0409af1cb831414  # Ubuntu 22.04 LTS in us-west-1
+      KeyName: !Ref KeyName
+      IamInstanceProfile: !Ref MicroservicesInstanceProfile
+      SecurityGroups:
+        - !Ref MicroservicesSecurityGroup
+      Tags:
+        - Key: Name
+          Value: !Sub "${EnvironmentName}-microservices"
+      UserData:
+        Fn::Base64: !Sub |
+          #!/bin/bash -xe
+          apt-get update
+          apt-get install -y apt-transport-https ca-certificates curl software-properties-common
+
+          # Install Java 17
+          apt-get install -y openjdk-17-jdk
+
+          # Install MongoDB
+          apt-get install -y gnupg
+          curl -fsSL https://pgp.mongodb.com/server-6.0.asc | gpg -o /usr/share/keyrings/mongodb-server-6.0.gpg --dearmor
+          echo "deb [ arch=amd64,arm64 signed-by=/usr/share/keyrings/mongodb-server-6.0.gpg ] https://repo.mongodb.org/apt/ubuntu jammy/mongodb-org/6.0 multiverse" | tee /etc/apt/sources.list.d/mongodb-org-6.0.list
+          apt-get update
+          apt-get install -y mongodb-org
+          systemctl start mongod
+          systemctl enable mongod
+
+          # Install MySQL
+          apt-get install -y mysql-server
+          systemctl start mysql
+          systemctl enable mysql
+          
+          # Configure MySQL for remote access and create database
+          mysql -e "CREATE DATABASE IF NOT EXISTS userservice;"
+          mysql -e "CREATE USER IF NOT EXISTS 'microuser'@'localhost' IDENTIFIED BY 'micropass';"
+          mysql -e "GRANT ALL PRIVILEGES ON userservice.* TO 'microuser'@'localhost';"
+          mysql -e "FLUSH PRIVILEGES;"
+          
+          # Update MySQL bind address to allow connections from services
+          sed -i 's/bind-address\s*=\s*127.0.0.1/bind-address = 0.0.0.0/' /etc/mysql/mysql.conf.d/mysqld.cnf
+          systemctl restart mysql
+
+          # Create directories for microservices
+          mkdir -p /opt/microservices/eureka-server
+          mkdir -p /opt/microservices/user-service
+          mkdir -p /opt/microservices/reminder-service
+          mkdir -p /opt/microservices/scheduler-service
+          mkdir -p /opt/microservices/notification-service
+          
+          # Install AWS CLI
+          apt-get install -y awscli
+          
+          # Install monitoring tools
+          apt-get install -y htop
+
+Outputs:
+  MicroservicesPublicIP:
+    Description: Public IP of Microservices instance
+    Value: !GetAtt MicroservicesInstance.PublicIp
+  MicroservicesPublicDNS:
+    Description: Public DNS of Microservices instance
+    Value: !GetAtt MicroservicesInstance.PublicDnsName
+  EurekaServerURL:
+    Description: URL for Eureka Server
+    Value: !Sub "http://${MicroservicesInstance.PublicDnsName}:8761"

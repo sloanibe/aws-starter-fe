@@ -3,7 +3,7 @@
 # Script should be run from the project root
 if [[ ! -d "aws-starter-api" ]]; then
     echo "❌ Error: Script must be run from project root directory"
-    echo "Usage: ./infrastructure/scripts/deploy/deploy-backend.sh"
+    echo "Usage: ./infrastructure/scripts/deploy/deploy-springboot.sh"
     exit 1
 fi
 

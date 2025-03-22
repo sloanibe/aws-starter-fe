@@ -1,0 +1,195 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: 'Lambda functions for automatically starting and stopping EC2 instances'
+
+Parameters:
+  Environment:
+    Type: String
+    Default: dev
+    AllowedValues:
+      - dev
+      - prod
+    Description: Environment (dev or prod)
+
+Resources:
+  # IAM Role for Lambda functions
+  LambdaExecutionRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: lambda.amazonaws.com
+            Action: sts:AssumeRole
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
+      Policies:
+        - PolicyName: EC2StopStartPolicy
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action:
+                  - ec2:StopInstances
+                  - ec2:StartInstances
+                  - ec2:DescribeInstances
+                Resource: '*'
+
+  # Lambda function to stop EC2 instances
+  StopEC2InstancesFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName: StopEC2Instances
+      Handler: index.lambda_handler
+      Role: !GetAtt LambdaExecutionRole.Arn
+      Runtime: python3.9
+      Timeout: 30
+      Environment:
+        Variables:
+          ENVIRONMENT: !Ref Environment
+      Code:
+        ZipFile: |
+          import boto3
+          import logging
+          import os
+
+          # Set up logging
+          logger = logging.getLogger()
+          logger.setLevel(logging.INFO)
+
+          def lambda_handler(event, context):
+              """
+              Lambda function to stop EC2 instances tagged with AutoStop=true
+              """
+              ec2 = boto3.resource('ec2')
+              
+              # Find all running instances with AutoStop=true tag
+              filters = [
+                  {'Name': 'tag:AutoStop', 'Values': ['true']},
+                  {'Name': 'instance-state-name', 'Values': ['running']}
+              ]
+              
+              instances = ec2.instances.filter(Filters=filters)
+              instance_ids = [instance.id for instance in instances]
+              
+              if not instance_ids:
+                  logger.info("No running instances found with AutoStop=true tag")
+                  return {
+                      'statusCode': 200,
+                      'body': 'No instances to stop'
+                  }
+              
+              # Stop the instances
+              ec2.instances.filter(InstanceIds=instance_ids).stop()
+              
+              logger.info(f"Stopping instances: {', '.join(instance_ids)}")
+              
+              return {
+                  'statusCode': 200,
+                  'body': f"Stopping instances: {', '.join(instance_ids)}"
+              }
+
+  # Lambda function to start EC2 instances
+  StartEC2InstancesFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName: StartEC2Instances
+      Handler: index.lambda_handler
+      Role: !GetAtt LambdaExecutionRole.Arn
+      Runtime: python3.9
+      Timeout: 30
+      Environment:
+        Variables:
+          ENVIRONMENT: !Ref Environment
+      Code:
+        ZipFile: |
+          import boto3
+          import logging
+          import os
+
+          # Set up logging
+          logger = logging.getLogger()
+          logger.setLevel(logging.INFO)
+
+          def lambda_handler(event, context):
+              """
+              Lambda function to start EC2 instances tagged with AutoStop=true
+              """
+              ec2 = boto3.resource('ec2')
+              
+              # Find all stopped instances with AutoStop=true tag
+              filters = [
+                  {'Name': 'tag:AutoStop', 'Values': ['true']},
+                  {'Name': 'instance-state-name', 'Values': ['stopped']}
+              ]
+              
+              instances = ec2.instances.filter(Filters=filters)
+              instance_ids = [instance.id for instance in instances]
+              
+              if not instance_ids:
+                  logger.info("No stopped instances found with AutoStop=true tag")
+                  return {
+                      'statusCode': 200,
+                      'body': 'No instances to start'
+                  }
+              
+              # Start the instances
+              ec2.instances.filter(InstanceIds=instance_ids).start()
+              
+              logger.info(f"Starting instances: {', '.join(instance_ids)}")
+              
+              return {
+                  'statusCode': 200,
+                  'body': f"Starting instances: {', '.join(instance_ids)}"
+              }
+
+  # EventBridge rule to stop instances daily at 8 PM UTC
+  StopEC2InstancesRule:
+    Type: AWS::Events::Rule
+    Properties:
+      Name: StopEC2Instances
+      Description: "Automatically stop EC2 instances tagged with AutoStop=true at 11:30 PM PST"
+      ScheduleExpression: "cron(30 6 * * ? *)"
+      State: ENABLED
+      Targets:
+        - Id: StopEC2InstancesTarget
+          Arn: !GetAtt StopEC2InstancesFunction.Arn
+
+  # EventBridge rule to start instances daily at 8 AM UTC
+  StartEC2InstancesRule:
+    Type: AWS::Events::Rule
+    Properties:
+      Name: StartEC2Instances
+      Description: "Automatically start EC2 instances tagged with AutoStop=true at 7:30 AM PST"
+      ScheduleExpression: "cron(30 14 * * ? *)"
+      State: ENABLED
+      Targets:
+        - Id: StartEC2InstancesTarget
+          Arn: !GetAtt StartEC2InstancesFunction.Arn
+
+  # Permissions for EventBridge to invoke Lambda functions
+  StopEC2InstancesPermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      Action: lambda:InvokeFunction
+      FunctionName: !Ref StopEC2InstancesFunction
+      Principal: events.amazonaws.com
+      SourceArn: !GetAtt StopEC2InstancesRule.Arn
+
+  StartEC2InstancesPermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      Action: lambda:InvokeFunction
+      FunctionName: !Ref StartEC2InstancesFunction
+      Principal: events.amazonaws.com
+      SourceArn: !GetAtt StartEC2InstancesRule.Arn
+
+Outputs:
+  StopEC2InstancesFunctionArn:
+    Description: ARN of the Lambda function to stop EC2 instances
+    Value: !GetAtt StopEC2InstancesFunction.Arn
+
+  StartEC2InstancesFunctionArn:
+    Description: ARN of the Lambda function to start EC2 instances
+    Value: !GetAtt StartEC2InstancesFunction.Arn
