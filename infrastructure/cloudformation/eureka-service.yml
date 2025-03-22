@@ -1,0 +1,124 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: 'CloudFormation template for Eureka Service Discovery server'
+
+Parameters:
+  InstanceType:
+    Type: String
+    Default: t2.micro
+    Description: EC2 instance type for the Eureka Service Discovery server
+    AllowedValues:
+      - t2.micro
+      - t2.small
+      - t2.medium
+  
+  KeyName:
+    Type: AWS::EC2::KeyPair::KeyName
+    Default: aws-starter-key
+    Description: Name of an existing EC2 KeyPair to enable SSH access to the instance
+  
+  VpcId:
+    Type: AWS::EC2::VPC::Id
+    Description: VPC where the EC2 instance will be launched
+  
+  SubnetId:
+    Type: AWS::EC2::Subnet::Id
+    Description: Subnet where the EC2 instance will be launched
+  
+  SourceIp:
+    Type: String
+    Default: 0.0.0.0/0
+    Description: IP address range for SSH access
+
+Resources:
+  # Security Group for Eureka Server
+  EurekaSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Security group for Eureka Service Discovery server
+      VpcId: !Ref VpcId
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 22
+          ToPort: 22
+          CidrIp: !Ref SourceIp
+          Description: SSH access
+        - IpProtocol: tcp
+          FromPort: 8761
+          ToPort: 8761
+          CidrIp: 0.0.0.0/0
+          Description: Eureka server port
+      Tags:
+        - Key: Name
+          Value: eureka-service-sg
+
+  # EC2 Instance for Eureka Server
+  EurekaInstance:
+    Type: AWS::EC2::Instance
+    Properties:
+      InstanceType: !Ref InstanceType
+      KeyName: !Ref KeyName
+      SecurityGroupIds:
+        - !GetAtt EurekaSecurityGroup.GroupId
+      SubnetId: !Ref SubnetId
+      ImageId: ami-0d50e5e845c552faf  # Amazon Linux 2 AMI for US West (N. California) region
+      Tags:
+        - Key: Name
+          Value: eureka-service-discovery
+      UserData:
+        Fn::Base64: !Sub |
+          #!/bin/bash -xe
+          # Update and install dependencies
+          yum update -y
+          amazon-linux-extras install java-openjdk11 -y
+          
+          # Create service user
+          useradd -m -d /home/eureka eureka
+          
+          # Create application directory
+          mkdir -p /home/eureka/service-discovery-service
+          chown -R eureka:eureka /home/eureka/service-discovery-service
+          
+          # Install and configure systemd service
+          cat > /etc/systemd/system/service-discovery.service << 'EOF'
+          [Unit]
+          Description=Eureka Service Discovery Server
+          After=network.target
+          
+          [Service]
+          User=eureka
+          WorkingDirectory=/home/eureka/service-discovery-service
+          ExecStart=/usr/bin/java -Xmx256m -Xms128m \
+              -DSERVER_PORT=8761 \
+              -DSPRING_PROFILES_ACTIVE=prod \
+              -DEUREKA_INSTANCE_HOSTNAME=localhost \
+              -DEUREKA_INSTANCE_IP=${EurekaInstance.PrivateIp} \
+              -jar service-discovery-service-0.0.1-SNAPSHOT.jar
+          SuccessExitStatus=143
+          TimeoutStopSec=10
+          Restart=on-failure
+          RestartSec=5
+          
+          [Install]
+          WantedBy=multi-user.target
+          EOF
+          
+          # Enable the service (but don't start it yet as we don't have the JAR file)
+          systemctl daemon-reload
+          systemctl enable service-discovery.service
+
+Outputs:
+  EurekaInstanceId:
+    Description: ID of the EC2 instance
+    Value: !Ref EurekaInstance
+  
+  EurekaPublicIP:
+    Description: Public IP address of the EC2 instance
+    Value: !GetAtt EurekaInstance.PublicIp
+  
+  EurekaPrivateIP:
+    Description: Private IP address of the EC2 instance
+    Value: !GetAtt EurekaInstance.PrivateIp
+  
+  EurekaDashboardUrl:
+    Description: URL for the Eureka Dashboard
+    Value: !Sub 'http://${EurekaInstance.PublicIp}:8761/'

@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Script to manage services running on EC2 instance
-# Usage: ./services.sh [start|stop|restart|status] [--service=all|spring-boot|mongodb]
+# Usage: ./services.sh [start|stop|restart|status] [--service=all|spring-boot|mongodb|eureka]
 
 set -e
 
@@ -34,8 +34,8 @@ if [ -z "$ACTION" ]; then
     exit 1
 fi
 
-if [[ ! "$SERVICE" =~ ^(all|spring-boot|mongodb)$ ]]; then
-    echo "Error: Invalid service. Must be 'all', 'spring-boot', or 'mongodb'"
+if [[ ! "$SERVICE" =~ ^(all|spring-boot|mongodb|eureka)$ ]]; then
+    echo "Error: Invalid service. Must be 'all', 'spring-boot', 'mongodb', or 'eureka'"
     exit 1
 fi
 
@@ -219,6 +219,61 @@ manage_mongodb() {
     esac
 }
 
+# Function to manage Eureka service discovery
+manage_eureka() {
+    local action=$1
+    echo "Managing Eureka Service Discovery: $action"
+    
+    case $action in
+        start)
+            ssh -i $SSH_KEY ubuntu@$EC2_IP "sudo systemctl start service-discovery.service"
+            echo "Waiting for Eureka to start..."
+            sleep 2
+            ;;
+        stop)
+            ssh -i $SSH_KEY ubuntu@$EC2_IP "sudo systemctl stop service-discovery.service"
+            echo "Waiting for Eureka to stop..."
+            sleep 2
+            ;;
+        restart)
+            ssh -i $SSH_KEY ubuntu@$EC2_IP "sudo systemctl restart service-discovery.service"
+            echo "Waiting for Eureka to restart..."
+            sleep 2
+            ;;
+        kill)
+            echo "Forcefully terminating Eureka..."
+            ssh -i $SSH_KEY ubuntu@$EC2_IP "sudo systemctl stop service-discovery.service"
+            ssh -i $SSH_KEY ubuntu@$EC2_IP "sudo kill -9 \$(sudo lsof -t -i:8761) 2>/dev/null || true"
+            echo "✅ Eureka successfully terminated"
+            ;;
+        status)
+            if ssh -i $SSH_KEY ubuntu@$EC2_IP "systemctl is-active service-discovery.service" > /dev/null; then
+                echo "✅ Eureka Service Discovery is running"
+                # Get health check info
+                health_response=$(curl -s http://$EC2_IP:8761/actuator/health)
+                if [ $? -eq 0 ]; then
+                    echo "\nHealth Status:"
+                    echo "$health_response" | jq '.'
+                    
+                    # Display registered services if any
+                    echo "\nRegistered Services:"
+                    apps_response=$(curl -s http://$EC2_IP:8761/eureka/apps)
+                    if [[ $apps_response == *"<application>"* ]]; then
+                        echo "Found registered services:"
+                        echo "$apps_response" | grep -o '<application>[^<]*</application>' | sed 's/<application>\(.*\)<\/application>/\1/'
+                    else
+                        echo "No services registered yet"
+                    fi
+                else
+                    echo "❌ Health check failed: Could not connect to health endpoint"
+                fi
+            else
+                echo "❌ Eureka Service Discovery is not running"
+            fi
+            ;;
+    esac
+}
+
 # Main service management logic
 case $SERVICE in
     all)
@@ -227,9 +282,12 @@ case $SERVICE in
             manage_mongodb status
             echo -e "\n=== Spring Boot Status ==="
             manage_springboot status
+            echo -e "\n=== Eureka Service Discovery Status ==="
+            manage_eureka status
         else
             manage_mongodb $ACTION
             manage_springboot $ACTION
+            manage_eureka $ACTION
         fi
         ;;
     spring-boot)
@@ -237,5 +295,8 @@ case $SERVICE in
         ;;
     mongodb)
         manage_mongodb $ACTION
+        ;;
+    eureka)
+        manage_eureka $ACTION
         ;;
 esac

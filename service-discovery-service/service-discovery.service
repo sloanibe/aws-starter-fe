@@ -1,0 +1,20 @@
+[Unit]
+Description=Eureka Service Discovery Server
+After=network.target
+
+[Service]
+User=ubuntu
+WorkingDirectory=/home/ubuntu/service-discovery-service
+ExecStart=/usr/bin/java -Xmx256m -Xms128m \
+    -DSERVER_PORT=8761 \
+    -DSPRING_PROFILES_ACTIVE=prod \
+    -DEUREKA_INSTANCE_HOSTNAME=localhost \
+    -DEUREKA_INSTANCE_IP=13.52.157.48 \
+    -jar service-discovery-service-0.0.1-SNAPSHOT.jar
+SuccessExitStatus=143
+TimeoutStopSec=10
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target
