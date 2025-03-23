@@ -16,7 +16,7 @@ spring:
   application:
     name: aws-starter-api
   config:
-    import: configserver:http://localhost:8888
+    import: optional:configserver:http://${IP_ADDRESS:13.52.157.48}:8888
   data:
     mongodb:
       uri: mongodb://${MONGO_USER:admin}:${MONGO_PWD:admin123}@localhost:27017/aws_starter_db?authSource=admin&connectTimeoutMS=10000&socketTimeoutMS=10000
@@ -38,7 +38,8 @@ eureka:
     fetch-registry: true
   instance:
     prefer-ip-address: true
-    instance-id: ${spring.application.name}:${spring.cloud.client.ip-address}:${server.port}
+    ip-address: ${IP_ADDRESS:13.52.157.48}
+    instance-id: ${spring.application.name}:${IP_ADDRESS:13.52.157.48}:${server.port}
     lease-renewal-interval-in-seconds: 30
 
 app:

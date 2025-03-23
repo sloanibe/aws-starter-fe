@@ -20,5 +20,5 @@ server:
 # Eureka Client Configuration - minimal for service discovery
 eureka:
   client:
-    service-url:
+    serviceUrl:
       defaultZone: http://${IP_ADDRESS:13.52.157.48}:8761/eureka/
