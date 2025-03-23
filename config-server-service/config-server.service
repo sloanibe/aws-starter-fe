@@ -1,0 +1,24 @@
+[Unit]
+Description=Spring Cloud Config Server
+After=network.target
+
+[Service]
+User=ubuntu
+WorkingDirectory=/home/ubuntu/config-server-service
+EnvironmentFile=/home/ubuntu/config-server-service/.env
+ExecStart=/usr/bin/java -Xmx256m -Xms128m \
+    -DSERVER_PORT=8888 \
+    -DSPRING_PROFILES_ACTIVE=prod \
+    -DCONFIG_GIT_URI=${CONFIG_GIT_URI} \
+    -DCONFIG_GIT_USERNAME=${CONFIG_GIT_USERNAME} \
+    -DCONFIG_GIT_PASSWORD=${CONFIG_GIT_PASSWORD} \
+    -DHOSTNAME=config-server \
+    -DIP_ADDRESS=13.52.157.48 \
+    -jar config-server-service-0.0.1-SNAPSHOT.jar
+SuccessExitStatus=143
+TimeoutStopSec=10
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target
