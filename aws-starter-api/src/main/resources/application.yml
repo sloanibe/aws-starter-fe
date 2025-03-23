@@ -15,6 +15,8 @@ management:
 spring:
   application:
     name: aws-starter-api
+  config:
+    import: configserver:http://13.52.157.48:8888
   data:
     mongodb:
       uri: mongodb://${MONGO_USER:admin}:${MONGO_PWD:admin123}@localhost:27017/aws_starter_db?authSource=admin&connectTimeoutMS=3000
