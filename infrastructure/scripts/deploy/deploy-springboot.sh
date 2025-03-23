@@ -119,7 +119,13 @@ ssh -i $SSH_KEY ubuntu@$EC2_IP "cd $REMOTE_DIR && \
         -DSERVER_PORT=8080 \
         -DSPRING_PROFILES_ACTIVE=prod \
         -DAPP_NAME=aws-starter-api \
+        -DSPRING_APPLICATION_NAME=aws-starter-api \
         -DMONGODB_URI=\$(grep MONGODB_URI .env | cut -d'=' -f2-) \
+        -DEUREKA_SERVICE_URL=http://13.52.157.48:8761/eureka/ \
+        -DEUREKA_CLIENT_REGISTER-WITH-EUREKA=true \
+        -DEUREKA_CLIENT_FETCH-REGISTRY=true \
+        -DEUREKA_INSTANCE_PREFER-IP-ADDRESS=true \
+        -DEUREKA_INSTANCE_IP-ADDRESS=$(ssh -i $SSH_KEY ubuntu@$EC2_IP "hostname -I | awk '{print \$1}'" | tr -d '\n') \
         -jar ${APP_NAME}-0.0.1-SNAPSHOT.jar > app.log 2>&1 &"
 
 # Wait for startup and get new PID

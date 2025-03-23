@@ -22,6 +22,7 @@
         <groovy.version>4.0.15</groovy.version>
         <spock.version>2.3-groovy-4.0</spock.version>
         <aws.sdk.version>2.25.11</aws.sdk.version>
+        <spring-cloud.version>2023.0.0</spring-cloud.version>
     </properties>
 
     <dependencies>
@@ -42,6 +43,13 @@
             <groupId>software.amazon.awssdk</groupId>
             <artifactId>ses</artifactId>
             <version>${aws.sdk.version}</version>
+        </dependency>
+
+        <!-- Spring Cloud Eureka Client -->
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-netflix-eureka-client</artifactId>
+            <!-- Version managed by spring-cloud-dependencies BOM -->
         </dependency>
 
         <!-- Lombok for reducing boilerplate -->
@@ -110,6 +118,18 @@
             <scope>test</scope>
         </dependency>
     </dependencies>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.springframework.cloud</groupId>
+                <artifactId>spring-cloud-dependencies</artifactId>
+                <version>${spring-cloud.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
 
     <build>
         <plugins>

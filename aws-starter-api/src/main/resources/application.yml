@@ -13,6 +13,8 @@ management:
       show-details: ${MANAGEMENT_ENDPOINT_HEALTH_SHOW_DETAILS:when_authorized}
 
 spring:
+  application:
+    name: aws-starter-api
   data:
     mongodb:
       uri: mongodb://${MONGO_USER:admin}:${MONGO_PWD:admin123}@localhost:27017/aws_starter_db?authSource=admin&connectTimeoutMS=3000
@@ -24,6 +26,18 @@ aws:
     sender-email: ${AWS_SES_SENDER_EMAIL:sloanibe@gmail.com}
     template-name: ${AWS_SES_TEMPLATE_NAME:guest-visit-notification-dev}
     welcome-template-name: ${AWS_SES_WELCOME_TEMPLATE_NAME:login-notification-dev}
+
+# Eureka Client Configuration
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: ${EUREKA_SERVICE_URL:http://13.52.157.48:8761/eureka/}
+    register-with-eureka: true
+    fetch-registry: true
+  instance:
+    prefer-ip-address: true
+    instance-id: ${spring.application.name}:${spring.cloud.client.ip-address}:${server.port}
+    lease-renewal-interval-in-seconds: 30
 
 app:
   cors:
