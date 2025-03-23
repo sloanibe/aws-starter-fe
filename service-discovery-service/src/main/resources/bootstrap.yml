@@ -1,0 +1,24 @@
+# Minimal bootstrap configuration for Service Discovery Service
+# Service Discovery typically doesn't depend on Config Server to avoid circular dependencies
+
+spring:
+  application:
+    name: service-discovery-service
+
+# Server configuration
+server:
+  port: ${SERVER_PORT:8761}
+
+# Eureka server configuration - standalone mode
+eureka:
+  instance:
+    hostname: ${HOSTNAME:service-discovery}
+    ip-address: ${IP_ADDRESS:13.52.157.48}
+    prefer-ip-address: true
+  client:
+    register-with-eureka: false
+    fetch-registry: false
+  server:
+    enable-self-preservation: false
+    renewal-percent-threshold: 0.85
+    eviction-interval-timer-in-ms: 30000
