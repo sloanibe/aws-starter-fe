@@ -78,7 +78,7 @@ Resources:
       Integration:
         Type: HTTP_PROXY
         IntegrationHttpMethod: ANY
-        Uri: !Sub 'http://${EC2InstanceIP}:${EC2Port}/api/{proxy}'
+        Uri: !Sub 'http://${EC2InstanceIP}:8080/api/{proxy}'
         RequestParameters:
           integration.request.path.proxy: 'method.request.path.proxy'
         IntegrationResponses:
@@ -107,7 +107,7 @@ Resources:
       Integration:
         Type: HTTP_PROXY
         IntegrationHttpMethod: ANY
-        Uri: !Sub 'http://${EC2InstanceIP}:${EC2Port}/'
+        Uri: !Sub 'http://${EC2InstanceIP}:8080/'
         IntegrationResponses:
           - StatusCode: 200
 

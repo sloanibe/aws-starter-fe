@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>AWS Admin Tool</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="container">
+    <h1>AWS Starter Admin Tool</h1>
+    
+    <div class="dashboard-panel">
+      <div class="dashboard-header">
+        <h2>Services Dashboard</h2>
+        <div class="dashboard-refresh">
+          <button id="dashboard-refresh-btn" class="btn btn-sm">Refresh All</button>
+        </div>
+      </div>
+      <div class="dashboard-grid">
+        <div class="dashboard-item" id="ec2-dashboard-item">
+          <div class="dashboard-icon ec2-icon"></div>
+          <div class="dashboard-label">EC2 Instance</div>
+          <div class="dashboard-status" id="ec2-dashboard-status">Unknown</div>
+        </div>
+        <div class="dashboard-item" id="eureka-dashboard-item">
+          <div class="dashboard-icon eureka-icon"></div>
+          <div class="dashboard-label">Eureka Discovery</div>
+          <div class="dashboard-status" id="eureka-dashboard-status">Unknown</div>
+        </div>
+        <div class="dashboard-item" id="config-dashboard-item">
+          <div class="dashboard-icon config-icon"></div>
+          <div class="dashboard-label">Config Server</div>
+          <div class="dashboard-status" id="config-dashboard-status">Unknown</div>
+        </div>
+        <div class="dashboard-item" id="springboot-dashboard-item">
+          <div class="dashboard-icon springboot-icon"></div>
+          <div class="dashboard-label">Spring Boot API</div>
+          <div class="dashboard-status" id="springboot-dashboard-status">Unknown</div>
+        </div>
+        <div class="dashboard-item" id="mongodb-dashboard-item">
+          <div class="dashboard-icon mongodb-icon"></div>
+          <div class="dashboard-label">MongoDB</div>
+          <div class="dashboard-status" id="mongodb-dashboard-status">Unknown</div>
+        </div>
+        <div class="dashboard-item" id="gateway-dashboard-item">
+          <div class="dashboard-icon gateway-icon"></div>
+          <div class="dashboard-label">API Gateway</div>
+          <div class="dashboard-status" id="gateway-dashboard-status">Unknown</div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="card">
+      <h2>EC2 Instance Management</h2>
+      <div class="status-container">
+        <div class="status-label">Status:</div>
+        <div id="ec2-status" class="status-value">Checking...</div>
+      </div>
+      <div class="button-group">
+        <button id="refresh-ec2-btn" class="btn">Refresh Status</button>
+        <button id="start-ec2-btn" class="btn btn-success">Start Instance</button>
+        <button id="stop-ec2-btn" class="btn btn-danger">Stop Instance</button>
+      </div>
+    </div>
+    
+    <div class="card">
+      <h2>Services Management</h2>
+      <div class="services-grid">
+        <div class="service-card">
+          <h3>Spring Boot</h3>
+          <div class="status-container">
+            <div class="status-indicator" id="springboot-status"></div>
+            <div class="service-status-text" id="springboot-status-text">Unknown</div>
+          </div>
+          <div class="button-group">
+            <button id="start-springboot-btn" class="btn btn-sm btn-success">Start</button>
+            <button id="stop-springboot-btn" class="btn btn-sm btn-danger">Stop</button>
+          </div>
+        </div>
+        <div class="service-card">
+          <h3>MongoDB</h3>
+          <div class="status-container">
+            <div class="status-indicator" id="mongodb-status"></div>
+            <div class="service-status-text" id="mongodb-status-text">Unknown</div>
+          </div>
+          <div class="button-group">
+            <button id="start-mongodb-btn" class="btn btn-sm btn-success">Start</button>
+            <button id="stop-mongodb-btn" class="btn btn-sm btn-danger">Stop</button>
+          </div>
+        </div>
+        <div class="service-card">
+          <h3>Eureka</h3>
+          <div class="status-container">
+            <div class="status-indicator" id="eureka-status"></div>
+            <div class="service-status-text" id="eureka-status-text">Unknown</div>
+          </div>
+          <div class="button-group">
+            <button id="start-eureka-btn" class="btn btn-sm btn-success">Start</button>
+            <button id="stop-eureka-btn" class="btn btn-sm btn-danger">Stop</button>
+          </div>
+        </div>
+        <div class="service-card">
+          <h3>Config Server</h3>
+          <div class="status-container">
+            <div class="status-indicator" id="config-status"></div>
+            <div class="service-status-text" id="config-status-text">Unknown</div>
+          </div>
+          <div class="button-group">
+            <button id="start-config-btn" class="btn btn-sm btn-success">Start</button>
+            <button id="stop-config-btn" class="btn btn-sm btn-danger">Stop</button>
+          </div>
+        </div>
+        <div class="service-card">
+          <h3>API Gateway</h3>
+          <div class="status-container">
+            <div class="status-indicator" id="gateway-status"></div>
+            <div class="service-status-text" id="gateway-status-text">Unknown</div>
+          </div>
+          <div class="button-group">
+            <button id="start-gateway-btn" class="btn btn-sm btn-success">Start</button>
+            <button id="stop-gateway-btn" class="btn btn-sm btn-danger">Stop</button>
+          </div>
+        </div>
+      </div>
+      <div class="button-group">
+        <button id="refresh-services-btn" class="btn">Refresh All Services</button>
+      </div>
+    </div>
+    
+    <div class="card">
+      <h2>Console Output</h2>
+      <div class="console" id="console-output">
+        <div class="console-line">Welcome to AWS Admin Tool</div>
+        <div class="console-line">Click any button to execute a command</div>
+      </div>
+    </div>
+  </div>
+
+  <script src="renderer.js"></script>
+</body>
+</html>

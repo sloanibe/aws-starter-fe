@@ -36,8 +36,8 @@ if [ -z "$ACTION" ]; then
     exit 1
 fi
 
-if [[ ! "$SERVICE" =~ ^(all|spring-boot|mongodb|eureka|config-server)$ ]]; then
-    echo "Error: Invalid service. Must be 'all', 'spring-boot', 'mongodb', 'eureka', or 'config-server'"
+if [[ ! "$SERVICE" =~ ^(all|spring-boot|mongodb|eureka|config-server|api-gateway)$ ]]; then
+    echo "Error: Invalid service. Must be 'all', 'spring-boot', 'mongodb', 'eureka', 'config-server', or 'api-gateway'"
     exit 1
 fi
 
@@ -53,7 +53,14 @@ manage_springboot() {
                 -DSERVER_PORT=8080 \
                 -DSPRING_PROFILES_ACTIVE=prod \
                 -DAPP_NAME=$APP_NAME \
+                -DSPRING_APPLICATION_NAME=$APP_NAME \
                 -DMONGODB_URI=\$(grep MONGODB_URI .env | cut -d'=' -f2-) \
+                -DEUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://13.52.157.48:8761/eureka/ \
+                -DEUREKA_CLIENT_REGISTER-WITH-EUREKA=true \
+                -DEUREKA_CLIENT_FETCH-REGISTRY=true \
+                -DEUREKA_INSTANCE_PREFER-IP-ADDRESS=true \
+                -DEUREKA_INSTANCE_IP-ADDRESS=13.52.157.48 \
+                -DEUREKA_INSTANCE_INSTANCE-ID=$APP_NAME:13.52.157.48:8080 \
                 -jar ${APP_NAME}-0.0.1-SNAPSHOT.jar > app.log 2>&1 &"
             echo "Waiting for Spring Boot to start..."
             sleep 5
@@ -259,7 +266,7 @@ manage_eureka() {
                     
                     # Display registered services if any
                     echo "\nRegistered Services:"
-                    apps_response=$(curl -s http://$COMBINED_EC2_IP:8761/eureka/apps)
+                    apps_response=$(curl -s http://$EC2_IP:8761/eureka/apps)
                     if [[ $apps_response == *"<application>"* ]]; then
                         echo "Found registered services:"
                         echo "$apps_response" | grep -o '<application>[^<]*</application>' | sed 's/<application>\(.*\)<\/application>/\1/'
@@ -314,7 +321,7 @@ manage_config_server() {
                     
                     # Display available configuration profiles
                     echo "\nAvailable Configuration Profiles:"
-                    profiles_response=$(curl -s http://$SPRINGBOOT_EC2_IP:8888/application/default 2>/dev/null)
+                    profiles_response=$(curl -s http://$EC2_IP:8888/application/default 2>/dev/null)
                     if [ $? -eq 0 ] && [ -n "$profiles_response" ]; then
                         echo "Default configuration available"
                         echo "$profiles_response" | jq '.'
@@ -326,6 +333,61 @@ manage_config_server() {
                 fi
             else
                 echo "❌ Config Server is not running"
+            fi
+            ;;
+    esac
+}
+
+# Function to manage API Gateway
+manage_api_gateway() {
+    local action=$1
+    echo "Managing API Gateway: $action"
+    
+    case $action in
+        start)
+            ssh -i $SSH_KEY ubuntu@$EC2_IP "sudo systemctl start api-gateway.service"
+            echo "Waiting for API Gateway to start..."
+            sleep 2
+            ;;
+        stop)
+            ssh -i $SSH_KEY ubuntu@$EC2_IP "sudo systemctl stop api-gateway.service"
+            echo "Waiting for API Gateway to stop..."
+            sleep 2
+            ;;
+        restart)
+            ssh -i $SSH_KEY ubuntu@$EC2_IP "sudo systemctl restart api-gateway.service"
+            echo "Waiting for API Gateway to restart..."
+            sleep 2
+            ;;
+        kill)
+            echo "Forcefully terminating API Gateway..."
+            ssh -i $SSH_KEY ubuntu@$EC2_IP "sudo systemctl stop api-gateway.service"
+            ssh -i $SSH_KEY ubuntu@$EC2_IP "sudo kill -9 \$(sudo lsof -t -i:8080) 2>/dev/null || true"
+            echo "✅ API Gateway successfully terminated"
+            ;;
+        status)
+            if ssh -i $SSH_KEY ubuntu@$EC2_IP "systemctl is-active api-gateway.service" > /dev/null; then
+                echo "✅ API Gateway is running"
+                # Get health check info
+                health_response=$(curl -s http://$EC2_IP:8080/actuator/health)
+                if [ $? -eq 0 ]; then
+                    echo "\nHealth Status:"
+                    echo "$health_response" | jq '.'
+                    
+                    # Display available routes
+                    echo "\nAvailable Routes:"
+                    routes_response=$(curl -s http://$EC2_IP:8080/actuator/gateway/routes 2>/dev/null)
+                    if [ $? -eq 0 ] && [ -n "$routes_response" ]; then
+                        echo "Routes available"
+                        echo "$routes_response" | jq '.'
+                    else
+                        echo "No routes available or unable to access them"
+                    fi
+                else
+                    echo "❌ Health check failed: Could not connect to health endpoint"
+                fi
+            else
+                echo "❌ API Gateway is not running"
             fi
             ;;
     esac
@@ -343,11 +405,14 @@ case $SERVICE in
             manage_eureka status
             echo -e "\n=== Config Server Status ==="
             manage_config_server status
+            echo -e "\n=== API Gateway Status ==="
+            manage_api_gateway status
         else
             manage_mongodb $ACTION
             manage_springboot $ACTION
             manage_eureka $ACTION
             manage_config_server $ACTION
+            manage_api_gateway $ACTION
         fi
         ;;
     spring-boot)
@@ -361,5 +426,8 @@ case $SERVICE in
         ;;
     config-server)
         manage_config_server $ACTION
+        ;;
+    api-gateway)
+        manage_api_gateway $ACTION
         ;;
 esac

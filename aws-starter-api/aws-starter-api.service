@@ -1,0 +1,28 @@
+[Unit]
+Description=AWS Starter API Service
+After=network.target service-discovery.service config-server.service
+
+[Service]
+User=ubuntu
+WorkingDirectory=/home/ubuntu/aws-starter-api
+ExecStart=/usr/bin/java -Xmx192m -Xms96m \
+    -XX:MaxMetaspaceSize=128m \
+    -XX:CompressedClassSpaceSize=32m \
+    -XX:+UseSerialGC \
+    -DSERVER_PORT=8080 \
+    -DSPRING_PROFILES_ACTIVE=prod \
+    -DSPRING_APPLICATION_NAME=aws-starter-api \
+    -DEUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://13.52.157.48:8761/eureka/ \
+    -DEUREKA_CLIENT_REGISTER-WITH-EUREKA=true \
+    -DEUREKA_CLIENT_FETCH-REGISTRY=true \
+    -DEUREKA_INSTANCE_PREFER-IP-ADDRESS=true \
+    -DEUREKA_INSTANCE_IP-ADDRESS=13.52.157.48 \
+    -DEUREKA_INSTANCE_INSTANCE-ID=aws-starter-api:13.52.157.48:8080 \
+    -jar aws-starter-api-0.0.1-SNAPSHOT.jar
+SuccessExitStatus=143
+TimeoutStopSec=10
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,31 @@
+[Unit]
+Description=Spring Cloud API Gateway
+After=network.target service-discovery.service config-server.service
+
+[Service]
+User=ubuntu
+WorkingDirectory=/home/ubuntu/api-gateway-service
+ExecStart=/usr/bin/java -Xmx256m -Xms128m \
+    -XX:MaxMetaspaceSize=128m \
+    -XX:CompressedClassSpaceSize=32m \
+    -XX:+UseSerialGC \
+    -Xss256k \
+    -DSERVER_PORT=8090 \
+    -DSPRING_PROFILES_ACTIVE=prod \
+    -DSPRING_APPLICATION_NAME=api-gateway-service \
+    -DEUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://13.52.157.48:8761/eureka/ \
+    -DEUREKA_CLIENT_REGISTER-WITH-EUREKA=true \
+    -DEUREKA_CLIENT_FETCH-REGISTRY=true \
+    -DEUREKA_INSTANCE_PREFER-IP-ADDRESS=true \
+    -DEUREKA_INSTANCE_IP-ADDRESS=13.52.157.48 \
+    -DEUREKA_INSTANCE_INSTANCE-ID=api-gateway-service:13.52.157.48:8090 \
+    -DHOSTNAME=api-gateway \
+    -DIP_ADDRESS=13.52.157.48 \
+    -jar api-gateway-service-0.0.1-SNAPSHOT.jar
+SuccessExitStatus=143
+TimeoutStopSec=10
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target
