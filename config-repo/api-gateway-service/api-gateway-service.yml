@@ -1,0 +1,53 @@
+# API Gateway Service Configuration
+# Default configuration for all environments
+
+# Server configuration
+server:
+  port: ${SERVER_PORT:8090}
+
+# Eureka Client Configuration
+eureka:
+  client:
+    service-url:
+      defaultZone: http://13.52.157.48:8761/eureka/
+    register-with-eureka: true
+    fetch-registry: true
+  instance:
+    prefer-ip-address: true
+
+# Gateway routes configuration
+spring:
+  cloud:
+    gateway:
+      routes:
+        - id: api-service
+          uri: lb://api-service
+          predicates:
+            - Path=/api/**
+          filters:
+            - RewritePath=/api/(?<segment>.*), /${segment}
+
+# Actuator endpoints for monitoring
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,gateway
+  endpoint:
+    health:
+      show-details: always
+  health:
+    defaults:
+      enabled: true
+
+# Logging configuration
+logging:
+  level:
+    org.springframework.cloud.gateway: INFO
+    org.springframework.web: INFO
+    reactor.netty: INFO
+
+# JVM memory optimization for t2.small
+spring:
+  jvm:
+    memory: -Xmx256m -Xms128m

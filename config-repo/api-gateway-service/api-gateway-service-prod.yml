@@ -1,0 +1,28 @@
+# API Gateway Service Production Configuration
+# Overrides for production environment
+
+# Server configuration
+server:
+  port: ${SERVER_PORT:8090}
+
+# Eureka Client Configuration with explicit IP for production
+eureka:
+  client:
+    service-url:
+      defaultZone: http://${IP_ADDRESS:13.52.157.48}:8761/eureka/
+  instance:
+    hostname: ${HOSTNAME:api-gateway}
+    ip-address: ${IP_ADDRESS:13.52.157.48}
+
+# Logging configuration - more concise in production
+logging:
+  level:
+    org.springframework.cloud.gateway: WARN
+    org.springframework.web: WARN
+    reactor.netty: WARN
+
+# Disable development-specific features
+spring:
+  devtools:
+    restart:
+      enabled: false
