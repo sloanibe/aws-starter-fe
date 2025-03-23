@@ -8,7 +8,7 @@ if [[ ! -d "config-server-service" ]]; then
 fi
 
 # Set variables
-EC2_IP="13.52.157.48"  # Same EC2 instance as Eureka
+EC2_IP="13.52.157.48"  # t2.micro instance
 SSH_KEY="/home/msloan/.ssh/aws-starter-key.pem"
 APP_NAME="config-server-service"
 APP_JAR="config-server-service/target/${APP_NAME}-0.0.1-SNAPSHOT.jar"

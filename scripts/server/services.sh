@@ -8,7 +8,9 @@ set -e
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_ROOT="$(cd "$SCRIPT_DIR/../.." && pwd)"
 
-EC2_IP="13.52.157.48"
+# Instance IPs
+EC2_IP="13.52.157.48"  # t2.micro instance for all services
+
 SSH_KEY="/home/msloan/.ssh/aws-starter-key.pem"
 APP_NAME="aws-starter-api"
 REMOTE_DIR="/home/ubuntu/${APP_NAME}"
@@ -34,8 +36,8 @@ if [ -z "$ACTION" ]; then
     exit 1
 fi
 
-if [[ ! "$SERVICE" =~ ^(all|spring-boot|mongodb|eureka)$ ]]; then
-    echo "Error: Invalid service. Must be 'all', 'spring-boot', 'mongodb', or 'eureka'"
+if [[ ! "$SERVICE" =~ ^(all|spring-boot|mongodb|eureka|config-server)$ ]]; then
+    echo "Error: Invalid service. Must be 'all', 'spring-boot', 'mongodb', 'eureka', or 'config-server'"
     exit 1
 fi
 
@@ -257,7 +259,7 @@ manage_eureka() {
                     
                     # Display registered services if any
                     echo "\nRegistered Services:"
-                    apps_response=$(curl -s http://$EC2_IP:8761/eureka/apps)
+                    apps_response=$(curl -s http://$COMBINED_EC2_IP:8761/eureka/apps)
                     if [[ $apps_response == *"<application>"* ]]; then
                         echo "Found registered services:"
                         echo "$apps_response" | grep -o '<application>[^<]*</application>' | sed 's/<application>\(.*\)<\/application>/\1/'
@@ -274,6 +276,61 @@ manage_eureka() {
     esac
 }
 
+# Function to manage Config Server
+manage_config_server() {
+    local action=$1
+    echo "Managing Config Server: $action"
+    
+    case $action in
+        start)
+            ssh -i $SSH_KEY ubuntu@$EC2_IP "sudo systemctl start config-server.service"
+            echo "Waiting for Config Server to start..."
+            sleep 2
+            ;;
+        stop)
+            ssh -i $SSH_KEY ubuntu@$EC2_IP "sudo systemctl stop config-server.service"
+            echo "Waiting for Config Server to stop..."
+            sleep 2
+            ;;
+        restart)
+            ssh -i $SSH_KEY ubuntu@$EC2_IP "sudo systemctl restart config-server.service"
+            echo "Waiting for Config Server to restart..."
+            sleep 2
+            ;;
+        kill)
+            echo "Forcefully terminating Config Server..."
+            ssh -i $SSH_KEY ubuntu@$EC2_IP "sudo systemctl stop config-server.service"
+            ssh -i $SSH_KEY ubuntu@$EC2_IP "sudo kill -9 \$(sudo lsof -t -i:8888) 2>/dev/null || true"
+            echo "✅ Config Server successfully terminated"
+            ;;
+        status)
+            if ssh -i $SSH_KEY ubuntu@$EC2_IP "systemctl is-active config-server.service" > /dev/null; then
+                echo "✅ Config Server is running"
+                # Get health check info
+                health_response=$(curl -s http://$EC2_IP:8888/actuator/health)
+                if [ $? -eq 0 ]; then
+                    echo "\nHealth Status:"
+                    echo "$health_response" | jq '.'
+                    
+                    # Display available configuration profiles
+                    echo "\nAvailable Configuration Profiles:"
+                    profiles_response=$(curl -s http://$SPRINGBOOT_EC2_IP:8888/application/default 2>/dev/null)
+                    if [ $? -eq 0 ] && [ -n "$profiles_response" ]; then
+                        echo "Default configuration available"
+                        echo "$profiles_response" | jq '.'
+                    else
+                        echo "No configuration profiles available or unable to access them"
+                    fi
+                else
+                    echo "❌ Health check failed: Could not connect to health endpoint"
+                fi
+            else
+                echo "❌ Config Server is not running"
+            fi
+            ;;
+    esac
+}
+
 # Main service management logic
 case $SERVICE in
     all)
@@ -284,10 +341,13 @@ case $SERVICE in
             manage_springboot status
             echo -e "\n=== Eureka Service Discovery Status ==="
             manage_eureka status
+            echo -e "\n=== Config Server Status ==="
+            manage_config_server status
         else
             manage_mongodb $ACTION
             manage_springboot $ACTION
             manage_eureka $ACTION
+            manage_config_server $ACTION
         fi
         ;;
     spring-boot)
@@ -298,5 +358,8 @@ case $SERVICE in
         ;;
     eureka)
         manage_eureka $ACTION
+        ;;
+    config-server)
+        manage_config_server $ACTION
         ;;
 esac

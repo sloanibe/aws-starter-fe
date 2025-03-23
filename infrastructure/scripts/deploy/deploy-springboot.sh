@@ -8,7 +8,7 @@ if [[ ! -d "aws-starter-api" ]]; then
 fi
 
 # Set variables
-EC2_IP="13.52.157.48"
+EC2_IP="13.52.157.48"  # t2.micro instance
 SSH_KEY="/home/msloan/.ssh/aws-starter-key.pem"
 APP_NAME="aws-starter-api"
 APP_JAR="aws-starter-api/target/${APP_NAME}-0.0.1-SNAPSHOT.jar"
@@ -115,7 +115,7 @@ echo "▶️ Starting the application..."
 ssh -i $SSH_KEY ubuntu@$EC2_IP "cd $REMOTE_DIR && \
     # Start the application with environment variables
     JAVA_HOME=\$(dirname \$(dirname \$(readlink -f \$(which java)))) \
-    nohup java -Xmx256m -Xms128m \
+    nohup java -Xmx192m -Xms96m \
         -XX:MaxMetaspaceSize=128m \
         -XX:CompressedClassSpaceSize=32m \
         -XX:+UseSerialGC \
