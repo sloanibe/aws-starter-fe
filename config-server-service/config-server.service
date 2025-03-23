@@ -1,12 +1,17 @@
 [Unit]
 Description=Spring Cloud Config Server
-After=network.target
+After=network.target service-discovery.service
+Requires=service-discovery.service
 
 [Service]
 User=ubuntu
 WorkingDirectory=/home/ubuntu/config-server-service
 EnvironmentFile=/home/ubuntu/config-server-service/.env
-ExecStart=/usr/bin/java -Xmx256m -Xms128m \
+ExecStart=/usr/bin/java -Xmx192m -Xms96m \
+    -XX:MaxMetaspaceSize=128m \
+    -XX:CompressedClassSpaceSize=32m \
+    -XX:+UseSerialGC \
+    -Xss256k \
     -DSERVER_PORT=8888 \
     -DSPRING_PROFILES_ACTIVE=prod \
     -DCONFIG_GIT_URI=${CONFIG_GIT_URI} \

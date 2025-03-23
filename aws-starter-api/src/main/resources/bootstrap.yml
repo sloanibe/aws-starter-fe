@@ -2,10 +2,10 @@ spring:
   application:
     name: aws-starter-api
   config:
-    import: configserver:http://localhost:8888
+    import: configserver:http://13.52.157.48:8888
   cloud:
     config:
-      uri: http://localhost:8888
+      uri: http://13.52.157.48:8888
       fail-fast: false
       retry:
         initial-interval: 1000

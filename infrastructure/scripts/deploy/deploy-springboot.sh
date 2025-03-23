@@ -115,7 +115,10 @@ echo "▶️ Starting the application..."
 ssh -i $SSH_KEY ubuntu@$EC2_IP "cd $REMOTE_DIR && \
     # Start the application with environment variables
     JAVA_HOME=\$(dirname \$(dirname \$(readlink -f \$(which java)))) \
-    nohup java -Xmx512m -Xms256m \
+    nohup java -Xmx256m -Xms128m \
+        -XX:MaxMetaspaceSize=128m \
+        -XX:CompressedClassSpaceSize=32m \
+        -XX:+UseSerialGC \
         -DSERVER_PORT=8080 \
         -DSPRING_PROFILES_ACTIVE=prod \
         -DAPP_NAME=aws-starter-api \
