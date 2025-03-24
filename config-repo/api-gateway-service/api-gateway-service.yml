@@ -41,10 +41,12 @@ management:
   endpoints:
     web:
       exposure:
-        include: health,info,metrics,gateway
+        include: health,info,metrics,gateway,routes
   endpoint:
     health:
       show-details: always
+    gateway:
+      enabled: true
   health:
     defaults:
       enabled: true
