@@ -26,7 +26,7 @@ spring:
           predicates:
             - Path=/api/login/**
           filters:
-            - RewritePath=/api/login/(?<segment>.*), /${segment}
+            - RewritePath=/api/login/(?<segment>.*), /api/login/${segment}
             
         # General API Service route for all other API requests
         - id: api-service
