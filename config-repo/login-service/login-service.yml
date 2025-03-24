@@ -1,0 +1,40 @@
+# Login Service Configuration
+
+# RabbitMQ Configuration
+rabbitmq:
+  exchange:
+    name: login-exchange
+  queue:
+    name: login-queue
+  routing:
+    key: login.event
+
+# MongoDB Configuration
+spring:
+  application:
+    name: LOGIN-SERVICE
+  data:
+    mongodb:
+      host: localhost
+      port: 27017
+      database: aws-starter
+      authentication-database: admin
+      username: ${MONGO_USERNAME:admin}
+      password: ${MONGO_PASSWORD:password}
+
+# Actuator Configuration
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics
+  endpoint:
+    health:
+      show-details: always
+
+# Logging Configuration
+logging:
+  level:
+    com.example.loginservice: INFO
+    org.springframework.security: INFO
+    org.springframework.amqp: INFO
