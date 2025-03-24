@@ -20,8 +20,17 @@ spring:
   cloud:
     gateway:
       routes:
+        # Login Service route - must be before the api-service route for proper precedence
+        - id: login-service
+          uri: lb://LOGIN-SERVICE
+          predicates:
+            - Path=/api/login/**
+          filters:
+            - RewritePath=/api/login/(?<segment>.*), /${segment}
+            
+        # General API Service route for all other API requests
         - id: api-service
-          uri: lb://api-service
+          uri: lb://AWS-STARTER-API
           predicates:
             - Path=/api/**
           filters:
