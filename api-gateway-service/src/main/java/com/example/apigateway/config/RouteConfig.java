@@ -4,7 +4,6 @@ import org.springframework.cloud.gateway.route.RouteLocator;
 import org.springframework.cloud.gateway.route.builder.RouteLocatorBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpMethod;
 
 @Configuration
 public class RouteConfig {
@@ -12,9 +11,27 @@ public class RouteConfig {
     @Bean
     public RouteLocator customRouteLocator(RouteLocatorBuilder builder) {
         return builder.routes()
-            // API Service routes
+            // Login Service routes - using Eureka service discovery
+            .route("login-service-route", r -> r
+                .path("/api/login")
+                .filters(f -> f
+                    .rewritePath("/api/login", "/login")
+                    .addResponseHeader("X-Gateway-Source", "spring-cloud-gateway"))
+                .uri("lb://LOGIN-SERVICE"))
+                
+            // Test endpoint route - using Eureka service discovery
+            .route("test-endpoint-route", r -> r
+                .path("/api/test")
+                .filters(f -> f
+                    .rewritePath("/api/test", "/test")
+                    .addResponseHeader("X-Gateway-Source", "spring-cloud-gateway"))
+                .uri("lb://LOGIN-SERVICE"))
+                
+            // API Service routes - exclude login path
             .route("api-service-route", r -> r
                 .path("/api/**")
+                .and()
+                .not(p -> p.path("/api/login"))
                 .filters(f -> f
                     .rewritePath("/api/(?<segment>.*)", "/${segment}")
                     .addResponseHeader("X-Gateway-Source", "spring-cloud-gateway"))

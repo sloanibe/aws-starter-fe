@@ -1,0 +1,17 @@
+[Unit]
+Description=Login Service
+After=service-discovery.service config-server.service
+Requires=service-discovery.service config-server.service
+
+[Service]
+User=ubuntu
+WorkingDirectory=/home/ubuntu/login-service
+EnvironmentFile=/home/ubuntu/login-service/.env
+ExecStart=/usr/bin/java -Dspring.application.name=LOGIN-SERVICE -jar login-service.jar
+SuccessExitStatus=143
+TimeoutStopSec=10
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target

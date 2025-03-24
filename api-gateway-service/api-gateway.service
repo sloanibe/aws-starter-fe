@@ -11,16 +11,18 @@ ExecStart=/usr/bin/java -Xmx256m -Xms128m \
     -XX:+UseSerialGC \
     -Xss256k \
     -DSERVER_PORT=8090 \
+    -Dserver.port=8090 \
     -DSPRING_PROFILES_ACTIVE=prod \
-    -DSPRING_APPLICATION_NAME=api-gateway-service \
-    -DEUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://13.52.157.48:8761/eureka/ \
-    -DEUREKA_CLIENT_REGISTER-WITH-EUREKA=true \
-    -DEUREKA_CLIENT_FETCH-REGISTRY=true \
-    -DEUREKA_INSTANCE_PREFER-IP-ADDRESS=true \
-    -DEUREKA_INSTANCE_IP-ADDRESS=13.52.157.48 \
-    -DEUREKA_INSTANCE_INSTANCE-ID=api-gateway-service:13.52.157.48:8090 \
+    -Dspring.application.name=API-GATEWAY-SERVICE \
+    -DEUREKA_CLIENT_SERVICE_URL_DEFAULTZONE=http://13.52.157.48:8761/eureka/ \
+    -DEUREKA_CLIENT_REGISTER_WITH_EUREKA=true \
+    -DEUREKA_CLIENT_FETCH_REGISTRY=true \
+    -DEUREKA_INSTANCE_PREFER_IP_ADDRESS=true \
+    -DEUREKA_INSTANCE_IP_ADDRESS=13.52.157.48 \
+    -DEUREKA_INSTANCE_INSTANCE_ID=ip-10-0-1-138.us-west-1.compute.internal:API-GATEWAY-SERVICE:8090 \
     -DHOSTNAME=api-gateway \
     -DIP_ADDRESS=13.52.157.48 \
+    -Dspring.config.import=optional:configserver:http://13.52.157.48:8888 \
     -jar api-gateway-service-0.0.1-SNAPSHOT.jar
 SuccessExitStatus=143
 TimeoutStopSec=10
