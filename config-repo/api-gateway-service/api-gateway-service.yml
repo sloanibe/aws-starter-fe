@@ -22,7 +22,7 @@ spring:
       routes:
         # Login Service route - must be before the api-service route for proper precedence
         - id: login-service
-          uri: lb://LOGIN-SERVICE
+          uri: http://10.0.1.138:8081
           predicates:
             - Path=/api/login,/api/login/**
           filters:
