@@ -15,14 +15,11 @@ public class LoginEventProducer {
     private RabbitTemplate rabbitTemplate;
     private boolean rabbitMqAvailable = false;
 
-    @Value("${rabbitmq.exchange.name:login-exchange}")
+    @Value("${rabbitmq.exchange.name:login.exchange}")
     private String exchangeName;
 
-    @Value("${rabbitmq.routing.key:login.event}")
+    @Value("${rabbitmq.routing.key:login.events}")
     private String routingKey;
-    
-    @Value("${rabbitmq.enabled:false}")
-    private boolean rabbitMqEnabled;
 
     @Autowired(required = false)
     public void setRabbitTemplate(RabbitTemplate rabbitTemplate) {
@@ -32,11 +29,6 @@ public class LoginEventProducer {
     }
 
     public void sendLoginEvent(LoginEvent loginEvent) {
-        if (!rabbitMqEnabled) {
-            log.info("RabbitMQ integration disabled by configuration. Skipping message: {}", loginEvent);
-            return;
-        }
-        
         if (!rabbitMqAvailable) {
             log.warn("RabbitMQ not available. Login will proceed but notification will not be sent: {}", loginEvent);
             return;

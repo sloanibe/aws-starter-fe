@@ -1,0 +1,189 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: 'RabbitMQ Message Broker for AWS Starter Microservices'
+
+Parameters:
+  KeyName:
+    Description: Name of an existing EC2 KeyPair to enable SSH access
+    Type: AWS::EC2::KeyPair::KeyName
+    Default: aws-starter-key
+
+  LocalIpAddress:
+    Description: Your local IP address for SSH access (with /32)
+    Type: String
+    Default: 47.147.63.102/32
+
+  EnvironmentName:
+    Description: Environment name prefix
+    Type: String
+    Default: aws-starter
+    
+  HostedZoneId:
+    Description: Route 53 Hosted Zone ID for sloandev.net
+    Type: String
+    Default: Z03563681XDZ1U0VJCB9P
+    
+  DomainName:
+    Description: Domain name for the RabbitMQ service
+    Type: String
+    Default: rabbitmq.sloandev.net
+
+Resources:
+  # Security Group for RabbitMQ
+  RabbitMQSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Security group for RabbitMQ
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 22
+          ToPort: 22
+          CidrIp: !Ref LocalIpAddress
+          Description: SSH access from local IP
+        - IpProtocol: tcp
+          FromPort: 5672
+          ToPort: 5672
+          CidrIp: 0.0.0.0/0
+          Description: AMQP port
+        - IpProtocol: tcp
+          FromPort: 15672
+          ToPort: 15672
+          CidrIp: 0.0.0.0/0
+          Description: Management UI port
+      Tags:
+        - Key: Name
+          Value: !Sub ${EnvironmentName}-rabbitmq-sg
+
+  # RabbitMQ EC2 Instance
+  RabbitMQInstance:
+    Type: AWS::EC2::Instance
+    Properties:
+      InstanceType: t2.nano
+      ImageId: ami-0a0409af1cb831414  # Ubuntu 22.04 LTS in us-west-1
+      KeyName: !Ref KeyName
+      SecurityGroupIds:
+        - !GetAtt RabbitMQSecurityGroup.GroupId
+      UserData:
+        Fn::Base64: !Sub |
+          #!/bin/bash
+          # Update package lists
+          apt-get update
+          apt-get upgrade -y
+
+          # Install RabbitMQ server
+          apt-get install rabbitmq-server -y
+
+          # Enable and start RabbitMQ service
+          systemctl enable rabbitmq-server
+          systemctl start rabbitmq-server
+
+          # Create setup script that will run after RabbitMQ is fully initialized
+          cat > /tmp/setup-rabbitmq.sh << 'EOF'
+          #!/bin/bash
+          
+          # Wait for RabbitMQ to be fully up
+          echo "Waiting for RabbitMQ to be ready..."
+          for i in {1..30}; do
+            if rabbitmqctl status >/dev/null 2>&1; then
+              echo "RabbitMQ is ready!"
+              break
+            fi
+            echo "Waiting for RabbitMQ... ($i/30)"
+            sleep 5
+            if [ $i -eq 30 ]; then
+              echo "Timed out waiting for RabbitMQ to start"
+              exit 1
+            fi
+          done
+          
+          # Enable RabbitMQ Management UI
+          echo "Enabling RabbitMQ Management UI..."
+          rabbitmq-plugins enable rabbitmq_management
+          
+          # Create admin user for management
+          echo "Creating admin user..."
+          rabbitmqctl add_user admin admin123 || echo "User may already exist"
+          rabbitmqctl set_user_tags admin administrator
+          rabbitmqctl set_permissions -p / admin ".*" ".*" ".*"
+          
+          # Create application user with limited permissions
+          echo "Creating application user..."
+          rabbitmqctl add_user aws-starter aws-starter-password || echo "User may already exist"
+          rabbitmqctl set_permissions -p / aws-starter ".*" ".*" ".*"
+          
+          # Create Exchange for Login Events
+          echo "Creating login.exchange..."
+          rabbitmqadmin declare exchange name=login.exchange type=topic durable=true
+          
+          # Create Queue for Login Events
+          echo "Creating login.events.queue..."
+          rabbitmqadmin declare queue name=login.events.queue durable=true
+          
+          # Bind Queue to Exchange
+          echo "Binding queue to exchange..."
+          rabbitmqadmin declare binding source=login.exchange destination=login.events.queue routing_key="login.events"
+          
+          # Enable HA policy for login queue
+          echo "Setting HA policy..."
+          rabbitmqctl set_policy ha-login "^login\." '{"ha-mode":"all","ha-sync-mode":"automatic"}' --apply-to queues
+          
+          echo "RabbitMQ setup completed successfully!"
+          EOF
+          
+          # Make the setup script executable
+          chmod +x /tmp/setup-rabbitmq.sh
+          
+          # Install rabbitmqadmin CLI tool
+          apt-get install -y python3 python3-pip
+          pip3 install requests
+          
+          # Create a systemd service to run the setup script after RabbitMQ is up
+          cat > /etc/systemd/system/rabbitmq-setup.service << EOF
+          [Unit]
+          Description=RabbitMQ Setup
+          After=rabbitmq-server.service
+          Requires=rabbitmq-server.service
+          
+          [Service]
+          Type=oneshot
+          ExecStart=/tmp/setup-rabbitmq.sh
+          RemainAfterExit=true
+          
+          [Install]
+          WantedBy=multi-user.target
+          EOF
+          
+          # Enable and start the setup service
+          systemctl daemon-reload
+          systemctl enable rabbitmq-setup.service
+          systemctl start rabbitmq-setup.service
+      Tags:
+        - Key: Name
+          Value: !Sub ${EnvironmentName}-rabbitmq
+
+  # DNS Record for RabbitMQ
+  RabbitMQDNSRecord:
+    Type: AWS::Route53::RecordSet
+    Properties:
+      HostedZoneId: !Ref HostedZoneId
+      Name: !Ref DomainName
+      Type: A
+      TTL: 300
+      ResourceRecords:
+        - !GetAtt RabbitMQInstance.PublicIp
+
+Outputs:
+  RabbitMQInstanceId:
+    Description: ID of the RabbitMQ instance
+    Value: !Ref RabbitMQInstance
+
+  RabbitMQInstancePublicIP:
+    Description: Public IP of the RabbitMQ instance
+    Value: !GetAtt RabbitMQInstance.PublicIp
+
+  RabbitMQManagementUI:
+    Description: URL for RabbitMQ Management UI
+    Value: !Sub http://${RabbitMQInstance.PublicIp}:15672
+    
+  RabbitMQDNSName:
+    Description: DNS name for RabbitMQ
+    Value: !Ref DomainName

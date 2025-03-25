@@ -6,6 +6,13 @@ set -e
 # Get the project root directory
 PROJECT_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 
+# Define variables
+EC2_IP="13.52.157.48"
+EC2_USER="ubuntu"
+SERVICE_NAME="login-service"
+LOCAL_DIR="${PROJECT_ROOT}/login-service"
+TARGET_DIR="/home/ubuntu/login-service"
+
 # First, ensure EC2 infrastructure is up-to-date
 echo "🔍 Checking EC2 infrastructure..."
 $PROJECT_ROOT/scripts/aws/manage-aws.sh status --service=ec2
@@ -21,12 +28,12 @@ IP_ADDRESS=${EC2_IP}
 SERVER_PORT=8081
 MONGO_USERNAME=admin
 MONGO_PASSWORD=admin123
-# RabbitMQ is disabled by default until it's set up
-RABBITMQ_ENABLED=false
-RABBITMQ_HOST=localhost
+# RabbitMQ configuration
+RABBITMQ_ENABLED=true
+RABBITMQ_HOST=rabbitmq.sloandev.net
 RABBITMQ_PORT=5672
-RABBITMQ_USERNAME=guest
-RABBITMQ_PASSWORD=guest
+RABBITMQ_USERNAME=aws-starter
+RABBITMQ_PASSWORD=aws-starter-password
 EOF
 
 # Copy files to EC2
