@@ -24,19 +24,19 @@ public class LoginController {
         log.info("LOGIN-SERVICE: Received login request for user: {} ({})", 
                 loginRequest.getName() != null ? loginRequest.getName() : "unknown", 
                 loginRequest.getEmail() != null ? loginRequest.getEmail() : "unknown@example.com");
-        log.info("LOGIN-SERVICE: DEBUGGING MODE - Bypassing normal authentication flow");
         
-        // Create a simple success response without invoking the service
-        LoginResponse response = LoginResponse.builder()
-                .id("debug-user-id")
-                .email(loginRequest.getEmail() != null ? loginRequest.getEmail() : "debug@example.com")
-                .name(loginRequest.getName() != null ? loginRequest.getName() : "Debug User")
-                .organization(loginRequest.getOrganization() != null ? loginRequest.getOrganization() : "Debug Org")
-                .success(true)
-                .message("Login successful (DEBUG MODE)")
-                .build();
-                
-        log.info("LOGIN-SERVICE: Returning debug success response");
-        return ResponseEntity.ok(response);
+        try {
+            // Use the actual login service implementation
+            LoginResponse response = loginService.login(loginRequest);
+            log.info("LOGIN-SERVICE: Login successful for user: {}", response.getId());
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            log.error("LOGIN-SERVICE: Error processing login request", e);
+            LoginResponse errorResponse = LoginResponse.builder()
+                    .success(false)
+                    .message("Login failed: " + e.getMessage())
+                    .build();
+            return ResponseEntity.badRequest().body(errorResponse);
+        }
     }
 }
