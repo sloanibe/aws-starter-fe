@@ -26,8 +26,6 @@ spring:
           uri: http://10.0.1.138:8081
           predicates:
             - Path=/api/login,/api/login/**
-          filters:
-            - StripPrefix=1
           metadata:
             connect-timeout: 5000
             response-timeout: 5000
@@ -37,8 +35,6 @@ spring:
           uri: lb://AWS-STARTER-API
           predicates:
             - Path=/api/**
-          filters:
-            - RewritePath=/api/(?<segment>.*), /${segment}
 
 # Actuator endpoints for monitoring
 management:
