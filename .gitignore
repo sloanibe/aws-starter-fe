@@ -11,6 +11,17 @@ yarn-error.log
 # Maven build directories
 /aws-starter-api/target/
 /aws-starter-api/.mvn/wrapper/maven-wrapper.jar
+/api-gateway-service/target/
+/config-server-service/target/
+/service-discovery-service/target/
+/login-service/target/
+/email-service/target/
+**/target/
+**/.mvn/wrapper/maven-wrapper.jar
+**/target/**/*.jar
+**/target/**/*.original
+**/target/**/*.properties
+**/target/**/*.class
 
 # IDE files
 .idea/
