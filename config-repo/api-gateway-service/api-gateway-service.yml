@@ -22,23 +22,41 @@ spring:
       routes:
         # Login Service route - must be before the api-service route for proper precedence
         # Using Eureka service discovery with path rewriting to fix path duplication
-        - id: login-service
+        - id: login-service-route
           uri: lb://LOGIN-SERVICE
           predicates:
             - Path=/api/login,/api/login/**
           filters:
             - RewritePath=/api/(?<segment>.*), /$\{segment}
+            - AddResponseHeader=X-Gateway-Source, spring-cloud-gateway
+          metadata:
+            connect-timeout: 5000
+            response-timeout: 5000
+            
+        # Test endpoint route - using Eureka service discovery
+        - id: test-endpoint-route
+          uri: lb://LOGIN-SERVICE
+          predicates:
+            - Path=/api/test
+          filters:
+            - RewritePath=/api/test, /test
+            - AddResponseHeader=X-Gateway-Source, spring-cloud-gateway
           metadata:
             connect-timeout: 5000
             response-timeout: 5000
             
         # General API Service route for all other API requests
-        - id: api-service
+        - id: api-service-route
           uri: lb://AWS-STARTER-API
           predicates:
             - Path=/api/**
+            - name: Path
+              args:
+                negated: true
+                patterns: /api/login,/api/login/**
           filters:
-            - RewritePath=/api/(?<segment>.*), /api/$\{segment}
+            - RewritePath=/api/(?<segment>.*), /$\{segment}
+            - AddResponseHeader=X-Gateway-Source, spring-cloud-gateway
 
 # Actuator endpoints for monitoring
 management:
