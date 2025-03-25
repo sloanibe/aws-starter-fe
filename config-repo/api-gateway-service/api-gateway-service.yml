@@ -54,10 +54,12 @@ management:
 # Logging configuration
 logging:
   level:
-    org.springframework.cloud.gateway: DEBUG
-    org.springframework.cloud.gateway.handler.predicate: DEBUG
-    org.springframework.web: DEBUG
-    reactor.netty: INFO
+    org.springframework.cloud.gateway: TRACE
+    org.springframework.cloud.gateway.handler.predicate: TRACE
+    org.springframework.web: TRACE
+    reactor.netty: DEBUG
+    org.springframework.http.server.reactive: TRACE
+    org.springframework.boot.web.reactive: TRACE
 
 # JVM memory optimization for t2.small
 spring:
