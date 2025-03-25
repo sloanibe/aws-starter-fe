@@ -8,12 +8,12 @@ export const apiConfig = {
   // In production, use the actual API endpoint
   apiBaseUrl: import.meta.env.DEV 
     ? '/api'  // This will be proxied by Vite to the production API
-    : 'https://vab90wx4u0.execute-api.us-west-1.amazonaws.com/prod/api',
+    : 'https://vab90wx4u0.execute-api.us-west-1.amazonaws.com/prod',
   
   // API endpoints
   endpoints: {
     users: '/users',
-    login: '/login',  // Fixed to avoid duplicate /api prefix
+    login: '/api/login',  // Updated to match API Gateway configuration
     projects: '/projects',
     projectMembers: '/project-members',
     projectDetails: '/project-details',
