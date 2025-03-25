@@ -21,11 +21,13 @@ spring:
     gateway:
       routes:
         # Login Service route - must be before the api-service route for proper precedence
-        # Using direct IP address instead of Eureka service discovery to bypass resolution issues
+        # Using Eureka service discovery with path rewriting to fix path duplication
         - id: login-service
-          uri: http://10.0.1.138:8081
+          uri: lb://LOGIN-SERVICE
           predicates:
             - Path=/api/login,/api/login/**
+          filters:
+            - RewritePath=/api/(?<segment>.*), /$\{segment}
           metadata:
             connect-timeout: 5000
             response-timeout: 5000
@@ -53,7 +55,11 @@ management:
 
 # Logging configuration
 logging:
+  file:
+    name: /var/log/api-gateway-service.log
   level:
+    root: INFO
+    com.example.apigateway.filter: DEBUG
     org.springframework.cloud.gateway: TRACE
     org.springframework.cloud.gateway.handler.predicate: TRACE
     org.springframework.web: TRACE
