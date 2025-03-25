@@ -58,6 +58,29 @@ manage_instance() {
             # Get the public IP address
             local public_ip=$(aws ec2 describe-instances --instance-ids $instance_id --query 'Reservations[0].Instances[0].PublicIpAddress' --output text)
             echo "✅ $instance_name instance started with IP: $public_ip"
+            
+            # Install systemd service files if this is the combined instance
+            if [ "$instance_id" == "$COMBINED_INSTANCE_ID" ]; then
+                echo "Installing systemd service files..."
+                # Wait a bit for SSH to be available
+                echo "Waiting for SSH to be available..."
+                for i in {1..30}; do
+                    if ssh -o StrictHostKeyChecking=no -o ConnectTimeout=5 -i /home/msloan/.ssh/aws-starter-key.pem ubuntu@$public_ip "echo 'SSH connection successful'" 2>/dev/null; then
+                        echo "SSH connection established"
+                        break
+                    fi
+                    echo "Waiting for SSH... ($i/30)"
+                    sleep 5
+                    if [ $i -eq 30 ]; then
+                        echo "⚠️ Warning: Could not establish SSH connection. Systemd files not installed."
+                        return
+                    fi
+                done
+                
+                # Run the install-systemd-files.sh script
+                "$SCRIPT_DIR/install-systemd-files.sh"
+                echo "✅ Systemd service files installed and services started"
+            fi
             ;;
             
         stop)
