@@ -107,7 +107,7 @@ Resources:
       Integration:
         Type: HTTP_PROXY
         IntegrationHttpMethod: ANY
-        Uri: !Sub 'http://${EC2InstanceIP}:${EC2Port}/'
+        Uri: !Sub 'http://${EC2InstanceIP}:${EC2Port}'
         IntegrationResponses:
           - StatusCode: 200
 

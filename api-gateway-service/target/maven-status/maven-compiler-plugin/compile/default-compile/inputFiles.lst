@@ -1,3 +1,6 @@
+/home/msloan/gitprojects/aws-starter/api-gateway-service/src/main/java/com/example/apigateway/filter/RequestLoggingFilter.java
+/home/msloan/gitprojects/aws-starter/api-gateway-service/src/main/java/com/example/apigateway/config/FilterConfig.java
 /home/msloan/gitprojects/aws-starter/api-gateway-service/src/main/java/com/example/apigateway/config/CorsConfig.java
 /home/msloan/gitprojects/aws-starter/api-gateway-service/src/main/java/com/example/apigateway/config/RouteConfig.java
+/home/msloan/gitprojects/aws-starter/api-gateway-service/src/main/java/com/example/apigateway/controller/DebugController.java
 /home/msloan/gitprojects/aws-starter/api-gateway-service/src/main/java/com/example/apigateway/ApiGatewayApplication.java

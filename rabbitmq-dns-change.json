@@ -1,0 +1,18 @@
+{
+  "Comment": "Add rabbitmq.sloandev.net subdomain for RabbitMQ service",
+  "Changes": [
+    {
+      "Action": "UPSERT",
+      "ResourceRecordSet": {
+        "Name": "rabbitmq.sloandev.net",
+        "Type": "A",
+        "TTL": 300,
+        "ResourceRecords": [
+          {
+            "Value": "50.18.33.169"
+          }
+        ]
+      }
+    }
+  ]
+}

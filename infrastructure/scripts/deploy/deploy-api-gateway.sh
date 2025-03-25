@@ -15,7 +15,7 @@ DOMAIN_NAME="api.sloandev.net"
 # Normally we would get this from the EC2 metadata service, but since we're not running on EC2
 # we'll set it manually
 EC2_IP="13.52.157.48"  # Updated to match the current api.sloandev.net DNS resolution
-EC2_PORT=8080
+EC2_PORT=8090
 
 # Use the certificate ARN we just created in us-west-1
 CERT_ARN="arn:aws:acm:us-west-1:076034795794:certificate/6aee3b95-d747-4f5a-b9ec-2581e217bbf0"

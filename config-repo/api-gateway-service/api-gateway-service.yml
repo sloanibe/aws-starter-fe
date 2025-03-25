@@ -37,6 +37,8 @@ spring:
           uri: lb://AWS-STARTER-API
           predicates:
             - Path=/api/**
+          filters:
+            - RewritePath=/api/(?<segment>.*), /api/$\{segment}
 
 # Actuator endpoints for monitoring
 management:
