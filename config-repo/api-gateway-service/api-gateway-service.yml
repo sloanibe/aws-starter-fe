@@ -88,6 +88,5 @@ logging:
     org.springframework.boot.web.reactive: TRACE
 
 # JVM memory optimization for t2.small
-# Note: This is merged with the spring section above
   jvm:
     memory: -Xmx256m -Xms128m
