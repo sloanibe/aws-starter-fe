@@ -21,12 +21,16 @@ spring:
     gateway:
       routes:
         # Login Service route - must be before the api-service route for proper precedence
+        # Using direct IP address instead of Eureka service discovery to bypass resolution issues
         - id: login-service
-          uri: lb://LOGIN-SERVICE
+          uri: http://10.0.1.138:8081
           predicates:
             - Path=/api/login,/api/login/**
           filters:
             - StripPrefix=1
+          metadata:
+            connect-timeout: 5000
+            response-timeout: 5000
             
         # General API Service route for all other API requests
         - id: api-service

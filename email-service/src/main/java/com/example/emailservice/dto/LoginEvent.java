@@ -1,0 +1,19 @@
+package com.example.emailservice.dto;
+
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+import java.io.Serializable;
+import java.time.LocalDateTime;
+
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+public class LoginEvent implements Serializable {
+    private String userId;
+    private String email;
+    private String name;
+    private String organization;
+    private LocalDateTime loginTime;
+}

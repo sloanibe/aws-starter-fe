@@ -19,16 +19,15 @@ export interface GuestUser {
 class AuthService {
   async loginAsGuest(email: string, name: string, company?: string): Promise<GuestUser> {
     try {
-      const response = await fetch(`${apiConfig.apiBaseUrl}${apiConfig.endpoints.users}/guest`, {
+      // Use the new login service endpoint
+      const response = await fetch(`${apiConfig.apiBaseUrl}${apiConfig.endpoints.login}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
           email,
-          name: name,
-          displayName: name,
-          username: 'guest',
+          name,
           organization: company || ''
         })
       });
@@ -37,7 +36,25 @@ class AuthService {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
       
-      const user = await response.json();
+      const loginResponse = await response.json();
+      
+      // Map the login response to our GuestUser interface
+      const user: GuestUser = {
+        id: loginResponse.userId,
+        username: loginResponse.name.toLowerCase().replace(/\s+/g, '.'),
+        displayName: loginResponse.name,
+        email: loginResponse.email,
+        organization: loginResponse.organization,
+        avatar: null,
+        role: 'guest',
+        createdAt: loginResponse.createdAt || new Date().toISOString(),
+        lastLogin: loginResponse.lastLogin || new Date().toISOString(),
+        projects: null,
+        projectMemberships: null,
+        createdTasks: null,
+        assignedTasks: null
+      };
+      
       this.setUser(user);
       return user;
     } catch (error) {

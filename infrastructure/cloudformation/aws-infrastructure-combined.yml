@@ -142,6 +142,11 @@ Resources:
           CidrIp: 0.0.0.0/0
           Description: Spring Boot API access
         - IpProtocol: tcp
+          FromPort: 8090
+          ToPort: 8090
+          CidrIp: 0.0.0.0/0
+          Description: Spring Cloud Gateway access
+        - IpProtocol: tcp
           FromPort: 27017
           ToPort: 27017
           CidrIp: !Ref LocalIpAddress

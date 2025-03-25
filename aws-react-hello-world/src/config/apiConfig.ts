@@ -13,6 +13,7 @@ export const apiConfig = {
   // API endpoints
   endpoints: {
     users: '/users',
+    login: '/login',  // New login endpoint
     projects: '/projects',
     projectMembers: '/project-members',
     projectDetails: '/project-details',

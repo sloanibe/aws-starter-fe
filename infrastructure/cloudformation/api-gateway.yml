@@ -9,8 +9,8 @@ Parameters:
   
   EC2Port:
     Type: String
-    Default: 8080
-    Description: Port on which the Spring Boot API is running
+    Default: 8090
+    Description: Port on which the Spring Cloud Gateway is running
 
 Resources:
   # API Gateway REST API
@@ -78,7 +78,7 @@ Resources:
       Integration:
         Type: HTTP_PROXY
         IntegrationHttpMethod: ANY
-        Uri: !Sub 'http://${EC2InstanceIP}:8080/api/{proxy}'
+        Uri: !Sub 'http://${EC2InstanceIP}:${EC2Port}/api/{proxy}'
         RequestParameters:
           integration.request.path.proxy: 'method.request.path.proxy'
         IntegrationResponses:
@@ -107,7 +107,7 @@ Resources:
       Integration:
         Type: HTTP_PROXY
         IntegrationHttpMethod: ANY
-        Uri: !Sub 'http://${EC2InstanceIP}:8080/'
+        Uri: !Sub 'http://${EC2InstanceIP}:${EC2Port}/'
         IntegrationResponses:
           - StatusCode: 200
 

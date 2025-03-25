@@ -1,0 +1,17 @@
+[Unit]
+Description=Email Service
+After=service-discovery.service config-server.service
+Requires=service-discovery.service config-server.service
+
+[Service]
+User=ec2-user
+WorkingDirectory=/home/ec2-user/email-service
+EnvironmentFile=/home/ec2-user/email-service/.env
+ExecStart=/usr/bin/java -jar email-service.jar
+SuccessExitStatus=143
+TimeoutStopSec=10
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target
