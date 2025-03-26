@@ -75,7 +75,7 @@ spring:
                 negated: true
                 patterns: /api/login,/api/login/**
           filters:
-            - RewritePath=/api/(?<segment>.*), /$\{segment}
+            - StripPrefix=1
             - AddResponseHeader=X-Gateway-Source, spring-cloud-gateway
 
 # Actuator endpoints for monitoring
