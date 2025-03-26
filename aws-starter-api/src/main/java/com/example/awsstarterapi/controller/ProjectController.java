@@ -14,7 +14,7 @@ import java.util.stream.Collectors;
 import java.time.LocalDateTime;
 
 @RestController
-@RequestMapping("/api/projects")
+@RequestMapping("/projects")
 public class ProjectController extends BaseController {
 
     @Autowired
