@@ -7,7 +7,17 @@ Requires=service-discovery.service config-server.service
 User=ubuntu
 WorkingDirectory=/home/ubuntu/login-service
 EnvironmentFile=/home/ubuntu/login-service/.env
-ExecStart=/usr/bin/java -Dspring.application.name=LOGIN-SERVICE -jar login-service.jar
+ExecStart=/usr/bin/java -Xmx256m -Xms128m \
+    -Dspring.application.name=LOGIN-SERVICE \
+    -DSERVER_PORT=8081 \
+    -DIP_ADDRESS=13.52.157.48 \
+    -DEUREKA_CLIENT_SERVICE_URL_DEFAULTZONE=http://13.52.157.48:8761/eureka/ \
+    -DEUREKA_CLIENT_REGISTER_WITH_EUREKA=true \
+    -DEUREKA_CLIENT_FETCH_REGISTRY=true \
+    -DEUREKA_INSTANCE_PREFER_IP_ADDRESS=true \
+    -DEUREKA_INSTANCE_IP_ADDRESS=13.52.157.48 \
+    -DEUREKA_INSTANCE_INSTANCE_ID=ip-10-0-1-138.us-west-1.compute.internal:LOGIN-SERVICE:8081 \
+    -jar login-service.jar
 SuccessExitStatus=143
 TimeoutStopSec=10
 Restart=on-failure
