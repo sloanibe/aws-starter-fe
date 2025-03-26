@@ -17,7 +17,7 @@ spring:
   data:
     mongodb:
       # Use environment variables for production credentials
-      uri: mongodb://${MONGO_USER}:${MONGO_PWD}@localhost:27017/aws_starter_db?authSource=admin&connectTimeoutMS=3000
+      uri: mongodb://${MONGO_USER}:${MONGO_PWD}@13.52.157.48:27017/aws_starter_db?authSource=admin&connectTimeoutMS=3000
 
 aws:
   region: us-west-1
