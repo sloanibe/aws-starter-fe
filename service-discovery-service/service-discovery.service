@@ -5,6 +5,7 @@ After=network.target
 [Service]
 User=ubuntu
 WorkingDirectory=/home/ubuntu/service-discovery-service
+Environment="SERVER_PORT=8761"
 ExecStart=/usr/bin/java -Xmx256m -Xms128m \
     -DSERVER_PORT=8761 \
     -DSPRING_PROFILES_ACTIVE=prod \

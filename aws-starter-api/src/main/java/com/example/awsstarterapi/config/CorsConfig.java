@@ -1,29 +1,9 @@
 package com.example.awsstarterapi.config;
 
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Profile;
-import org.springframework.lang.NonNull;
-import org.springframework.web.servlet.config.annotation.CorsRegistry;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
-
-@Configuration
-@Profile("!prod") // Only apply in non-production environments
-public class CorsConfig implements WebMvcConfigurer {
-
-    @Override
-    public void addCorsMappings(@NonNull CorsRegistry registry) {
-        registry.addMapping("/**")
-                .allowedOrigins(
-                    "http://localhost:3000",
-                    "http://localhost:5173",
-                    "http://localhost:5174",
-                    "http://aws-starter-app.s3-website-us-west-1.amazonaws.com",
-                    "https://d23g2ah1oukxrw.cloudfront.net",
-                    "https://sloandev.net",
-                    "https://www.sloandev.net",
-                    "https://api.sloandev.net"
-                )
-                .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
-                .allowedHeaders("*");
-    }
+/**
+ * CORS configuration is completely disabled and handled at the API Gateway level.
+ * This class is kept as a placeholder for future configuration if needed.
+ */
+public class CorsConfig {
+    // CORS is now handled at the API Gateway level
 }
