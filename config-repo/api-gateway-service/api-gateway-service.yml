@@ -19,6 +19,26 @@ eureka:
 spring:
   cloud:
     gateway:
+      globalcors:
+        corsConfigurations:
+          '[/**]':
+            allowedOrigins:
+              - "http://localhost:3000"
+              - "http://localhost:5173"
+              - "http://localhost:5174"
+              - "http://aws-starter-app.s3-website-us-west-1.amazonaws.com"
+              - "https://d23g2ah1oukxrw.cloudfront.net"
+              - "https://sloandev.net"
+              - "https://www.sloandev.net"
+              - "https://api.sloandev.net"
+            allowedMethods:
+              - GET
+              - POST
+              - PUT
+              - DELETE
+              - OPTIONS
+            allowedHeaders: "*"
+            maxAge: 3600
       routes:
         # Login Service route - must be before the api-service route for proper precedence
         # Using Eureka service discovery with path rewriting to fix path duplication
