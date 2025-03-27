@@ -18,9 +18,10 @@ import java.util.UUID;
 
 public class ProjectAndTaskSeeder {
 
-    private static final String API_BASE_URL = "https://vab90wx4u0.execute-api.us-west-1.amazonaws.com/prod/api";
-    private static final String API_URL = API_BASE_URL + "/projects";
-    private static final String PROJECT_DETAILS_URL = API_BASE_URL + "/project-details";
+    // Use Spring Cloud Gateway URL (port 8090) as per the dual-gateway architecture
+    private static final String API_BASE_URL = "http://13.52.157.48:8090";
+    private static final String API_URL = API_BASE_URL + "/api/projects";
+    private static final String PROJECT_DETAILS_URL = API_BASE_URL + "/api/project-details";
     private static final RestTemplate restTemplate;
 
     static {
@@ -52,45 +53,55 @@ public class ProjectAndTaskSeeder {
         System.out.println("Clearing existing data...");
         
         // Clear projects
-        ResponseEntity<List<ProjectEntity>> projectsResponse = restTemplate.exchange(
-            API_URL,
-            HttpMethod.GET,
-            null,
-            new ParameterizedTypeReference<List<ProjectEntity>>() {}
-        );
+        try {
+            ResponseEntity<List<ProjectEntity>> projectsResponse = restTemplate.exchange(
+                API_URL,
+                HttpMethod.GET,
+                null,
+                new ParameterizedTypeReference<List<ProjectEntity>>() {}
+            );
 
-        List<ProjectEntity> projects = projectsResponse.getBody();
-        if (projects != null) {
-            System.out.println("Found " + projects.size() + " projects to delete");
-            for (ProjectEntity project : projects) {
-                try {
-                    restTemplate.delete(API_URL + "/" + project.getId());
-                    System.out.println("Deleted project: " + project.getName());
-                } catch (Exception e) {
-                    System.err.println("Error deleting project " + project.getName() + ": " + e.getMessage());
+            List<ProjectEntity> projects = projectsResponse.getBody();
+            if (projects != null) {
+                System.out.println("Found " + projects.size() + " projects to delete");
+                for (ProjectEntity project : projects) {
+                    try {
+                        restTemplate.delete(API_URL + "/" + project.getId());
+                        System.out.println("Deleted project: " + project.getName());
+                    } catch (Exception e) {
+                        System.err.println("Error deleting project " + project.getName() + ": " + e.getMessage());
+                    }
                 }
             }
+        } catch (Exception e) {
+            System.err.println("Warning: Could not access projects endpoint: " + e.getMessage());
+            System.out.println("Will attempt to seed new projects anyway...");
         }
 
         // Clear project details
-        ResponseEntity<List<ProjectDetailEntity>> detailsResponse = restTemplate.exchange(
-            PROJECT_DETAILS_URL,
-            HttpMethod.GET,
-            null,
-            new ParameterizedTypeReference<List<ProjectDetailEntity>>() {}
-        );
+        try {
+            ResponseEntity<List<ProjectDetailEntity>> detailsResponse = restTemplate.exchange(
+                PROJECT_DETAILS_URL,
+                HttpMethod.GET,
+                null,
+                new ParameterizedTypeReference<List<ProjectDetailEntity>>() {}
+            );
 
-        List<ProjectDetailEntity> details = detailsResponse.getBody();
-        if (details != null) {
-            System.out.println("Found " + details.size() + " project details to delete");
-            for (ProjectDetailEntity detail : details) {
-                try {
-                    restTemplate.delete(PROJECT_DETAILS_URL + "/" + detail.getId());
-                    System.out.println("Deleted project detail: " + detail.getName());
-                } catch (Exception e) {
-                    System.err.println("Error deleting project detail " + detail.getName() + ": " + e.getMessage());
+            List<ProjectDetailEntity> details = detailsResponse.getBody();
+            if (details != null) {
+                System.out.println("Found " + details.size() + " project details to delete");
+                for (ProjectDetailEntity detail : details) {
+                    try {
+                        restTemplate.delete(PROJECT_DETAILS_URL + "/" + detail.getId());
+                        System.out.println("Deleted project detail: " + detail.getName());
+                    } catch (Exception e) {
+                        System.err.println("Error deleting project detail " + detail.getName() + ": " + e.getMessage());
+                    }
                 }
             }
+        } catch (Exception e) {
+            System.err.println("Warning: Could not access project-details endpoint: " + e.getMessage());
+            System.out.println("Continuing with project seeding...");
         }
 
         // Start seeding new data
@@ -213,7 +224,9 @@ public class ProjectAndTaskSeeder {
                     System.out.println("Failed to create project detail: " + projectDetail.getName());
                 }
             } catch (Exception e) {
-                System.err.println("Error creating project detail " + projectDetail.getName() + ": " + e.getMessage());
+                System.err.println("Warning: Could not create project detail " + projectDetail.getName() + ": " + e.getMessage());
+                System.out.println("Continuing with next project...");
+                // Continue with the next project, don't let this error stop the entire process
             }
         }
 

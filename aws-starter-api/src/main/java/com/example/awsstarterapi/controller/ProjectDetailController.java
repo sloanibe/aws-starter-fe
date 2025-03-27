@@ -9,14 +9,14 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/project-details")
-public class ProjectDetailController {
+@RequestMapping("/project-details")
+public class ProjectDetailController extends BaseController {
     @Autowired
     private ProjectDetailRepository projectDetailRepository;
 
     @GetMapping
     public ResponseEntity<List<ProjectDetailEntity>> getAllProjectDetails() {
-        return ResponseEntity.ok(projectDetailRepository.findAll());
+        return success(projectDetailRepository.findAll());
     }
 
     @GetMapping("/{id}")
@@ -28,7 +28,7 @@ public class ProjectDetailController {
 
     @PostMapping
     public ResponseEntity<ProjectDetailEntity> createProjectDetail(@RequestBody ProjectDetailEntity projectDetail) {
-        return ResponseEntity.ok(projectDetailRepository.save(projectDetail));
+        return success(projectDetailRepository.save(projectDetail));
     }
 
     @DeleteMapping("/{id}")
