@@ -1,0 +1,34 @@
+# Email Service Configuration
+
+# RabbitMQ Configuration
+rabbitmq:
+  exchange:
+    name: login-exchange
+  queue:
+    name: login-queue
+  routing:
+    key: login.event
+
+# AWS SES Configuration
+aws:
+  ses:
+    region: ${AWS_REGION:us-west-1}
+    sender-email: ${SENDER_EMAIL:admin@sloandev.net}
+    template-name: ${TEMPLATE_NAME:login-notification-dev}
+
+# Actuator Configuration
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics
+  endpoint:
+    health:
+      show-details: always
+
+# Logging Configuration
+logging:
+  level:
+    com.example.emailservice: INFO
+    org.springframework.amqp: INFO
+    software.amazon.awssdk: INFO
