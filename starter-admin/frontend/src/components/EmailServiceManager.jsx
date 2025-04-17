@@ -383,26 +383,17 @@ export default function EmailServiceManager() {
       )}
       
       {/* Log Controls - Show/Hide Log Window */}
-      <HStack mb={4}>
+      <Box mb={4} display="flex" justifyContent="center">
         <Button
-          colorScheme={logPolling ? "red" : "blue"}
-          size="sm"
-          onClick={logPolling ? stopLogStream : startLogStream}
-          isLoading={loadingOp === 'logs'}
-          isDisabled={ec2Status === 'stopped'}
-          title={ec2Status === 'stopped' ? 'EC2 instance must be running to view logs' : undefined}
-        >
-          {logPolling ? 'Stop Logs' : 'Start Logs'}
-        </Button>
-        <Button
-          size="sm"
-          onClick={() => setShowLogWindow(v => !v)}
+          leftIcon={<span style={{fontSize: '1.1em'}}>🪟</span>}
+          size="md"
+          colorScheme="blue"
           variant={showLogWindow ? "outline" : "solid"}
-          colorScheme="gray"
+          onClick={() => setShowLogWindow(v => !v)}
         >
           {showLogWindow ? 'Hide Log Window' : 'Show Log Window'}
         </Button>
-      </HStack>
+      </Box>
 
       {/* Floating Log Window */}
       {showLogWindow && (
@@ -427,25 +418,39 @@ export default function EmailServiceManager() {
             <Button
               aria-label="Close log window"
               onClick={() => setShowLogWindow(false)}
-              size="sm"
+              size="xs"
               colorScheme="gray"
               variant="ghost"
               position="absolute"
-              top="8px"
-              right="8px"
+              top="6px"
+              right="6px"
               zIndex={100}
               bg="white"
               border="1px solid #ccc"
               borderRadius="full"
               p={0}
-              minW="32px"
-              minH="32px"
-              boxShadow="md"
+              minW="20px"
+              minH="20px"
+              h="20px"
+              w="20px"
+              boxShadow="sm"
               _hover={{ bg: 'gray.100', borderColor: 'blue.300' }}
             >
-              <span style={{fontSize: '1.25rem', color: '#222'}}>✕</span>
+              <span style={{fontSize: '0.9rem', color: '#222', lineHeight: 1}}>✕</span>
             </Button>
             <Heading size="md" mb={2} color="blue.400" textAlign="center" width="100%">Email Service Logs</Heading>
+            <Button
+              colorScheme={logPolling ? "red" : "blue"}
+              size="sm"
+              onClick={logPolling ? stopLogStream : startLogStream}
+              isLoading={loadingOp === 'logs'}
+              isDisabled={ec2Status === 'stopped'}
+              title={ec2Status === 'stopped' ? 'EC2 instance must be running to view logs' : undefined}
+              mb={2}
+              alignSelf="center"
+            >
+              {logPolling ? 'Stop Logs' : 'Start Logs'}
+            </Button>
             <Box
               ref={logContainerRef}
               borderWidth="1px"

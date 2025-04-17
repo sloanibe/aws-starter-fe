@@ -55,18 +55,26 @@ export default function Dashboard() {
         gap={6}
       >
         <GridItem area={'ec2'}>
-          <Ec2Manager />
+          <Box bg="blue.100" borderRadius="xl" boxShadow="lg" borderWidth="1.5px" borderColor="blue.100" p={5} h="100%">
+            <Ec2Manager />
+          </Box>
         </GridItem>
         <GridItem area={'login'}>
           {/* <LoginServiceManager /> */}
-          <Box borderWidth="1px" borderRadius="lg" p={4} h="100%">Login Service (Coming Soon)</Box>
+          <Box bg="blue.100" borderRadius="xl" boxShadow="lg" borderWidth="1.5px" borderColor="blue.100" p={5} h="100%" display="flex" alignItems="center" justifyContent="center" color="gray.400" fontWeight="semibold">
+            Login Service (Coming Soon)
+          </Box>
         </GridItem>
         <GridItem area={'email'}>
-          <EmailServiceManager />
+          <Box bg="blue.100" borderRadius="xl" boxShadow="lg" borderWidth="1.5px" borderColor="blue.100" p={5} h="100%">
+            <EmailServiceManager />
+          </Box>
         </GridItem>
         <GridItem area={'logs'}>
           {/* <LogsViewer /> */}
-          <Box borderWidth="1px" borderRadius="lg" p={4} h="100%">System Logs (Coming Soon)</Box>
+          <Box bg="blue.100" borderRadius="xl" boxShadow="lg" borderWidth="1.5px" borderColor="blue.100" p={5} h="100%" display="flex" alignItems="center" justifyContent="center" color="gray.400" fontWeight="semibold">
+            Logs Viewer (Coming Soon)
+          </Box>
         </GridItem>
       </Grid>
     </Box>
