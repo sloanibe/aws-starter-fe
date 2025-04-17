@@ -44,21 +44,21 @@ manage_instance() {
     local instance_id=$1
     local instance_name=$2
     local action=$3
-    
+
     echo "Managing $instance_name instance ($instance_id): $action"
-    
+
     case $action in
         start)
             echo "Starting $instance_name instance..."
             aws ec2 start-instances --instance-ids $instance_id
-            
+
             echo "Waiting for instance to be running..."
             aws ec2 wait instance-running --instance-ids $instance_id
-            
+
             # Get the public IP address
             local public_ip=$(aws ec2 describe-instances --instance-ids $instance_id --query 'Reservations[0].Instances[0].PublicIpAddress' --output text)
             echo "✅ $instance_name instance started with IP: $public_ip"
-            
+
             # Install systemd service files if this is the combined instance
             if [ "$instance_id" == "$COMBINED_INSTANCE_ID" ]; then
                 echo "Installing systemd service files..."
@@ -76,29 +76,29 @@ manage_instance() {
                         return
                     fi
                 done
-                
+
                 # Run the install-systemd-files.sh script
                 "$SCRIPT_DIR/install-systemd-files.sh"
                 echo "✅ Systemd service files installed and services started"
             fi
             ;;
-            
+
         stop)
             echo "Stopping $instance_name instance..."
             aws ec2 stop-instances --instance-ids $instance_id
-            
+
             echo "Waiting for instance to stop..."
             aws ec2 wait instance-stopped --instance-ids $instance_id
             echo "✅ $instance_name instance stopped"
             ;;
-            
+
         status)
             local status=$(aws ec2 describe-instances --instance-ids $instance_id --query 'Reservations[0].Instances[0].State.Name' --output text)
             local public_ip=$(aws ec2 describe-instances --instance-ids $instance_id --query 'Reservations[0].Instances[0].PublicIpAddress' --output text 2>/dev/null || echo "N/A")
-            
+
             echo "Status: $status"
             echo "Public IP: $public_ip"
-            
+
             if [ "$status" == "running" ]; then
                 echo "✅ $instance_name instance is running"
             else

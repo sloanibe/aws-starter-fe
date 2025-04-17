@@ -1,12 +1,12 @@
 [Unit]
 Description=Email Service
-After=service-discovery.service config-server.service
-Requires=service-discovery.service config-server.service
+After=network.target config-server.service
+Requires=config-server.service
 
 [Service]
-User=ec2-user
-WorkingDirectory=/home/ec2-user/email-service
-EnvironmentFile=/home/ec2-user/email-service/.env
+User=ubuntu
+WorkingDirectory=/home/ubuntu/email-service
+EnvironmentFile=/home/ubuntu/email-service/.env
 ExecStart=/usr/bin/java -jar email-service.jar
 SuccessExitStatus=143
 TimeoutStopSec=10
