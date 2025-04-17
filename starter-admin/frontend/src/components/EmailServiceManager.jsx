@@ -1,12 +1,14 @@
+import { useRef, useState, useEffect } from 'react';
 import { Box, Heading, Text, Button, HStack, VStack, Alert, AlertIcon, Spinner, Code, Flex, Switch, FormControl, FormLabel, NumberInput, NumberInputField, NumberInputStepper, NumberIncrementStepper, NumberDecrementStepper } from '@chakra-ui/react';
-import { useState, useEffect, useRef } from 'react';
+import { Rnd } from 'react-rnd';
+// Removed all DraggableBox and manual drag/resize logic
+// (No stray JSX or return outside function remains)
 
 export default function EmailServiceManager() {
   const [status, setStatus] = useState('unknown');
   const [ec2Status, setEc2Status] = useState('unknown');
   const [loadingOp, setLoadingOp] = useState(''); // '', 'start', 'stop', 'status'
   const [feedback, setFeedback] = useState({ message: '', status: '' });
-  
   // Log viewer state
   const [logs, setLogs] = useState([]);
   const [logStreamActive, setLogStreamActive] = useState(false);
@@ -14,6 +16,7 @@ export default function EmailServiceManager() {
   const [pollingInterval, setPollingInterval] = useState(3);
   const [autoScroll, setAutoScroll] = useState(true);
   const [lastTimestamp, setLastTimestamp] = useState(null);
+  const [showLogWindow, setShowLogWindow] = useState(false);
   const logContainerRef = useRef(null);
 
   const API_BASE = '/api/email';
@@ -167,7 +170,7 @@ export default function EmailServiceManager() {
         setFeedback({ message: 'Log streaming started', status: 'info' });
         // Start polling
         setLogPolling(true);
-        
+        setShowLogWindow(true);
         // Clear previous logs when starting a new stream
         setLogs([{
           timestamp: new Date().toISOString(),
@@ -379,80 +382,98 @@ export default function EmailServiceManager() {
         </Alert>
       )}
       
-      {/* Log Viewer */}
-      <Box flex="1" display="flex" flexDirection="column">
-        <Heading size="sm" mb={2}>Service Logs</Heading>
-        
-        {/* Log Controls */}
-        <HStack mb={2} spacing={4}>
-          <Button 
-            colorScheme="blue" 
-            size="sm" 
-            onClick={logPolling ? stopLogStream : startLogStream}
-            isLoading={loadingOp === 'logs'}
-            isDisabled={ec2Status === 'stopped'}
-            title={ec2Status === 'stopped' ? 'EC2 instance must be running to view logs' : undefined}
-          >
-            {logPolling ? 'Stop Logs' : 'Start Logs'}
-          </Button>
-          
-          <FormControl display="flex" alignItems="center" width="auto">
-            <FormLabel htmlFor="auto-scroll" mb="0" fontSize="sm">
-              Auto-scroll
-            </FormLabel>
-            <Switch id="auto-scroll" isChecked={autoScroll} onChange={(e) => setAutoScroll(e.target.checked)} />
-          </FormControl>
-          
-          <FormControl display="flex" alignItems="center" width="auto">
-            <FormLabel htmlFor="polling-interval" mb="0" fontSize="sm">
-              Polling (sec)
-            </FormLabel>
-            <NumberInput 
-              id="polling-interval"
-              value={pollingInterval} 
-              onChange={(valueString) => setPollingInterval(Number(valueString))}
-              min={1} 
-              max={10}
-              size="sm"
-              width="70px"
-            >
-              <NumberInputField />
-              <NumberInputStepper>
-                <NumberIncrementStepper />
-                <NumberDecrementStepper />
-              </NumberInputStepper>
-            </NumberInput>
-          </FormControl>
-          
-          <Button size="sm" onClick={() => setLogs([])}>Clear</Button>
-        </HStack>
-        
-        {/* Log Display */}
-        <Box 
-          ref={logContainerRef}
-          flex="1" 
-          borderWidth="1px" 
-          borderRadius="md" 
-          p={2} 
-          bg="black" 
-          color="green.300" 
-          fontFamily="mono" 
-          fontSize="sm"
-          overflowY="auto"
-          minHeight="300px"
+      {/* Log Controls - Show/Hide Log Window */}
+      <HStack mb={4}>
+        <Button
+          colorScheme={logPolling ? "red" : "blue"}
+          size="sm"
+          onClick={logPolling ? stopLogStream : startLogStream}
+          isLoading={loadingOp === 'logs'}
+          isDisabled={ec2Status === 'stopped'}
+          title={ec2Status === 'stopped' ? 'EC2 instance must be running to view logs' : undefined}
         >
-          {logs.length === 0 ? (
-            <Text color="gray.500" p={2}>No logs available. Click 'Start Logs' to begin collecting logs.</Text>
-          ) : (
-            logs.map((log, index) => (
-              <Box key={index} _hover={{ bg: 'whiteAlpha.100' }} py={0.5}>
-                <Text as="span" color="blue.300" mr={2}>[{formatTimestamp(log.timestamp)}]</Text>
-                <Text as="span">{log.message}</Text>
-              </Box>
-            ))
-          )}
-        </Box>
-      </Box>
+          {logPolling ? 'Stop Logs' : 'Start Logs'}
+        </Button>
+        <Button
+          size="sm"
+          onClick={() => setShowLogWindow(v => !v)}
+          variant={showLogWindow ? "outline" : "solid"}
+          colorScheme="gray"
+        >
+          {showLogWindow ? 'Hide Log Window' : 'Show Log Window'}
+        </Button>
+      </HStack>
+
+      {/* Floating Log Window */}
+      {showLogWindow && (
+        <Rnd
+          default={{ x: 120, y: 120, width: 500, height: 380 }}
+          minWidth={350}
+          minHeight={200}
+          bounds="window"
+          style={{ zIndex: 2000, boxShadow: '0 4px 24px rgba(0,0,0,0.20)' }}
+        >
+          <Box
+            bg="gray.800"
+            borderWidth="2px"
+            borderColor="blue.300"
+            borderRadius="md"
+            width="100%"
+            height="100%"
+            display="flex"
+            flexDirection="column"
+            position="relative"
+          >
+            <Button
+              aria-label="Close log window"
+              onClick={() => setShowLogWindow(false)}
+              size="sm"
+              colorScheme="gray"
+              variant="ghost"
+              position="absolute"
+              top="8px"
+              right="8px"
+              zIndex={100}
+              bg="white"
+              border="1px solid #ccc"
+              borderRadius="full"
+              p={0}
+              minW="32px"
+              minH="32px"
+              boxShadow="md"
+              _hover={{ bg: 'gray.100', borderColor: 'blue.300' }}
+            >
+              <span style={{fontSize: '1.25rem', color: '#222'}}>✕</span>
+            </Button>
+            <Heading size="md" mb={2} color="blue.400" textAlign="center" width="100%">Email Service Logs</Heading>
+            <Box
+              ref={logContainerRef}
+              borderWidth="1px"
+              borderRadius="md"
+              p={2}
+              bg="black"
+              color="green.300"
+              fontFamily="mono"
+              fontSize="sm"
+              overflowY="auto"
+              minHeight="200px"
+              flex={1}
+              width="100%"
+            >
+              {logs.length === 0 ? (
+                <Text color="gray.500" p={2}>No logs available. Click 'Start Logs' to begin collecting logs.</Text>
+              ) : (
+                logs.map((log, index) => (
+                  <Box key={index} _hover={{ bg: 'whiteAlpha.100' }} py={0.5}>
+                    <Text as="span" color="blue.300" mr={2}>[{formatTimestamp(log.timestamp)}]</Text>
+                    <Text as="span">{log.message}</Text>
+                  </Box>
+                ))
+              )}
+            </Box>
+          </Box>
+        </Rnd>
+      )}
     </Box>
   );
 }
