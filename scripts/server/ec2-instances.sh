@@ -12,6 +12,7 @@ PROJECT_ROOT="$(cd "$SCRIPT_DIR/../.." && pwd)"
 COMBINED_INSTANCE_ID="i-00c601082fcb6bec1"
 SPRINGBOOT_INSTANCE_ID="i-0511968cdefa2a66b"
 MONGODB_INSTANCE_ID="i-01e834b9543995678"
+RABBITMQ_INSTANCE_ID="i-03c3cdae1dc401eaa"
 
 # Default values
 ACTION=""
@@ -34,8 +35,8 @@ if [ -z "$ACTION" ]; then
     exit 1
 fi
 
-if [[ ! "$INSTANCE" =~ ^(all|combined|springboot|mongodb)$ ]]; then
-    echo "Error: Invalid instance. Must be 'all', 'combined', 'springboot', or 'mongodb'"
+if [[ ! "$INSTANCE" =~ ^(all|combined|springboot|mongodb|rabbitmq)$ ]]; then
+    echo "Error: Invalid instance. Must be 'all', 'combined', 'springboot', 'mongodb', or 'rabbitmq'"
     exit 1
 fi
 
@@ -131,9 +132,12 @@ case $INSTANCE in
         manage_instance $SPRINGBOOT_INSTANCE_ID "Spring Boot" $ACTION
         ;;
     mongodb)
-        manage_instance $MONGODB_INSTANCE_ID "MongoDB" $ACTION
+        manage_instance "$MONGODB_INSTANCE_ID" "mongodb" "$ACTION"
+        ;;
+    rabbitmq)
+        manage_instance "$RABBITMQ_INSTANCE_ID" "rabbitmq" "$ACTION"
         ;;
 esac
 
 echo -e "\nNote: After starting instances, you may need to wait a minute or two for services to initialize."
-echo "To manage services on the instances, use: ./services.sh [start|stop|restart|status] [--service=all|spring-boot|mongodb]"
+echo "To manage services on the instances, use: ./services.sh [start|stop|restart|status] [--service=all|spring-boot|mongodb|rabbitmq]"

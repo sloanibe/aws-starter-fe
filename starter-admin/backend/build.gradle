@@ -20,6 +20,7 @@ repositories {
 
 dependencies {
 	implementation platform('software.amazon.awssdk:bom:2.25.32')
+	implementation 'software.amazon.awssdk:ec2'
 	implementation 'software.amazon.awssdk:costexplorer'
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	implementation 'org.springframework.boot:spring-boot-starter-webflux' // Added for SSE support

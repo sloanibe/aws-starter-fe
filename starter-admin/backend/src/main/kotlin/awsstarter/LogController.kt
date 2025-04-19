@@ -18,6 +18,8 @@ class LogController(private val logService: LogService) {
     // Map of service IDs to their corresponding SSH commands
     private val serviceCommands = mapOf(
         "email-service" to "ssh -i /home/msloan/.ssh/aws-starter-key.pem ubuntu@13.52.157.48 'sudo journalctl -u email-service.service -f'",
+        "login-service" to "ssh -i /home/msloan/.ssh/aws-starter-key.pem ubuntu@13.52.157.48 'sudo journalctl -u login-service.service -f'",
+        "rabbitmq-service" to "ssh -i /home/msloan/.ssh/aws-starter-key.pem ubuntu@54.241.100.123 'sudo journalctl -u rabbitmq-server -f'", // replace with your actual RabbitMQ EC2 public IP
         "api-gateway" to "ssh -i /home/msloan/.ssh/aws-starter-key.pem ubuntu@13.52.157.48 'sudo journalctl -u api-gateway.service -f'",
         "config-server" to "ssh -i /home/msloan/.ssh/aws-starter-key.pem ubuntu@13.52.157.48 'sudo journalctl -u config-server.service -f'",
         "eureka" to "ssh -i /home/msloan/.ssh/aws-starter-key.pem ubuntu@13.52.157.48 'sudo journalctl -u service-discovery.service -f'",

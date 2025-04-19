@@ -5,7 +5,7 @@ rabbitmq:
   exchange:
     name: login-exchange
   queue:
-    name: login-queue
+    name: login.events.queue
   routing:
     key: login.event
 

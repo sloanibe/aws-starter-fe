@@ -1,40 +1,33 @@
 import { useRef, useState, useEffect } from 'react';
 import { Box, Heading, Text, Button, HStack, VStack, Alert, AlertIcon, Spinner, Code, Flex, Switch, FormControl, FormLabel, NumberInput, NumberInputField, NumberInputStepper, NumberIncrementStepper, NumberDecrementStepper } from '@chakra-ui/react';
 import { Rnd } from 'react-rnd';
-// Removed all DraggableBox and manual drag/resize logic
-// (No stray JSX or return outside function remains)
 
-export default function EmailServiceManager() {
+export default function LoginServiceManager() {
   const [status, setStatus] = useState('unknown');
   const [ec2Status, setEc2Status] = useState('unknown');
-  const [loadingOp, setLoadingOp] = useState(''); // '', 'start', 'stop', 'status'
+  const [loadingOp, setLoadingOp] = useState('');
   const [feedback, setFeedback] = useState({ message: '', status: '' });
-  // Log viewer state
   const [logs, setLogs] = useState([]);
-  const [logStreamActive, setLogStreamActive] = useState(false);
   const [logPolling, setLogPolling] = useState(false);
-  const [pollingInterval, setPollingInterval] = useState(3);
-  const [autoScroll, setAutoScroll] = useState(true);
+  const [pollingInterval] = useState(3); // fixed for now, can add UI later
+  const [autoScroll] = useState(true); // fixed for now, can add UI later
   const [lastTimestamp, setLastTimestamp] = useState(null);
   const [showLogWindow, setShowLogWindow] = useState(false);
   const logContainerRef = useRef(null);
 
-  const API_BASE = '/api/email';
-  const LOGS_API_BASE = '/api/logs';
+  const API_BASE = '/api/login';
+  const LOGS_API_BASE = '/api/logs'; // match EmailServiceManager pattern
   const EC2_API_BASE = '/api/ec2';
 
-  // Function to check EC2 instance status
+  // Check EC2 status
   const checkEc2Status = async () => {
     try {
       const res = await fetch(`${EC2_API_BASE}/status`);
       const text = await res.text();
-      
       if (text.toLowerCase().includes('status: running')) {
         setEc2Status('running');
         return true;
-      } else if (text.toLowerCase().includes('status: stopped') || 
-                text.toLowerCase().includes('❌') || 
-                text.toLowerCase().includes('not running')) {
+      } else if (text.toLowerCase().includes('status: stopped') || text.toLowerCase().includes('❌') || text.toLowerCase().includes('not running')) {
         setEc2Status('stopped');
         return false;
       } else {
@@ -42,29 +35,23 @@ export default function EmailServiceManager() {
         return false;
       }
     } catch (err) {
-      console.error('Error checking EC2 status:', err);
       setEc2Status('unknown');
       return false;
     }
   };
 
-  // Function to check email service status
-  const checkEmailServiceStatus = async () => {
+  // Check login service status
+  const checkLoginServiceStatus = async () => {
     setLoadingOp('status');
     try {
-      // First check if EC2 is running
       const ec2Running = await checkEc2Status();
-      
       if (!ec2Running) {
         setStatus('ec2-stopped');
         setLoadingOp('');
         return;
       }
-      
-      // If EC2 is running, check email service status
       const res = await fetch(`${API_BASE}/status`);
       const text = await res.text();
-      
       if (text.toLowerCase().includes('running')) {
         setStatus('running');
       } else if (text.toLowerCase().includes('stopped') || text.toLowerCase().includes('not running')) {
@@ -73,23 +60,13 @@ export default function EmailServiceManager() {
         setStatus('unknown');
       }
     } catch (err) {
-      console.error('Error checking email service status:', err);
       setStatus('unknown');
     } finally {
       setLoadingOp('');
     }
   };
-  
-  // Fetch status on mount
-  useEffect(() => {
-    checkEmailServiceStatus();
-    
-    // Set up a refresh interval (every 60 seconds)
-    const intervalId = setInterval(checkEmailServiceStatus, 60000);
-    
-    return () => clearInterval(intervalId);
-  }, []);
 
+  // Service control handlers
   const handleStart = async () => {
     setLoadingOp('start');
     setFeedback({ message: '', status: '' });
@@ -98,7 +75,9 @@ export default function EmailServiceManager() {
       const text = await res.text();
       if (res.ok) {
         setStatus('running');
-        setFeedback({ message: 'Email Service Started', status: 'success' });
+        setFeedback({ message: 'Login Service Started', status: 'success' });
+        // Automatically start log streaming when service starts
+        await startLogStream();
       } else {
         setFeedback({ message: `Start failed: ${text}`, status: 'error' });
       }
@@ -109,6 +88,7 @@ export default function EmailServiceManager() {
     }
   };
 
+
   const handleStop = async () => {
     setLoadingOp('stop');
     setFeedback({ message: '', status: '' });
@@ -117,7 +97,7 @@ export default function EmailServiceManager() {
       const text = await res.text();
       if (res.ok) {
         setStatus('stopped');
-        setFeedback({ message: 'Email Service Stopped', status: 'info' });
+        setFeedback({ message: 'Login Service Stopped', status: 'info' });
       } else {
         setFeedback({ message: `Stop failed: ${text}`, status: 'error' });
       }
@@ -128,212 +108,97 @@ export default function EmailServiceManager() {
     }
   };
 
-  const handleStatus = async () => {
-    setLoadingOp('status');
-    setFeedback({ message: '', status: '' });
-    try {
-      await checkEmailServiceStatus();
-      
-      if (ec2Status === 'stopped') {
-        setFeedback({ message: 'EC2 instance is stopped. Email service cannot be running.', status: 'warning' });
-      } else if (status === 'running') {
-        setFeedback({ message: 'Email Service is running', status: 'success' });
-      } else if (status === 'stopped') {
-        setFeedback({ message: 'Email Service is stopped', status: 'info' });
-      } else {
-        setFeedback({ message: 'Email Service status is unknown', status: 'warning' });
-      }
-    } catch (err) {
-      setFeedback({ message: `Status check failed: ${err.message}`, status: 'error' });
-    } finally {
-      setLoadingOp('');
-    }
-  };
-
-  // Start log streaming
-  const startLogStream = async () => {
-    try {
-      // First check if EC2 is running
-      const ec2Running = await checkEc2Status();
-      
-      if (!ec2Running) {
-        setFeedback({ 
-          message: 'Cannot start log streaming: EC2 instance is stopped', 
-          status: 'warning' 
-        });
-        return;
-      }
-      
-      const res = await fetch(`${LOGS_API_BASE}/start/email-service`, { method: 'POST' });
-      if (res.ok) {
-        setLogStreamActive(true);
-        setFeedback({ message: 'Log streaming started', status: 'info' });
-        // Start polling
-        setLogPolling(true);
-        setShowLogWindow(true);
-        // Clear previous logs when starting a new stream
-        setLogs([{
-          timestamp: new Date().toISOString(),
-          message: 'Starting log collection for email-service...'
-        }]);
-      } else {
-        setFeedback({ message: 'Failed to start log streaming', status: 'error' });
-      }
-    } catch (err) {
-      setFeedback({ message: `Error: ${err.message}`, status: 'error' });
-    }
-  };
-
-  // Stop log streaming
-  const stopLogStream = async () => {
-    try {
-      const res = await fetch(`${LOGS_API_BASE}/stop/email-service`, { method: 'POST' });
-      if (res.ok) {
-        setLogStreamActive(false);
-        setFeedback({ message: 'Log streaming stopped', status: 'info' });
-      } else {
-        setFeedback({ message: 'Failed to stop log streaming', status: 'error' });
-      }
-    } catch (err) {
-      setFeedback({ message: `Error: ${err.message}`, status: 'error' });
-    }
-  };
-
-  // Check log stream status
-  const checkLogStreamStatus = async () => {
-    try {
-      const res = await fetch(`${LOGS_API_BASE}/email-service/status`);
-      if (res.ok) {
-        const data = await res.json();
-        setLogStreamActive(data.active);
-      }
-    } catch (err) {
-      console.error('Error checking log stream status:', err);
-    }
-  };
-
-  // Fetch logs with polling
+  // Log polling and streaming logic
   const fetchLogs = async () => {
     try {
-      let url = `${LOGS_API_BASE}/email-service?limit=100`;
+      let url = `${LOGS_API_BASE}/login-service?limit=100`;
       if (lastTimestamp) {
         url += `&since=${encodeURIComponent(lastTimestamp)}`;
       }
-      
       const res = await fetch(url);
       if (res.ok) {
         const newLogs = await res.json();
         if (newLogs.length > 0) {
           setLogs(prevLogs => {
-            // Combine logs, ensuring no duplicates
             const combined = [...prevLogs];
-            
             newLogs.forEach(newLog => {
-              // Check if this log is already in our list
-              const exists = combined.some(log => 
-                log.timestamp === newLog.timestamp && log.message === newLog.message
-              );
-              
-              if (!exists) {
-                combined.push(newLog);
-              }
+              const exists = combined.some(log => log.timestamp === newLog.timestamp && log.message === newLog.message);
+              if (!exists) combined.push(newLog);
             });
-            
-            // Sort by timestamp (newest last)
             combined.sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp));
-            
-            // Limit to last 1000 entries to prevent memory issues
             return combined.slice(-1000);
           });
-          
-          // Update last timestamp for incremental fetching
-          if (newLogs.length > 0) {
-            setLastTimestamp(newLogs[newLogs.length - 1].timestamp);
-          }
-          
-          // Auto-scroll to bottom if enabled
-          if (autoScroll && logContainerRef.current) {
-            setTimeout(() => {
-              logContainerRef.current.scrollTop = logContainerRef.current.scrollHeight;
-            }, 100);
-          }
+          setLastTimestamp(newLogs[newLogs.length - 1].timestamp);
         }
       }
-    } catch (err) {
-      console.error('Error fetching logs:', err);
-    }
+    } catch {}
   };
 
-  // Polling effect
   useEffect(() => {
     let interval;
-    
     if (logPolling) {
-      // Initial fetch
       fetchLogs();
-      
-      // Set up polling interval
-      interval = setInterval(async () => {
-        // Check EC2 status before fetching logs
-        const ec2Running = await checkEc2Status();
-        if (!ec2Running) {
-          // If EC2 is stopped, add a log entry about it and stop polling
-          setLogs(prevLogs => [
-            ...prevLogs,
-            {
-              timestamp: new Date().toISOString(),
-              message: 'EC2 instance is stopped. Log streaming interrupted.'
-            }
-          ]);
-          stopLogStream();
-          return;
-        }
-        
-        fetchLogs();
-      }, pollingInterval * 1000);
+      interval = setInterval(fetchLogs, pollingInterval * 1000);
     }
-    
-    return () => {
-      if (interval) clearInterval(interval);
-    };
+    return () => interval && clearInterval(interval);
   }, [logPolling, pollingInterval, lastTimestamp]);
 
-  // Check log stream status on mount and when EC2 status changes
   useEffect(() => {
-    checkLogStreamStatus();
-    
-    // If EC2 is stopped, make sure log streaming is also stopped
-    if (ec2Status === 'stopped' && logPolling) {
-      stopLogStream();
-      setLogs(prevLogs => [
-        ...prevLogs,
-        {
-          timestamp: new Date().toISOString(),
-          message: 'EC2 instance is stopped. Log streaming interrupted.'
-        }
-      ]);
-    }
-  }, [ec2Status]);
+    checkLoginServiceStatus();
+    // Optionally poll status every minute
+    const intervalId = setInterval(checkLoginServiceStatus, 60000);
+    return () => clearInterval(intervalId);
+  }, []);
 
-  // Format timestamp for display
+  useEffect(() => {
+    if (autoScroll && logContainerRef.current) {
+      logContainerRef.current.scrollTop = logContainerRef.current.scrollHeight;
+    }
+  }, [logs, autoScroll]);
+
+  // Start log streaming (consistent with EmailServiceManager)
+  const startLogStream = async () => {
+    try {
+      // Optionally: check EC2 status if needed
+      const res = await fetch(`/api/logs/start/login-service`, { method: 'POST' });
+      if (res.ok) {
+        setFeedback({ message: 'Log streaming started', status: 'info' });
+        setLogPolling(true);
+        setShowLogWindow(true);
+        setLogs([
+          {
+            timestamp: new Date().toISOString(),
+            message: 'Starting log collection for login-service...'
+          }
+        ]);
+        setLastTimestamp(null);
+      } else {
+        setFeedback({ message: 'Failed to start log streaming', status: 'error' });
+      }
+    } catch (err) {
+      setFeedback({ message: `Failed to start log streaming: ${err.message}`, status: 'error' });
+    }
+  };
+  const stopLogStream = () => setLogPolling(false);
+
   const formatTimestamp = (timestamp) => {
     try {
       const date = new Date(timestamp);
       return date.toLocaleTimeString();
-    } catch (e) {
+    } catch {
       return 'Invalid time';
     }
   };
 
   return (
     <Box borderWidth="1px" borderRadius="lg" p={4} h="100%" display="flex" flexDirection="column">
-      <Heading size="md" mb={2}>Email Service</Heading>
+      <Heading size="md" mb={2}>Login Service</Heading>
       
       {/* EC2 Status Warning */}
       {ec2Status === 'stopped' && (
         <Alert status="warning" mb={4} borderRadius="md">
           <AlertIcon />
-          EC2 instance is stopped. Email service cannot be accessed.
+          EC2 instance is stopped. Login service cannot be accessed.
         </Alert>
       )}
       
@@ -369,19 +234,17 @@ export default function EmailServiceManager() {
           >
             Stop
           </Button>
-          <Button onClick={handleStatus} isLoading={loadingOp==='status'}>
+          <Button onClick={checkLoginServiceStatus} isLoading={loadingOp==='status'}>
             Status
           </Button>
         </HStack>
       </Box>
-      
       {/* Feedback Alert */}
       {feedback.message && (
         <Alert status={feedback.status} mb={4}>
           {feedback.message}
         </Alert>
       )}
-      
       {/* Log Controls - Show/Hide Log Window */}
       <Box mb={4} display="flex" justifyContent="center">
         <Button
@@ -390,11 +253,12 @@ export default function EmailServiceManager() {
           colorScheme="blue"
           variant={showLogWindow ? "outline" : "solid"}
           onClick={() => setShowLogWindow(v => !v)}
+          width="auto"
+          minWidth="180px"
         >
           {showLogWindow ? 'Hide Log Window' : 'Show Log Window'}
         </Button>
       </Box>
-
       {/* Floating Log Window */}
       {showLogWindow && (
         <Rnd
@@ -448,7 +312,7 @@ export default function EmailServiceManager() {
               className="log-window-header"
               style={{ cursor: "move" }}
             >
-              Email Service Logs
+              Login Service Logs
             </Heading>
             <Button
               colorScheme={logPolling ? "red" : "blue"}

@@ -2,6 +2,8 @@ import { Grid, GridItem, Heading, Box, Alert, AlertIcon, Spinner } from '@chakra
 import { useEffect, useState } from 'react'
 import Ec2Manager from './Ec2Manager'
 import EmailServiceManager from './EmailServiceManager'
+import LoginServiceManager from './LoginServiceManager'
+import RabbitMQManager from './RabbitMQManager'
 
 export default function Dashboard() {
   const [billing, setBilling] = useState(null);
@@ -48,32 +50,30 @@ export default function Dashboard() {
       <Grid
         templateAreas={`
           'ec2 login'
-          'email logs'
+          'email rabbitmq'
         `}
-        gridTemplateRows={'200px 1fr'}
         gridTemplateColumns={'1fr 1fr'}
         gap={6}
+        alignItems="stretch"
       >
-        <GridItem area={'ec2'}>
-          <Box bg="blue.100" borderRadius="xl" boxShadow="lg" borderWidth="1.5px" borderColor="blue.100" p={5} h="100%">
+        <GridItem area={'ec2'} h="100%">
+          <Box bg="blue.100" borderRadius="xl" boxShadow="lg" borderWidth="1.5px" borderColor="blue.100" p={5} h="100%" minHeight="260px">
             <Ec2Manager />
           </Box>
         </GridItem>
-        <GridItem area={'login'}>
-          {/* <LoginServiceManager /> */}
-          <Box bg="blue.100" borderRadius="xl" boxShadow="lg" borderWidth="1.5px" borderColor="blue.100" p={5} h="100%" display="flex" alignItems="center" justifyContent="center" color="gray.400" fontWeight="semibold">
-            Login Service (Coming Soon)
+        <GridItem area={'login'} h="100%">
+          <Box bg="blue.100" borderRadius="xl" boxShadow="lg" borderWidth="1.5px" borderColor="blue.100" p={5} h="100%" minHeight="260px">
+            <LoginServiceManager />
           </Box>
         </GridItem>
-        <GridItem area={'email'}>
-          <Box bg="blue.100" borderRadius="xl" boxShadow="lg" borderWidth="1.5px" borderColor="blue.100" p={5} h="100%">
+        <GridItem area={'email'} h="100%">
+          <Box bg="blue.100" borderRadius="xl" boxShadow="lg" borderWidth="1.5px" borderColor="blue.100" p={5} h="100%" minHeight="260px">
             <EmailServiceManager />
           </Box>
         </GridItem>
-        <GridItem area={'logs'}>
-          {/* <LogsViewer /> */}
-          <Box bg="blue.100" borderRadius="xl" boxShadow="lg" borderWidth="1.5px" borderColor="blue.100" p={5} h="100%" display="flex" alignItems="center" justifyContent="center" color="gray.400" fontWeight="semibold">
-            Logs Viewer (Coming Soon)
+        <GridItem area={'rabbitmq'} h="100%">
+          <Box bg="blue.100" borderRadius="xl" boxShadow="lg" borderWidth="1.5px" borderColor="blue.100" p={5} h="100%" minHeight="260px">
+            <RabbitMQManager />
           </Box>
         </GridItem>
       </Grid>

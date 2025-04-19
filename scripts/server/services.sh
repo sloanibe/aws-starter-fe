@@ -36,8 +36,8 @@ if [ -z "$ACTION" ]; then
     exit 1
 fi
 
-if [[ ! "$SERVICE" =~ ^(all|spring-boot|mongodb|eureka|config-server|api-gateway|login-service|email-service)$ ]]; then
-    echo "Error: Invalid service. Must be 'all', 'spring-boot', 'mongodb', 'eureka', 'config-server', 'api-gateway', 'login-service', or 'email-service'"
+if [[ ! "$SERVICE" =~ ^(all|spring-boot|mongodb|eureka|config-server|api-gateway|login-service|email-service|rabbitmq-service)$ ]]; then
+    echo "Error: Invalid service. Must be 'all', 'spring-boot', 'mongodb', 'eureka', 'config-server', 'api-gateway', 'login-service', 'email-service', or 'rabbitmq-service'"
     exit 1
 fi
 
@@ -438,6 +438,29 @@ manage_login_service() {
 }
 
 # Function to manage Email Service
+manage_rabbitmq_service() {
+    local action=$1
+    case $action in
+        start)
+            ssh -i $SSH_KEY ubuntu@$EC2_IP "sudo systemctl start rabbitmq-server"
+            ;;
+        stop)
+            ssh -i $SSH_KEY ubuntu@$EC2_IP "sudo systemctl stop rabbitmq-server"
+            ;;
+        restart)
+            ssh -i $SSH_KEY ubuntu@$EC2_IP "sudo systemctl restart rabbitmq-server"
+            ;;
+        status)
+            if ssh -i $SSH_KEY ubuntu@$EC2_IP "sudo systemctl is-active --quiet rabbitmq-server"; then
+                echo '✅ RabbitMQ is running'
+            else
+                echo '❌ RabbitMQ is stopped'
+            fi
+            ;;
+    esac
+}
+
+# Function to manage Email Service
 manage_email_service() {
     local action=$1
     echo "Managing Email Service: $action"
@@ -523,5 +546,8 @@ case $SERVICE in
         ;;
     email-service)
         manage_email_service $ACTION
+        ;;
+    rabbitmq-service)
+        manage_rabbitmq_service $ACTION
         ;;
 esac

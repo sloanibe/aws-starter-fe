@@ -13,7 +13,7 @@ public class LoginEventConsumer {
 
     private final EmailService emailService;
 
-    @RabbitListener(queues = "${rabbitmq.queue.name:login-queue}")
+    @RabbitListener(queues = "${rabbitmq.queue.name}")
     public void consumeLoginEvent(LoginEvent loginEvent) {
         try {
             log.info("Received login event: {}", loginEvent);
