@@ -17,7 +17,8 @@ export default function LoginServiceManager() {
   const logContainerRef = useRef(null);
   // Log level highlighting state
   const [selectedLogLevel, setSelectedLogLevel] = useState('DEBUG');
-
+  const [sloanOnly, setSloanOnly] = useState(false);
+  const [searchText, setSearchText] = useState("");
   const API_BASE = '/api/login';
   const LOGS_API_BASE = '/api/logs'; // match EmailServiceManager pattern
   const EC2_API_BASE = '/api/ec2';
@@ -327,6 +328,23 @@ export default function LoginServiceManager() {
             >
               Login Service Logs
             </Heading>
+            <Box mb={2} display="flex" alignItems="center" justifyContent="center" gap={2}>
+              <input
+                type="checkbox"
+                id="sloan-checkbox"
+                checked={sloanOnly}
+                onChange={e => setSloanOnly(e.target.checked)}
+                style={{ marginRight: '0.5em' }}
+              />
+              <label htmlFor="sloan-checkbox" style={{ color: 'white', fontWeight: 'bold', userSelect: 'none', marginRight: '1em' }}>sloan</label>
+              <input
+                type="text"
+                placeholder="filter text..."
+                value={searchText}
+                onChange={e => setSearchText(e.target.value)}
+                style={{ padding: '2px 8px', borderRadius: 4, border: '1px solid #aaa', background: '#222', color: 'white', minWidth: 120 }}
+              />
+            </Box>
             {/* Log Level Filter Buttons */}
             <Box mb={2} display="flex" justifyContent="center" gap={2}>
               {['DEBUG', 'INFO', 'ERROR'].map((level) => (
@@ -353,23 +371,29 @@ export default function LoginServiceManager() {
               {logs.length === 0 ? (
                 <Text color="gray.500" p={2}>No logs available. Click 'Start Logs' to begin collecting logs.</Text>
               ) : (
-                logs.map((log, index) => {
-                  // Extract log level
-                  let logLevel = 'OTHER';
-                  if (/\sDEBUG\s|\[DEBUG\]/.test(log.message)) logLevel = 'DEBUG';
-                  else if (/\sINFO\s|\[INFO\]/.test(log.message)) logLevel = 'INFO';
-                  else if (/\sERROR\s|\[ERROR\]/.test(log.message)) logLevel = 'ERROR';
+                logs
+                  .filter(log => (!sloanOnly || (log.message && log.message.toLowerCase().includes('sloan')))
+                        && (searchText.trim() === "" || (log.message && log.message.toLowerCase().includes(searchText.toLowerCase()))))
+                  .map((log, index) => {
+                    // Extract log level
+                    let logLevel = 'OTHER';
+                    if (/\sDEBUG\s|\[DEBUG\]/.test(log.message)) logLevel = 'DEBUG';
+                    else if (/\sINFO\s|\[INFO\]/.test(log.message)) logLevel = 'INFO';
+                    else if (/\sERROR\s|\[ERROR\]/.test(log.message)) logLevel = 'ERROR';
 
-                  // Highlight only the selected log level
-                  if (logLevel === selectedLogLevel) {
                     let borderColor, bg, color, icon;
-                    if (logLevel === 'DEBUG') {
-                      borderColor = 'purple.400'; bg = 'purple.50'; color = 'purple.700'; icon = '🐛';
-                    } else if (logLevel === 'INFO') {
-                      borderColor = 'blue.400'; bg = 'blue.50'; color = 'blue.700'; icon = 'ℹ️';
-                    } else if (logLevel === 'ERROR') {
-                      borderColor = 'red.400'; bg = 'red.50'; color = 'red.700'; icon = '❌';
+                    if (logLevel === selectedLogLevel) {
+                      if (logLevel === 'DEBUG') {
+                        borderColor = 'purple.400'; bg = 'purple.50'; color = 'purple.700'; icon = '🐛';
+                      } else if (logLevel === 'INFO') {
+                        borderColor = 'blue.400'; bg = 'blue.50'; color = 'blue.700'; icon = 'ℹ️';
+                      } else if (logLevel === 'ERROR') {
+                        borderColor = 'red.400'; bg = 'red.50'; color = 'red.700'; icon = '❌';
+                      }
+                    } else {
+                      borderColor = 'gray.200'; bg = 'transparent'; color = 'gray.100'; icon = '';
                     }
+
                     return (
                       <Box
                         key={index}
@@ -380,25 +404,35 @@ export default function LoginServiceManager() {
                         borderColor={borderColor}
                         borderRadius="md"
                         bg={bg}
-                        boxShadow="md"
+                        boxShadow={logLevel === selectedLogLevel ? "md" : "none"}
                         display="flex"
                         alignItems="center"
                       >
-                        <Text as="span" fontFamily="mono" color={color} fontWeight="bold" mr={2}>{icon}</Text>
+                        {logLevel === selectedLogLevel && (
+                          <Text as="span" fontFamily="mono" color={color} fontWeight="bold" mr={2}>{icon}</Text>
+                        )}
                         <Text as="span" color="blue.300" mr={2} fontFamily="mono">[{formatTimestamp(log.timestamp)}]</Text>
-                        <Text as="span" color={color} fontWeight="bold" fontFamily="mono">{log.message}</Text>
+                        <Text as="span" color={color} fontWeight={logLevel === selectedLogLevel ? "bold" : "normal"} fontFamily="mono">
+                          {(() => {
+                            if (logLevel === selectedLogLevel && ['DEBUG','INFO','ERROR'].includes(logLevel)) {
+                              const regex = new RegExp(logLevel, 'gi');
+                              return log.message.split(regex).reduce((acc, part, i, arr) => {
+                                if (i < arr.length - 1) {
+                                  acc.push(part);
+                                  acc.push(<span key={i} style={{ color: '#FFD600', fontWeight: 'bold' }}>{logLevel}</span>);
+                                } else {
+                                  acc.push(part);
+                                }
+                                return acc;
+                              }, []);
+                            } else {
+                              return log.message;
+                            }
+                          })()}
+                        </Text>
                       </Box>
                     );
-                  } else {
-                    // Plain for non-selected log levels
-                    return (
-                      <Box key={index} _hover={{ bg: 'whiteAlpha.100' }} py={0.5}>
-                        <Text as="span" color="blue.300" mr={2} fontFamily="mono">[{formatTimestamp(log.timestamp)}]</Text>
-                        <Text as="span" color="gray.100" fontFamily="mono">{log.message}</Text>
-                      </Box>
-                    );
-                  }
-                })
+                  })
               )}
             </Box>
           </Box>
