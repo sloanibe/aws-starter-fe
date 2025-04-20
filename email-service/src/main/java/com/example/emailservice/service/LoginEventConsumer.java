@@ -17,6 +17,12 @@ public class LoginEventConsumer {
     public void consumeLoginEvent(LoginEvent loginEvent) {
         try {
             log.info("Received login event: {}", loginEvent);
+            log.info("Received JSON content type: {}. User ID: {}, Email: {}, Name: {}, Organization: {}", 
+                    "application/json", 
+                    loginEvent.getUserId(),
+                    loginEvent.getEmail(),
+                    loginEvent.getName(),
+                    loginEvent.getOrganization());
             
             // Process the login event
             emailService.sendLoginNotification(
