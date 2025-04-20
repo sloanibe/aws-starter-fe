@@ -255,7 +255,14 @@ export default function LoginServiceManager() {
           size="md"
           colorScheme="blue"
           variant={showLogWindow ? "outline" : "solid"}
-          onClick={() => setShowLogWindow(v => !v)}
+          onClick={() => {
+            if (!showLogWindow) {
+              startLogStream();
+            } else {
+              stopLogStream();
+            }
+            setShowLogWindow(v => !v);
+          }}
           width="auto"
           minWidth="180px"
         >
@@ -285,7 +292,10 @@ export default function LoginServiceManager() {
           >
             <Button
               aria-label="Close log window"
-              onClick={() => setShowLogWindow(false)}
+              onClick={() => {
+                setShowLogWindow(false);
+                stopLogStream();
+              }}
               size="xs"
               colorScheme="gray"
               variant="ghost"
@@ -317,18 +327,6 @@ export default function LoginServiceManager() {
             >
               Login Service Logs
             </Heading>
-            <Button
-              colorScheme={logPolling ? "red" : "blue"}
-              size="sm"
-              onClick={logPolling ? stopLogStream : startLogStream}
-              isLoading={loadingOp === 'logs'}
-              isDisabled={ec2Status === 'stopped'}
-              title={ec2Status === 'stopped' ? 'EC2 instance must be running to view logs' : undefined}
-              mb={2}
-              alignSelf="center"
-            >
-              {logPolling ? 'Stop Logs' : 'Start Logs'}
-            </Button>
             {/* Log Level Filter Buttons */}
             <Box mb={2} display="flex" justifyContent="center" gap={2}>
               {['DEBUG', 'INFO', 'ERROR'].map((level) => (
@@ -339,7 +337,8 @@ export default function LoginServiceManager() {
                   variant={selectedLogLevel === level ? 'solid' : 'outline'}
                   onClick={() => setSelectedLogLevel(level)}
                   fontWeight={selectedLogLevel === level ? 'bold' : 'normal'}
-                  leftIcon={level === 'DEBUG' ? '🐛' : level === 'INFO' ? 'ℹ️' : '❌'}
+                  leftIcon={level === 'DEBUG' ? <span>🐛</span> : level === 'INFO' ? <span>ℹ️</span> : <span>❌</span>}
+                  color={selectedLogLevel === level ? 'white' : (level === 'DEBUG' ? 'purple.700' : level === 'INFO' ? 'blue.700' : 'red.700')}
                 >
                   {level}
                 </Button>
