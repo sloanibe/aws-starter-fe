@@ -2,6 +2,7 @@ import { useRef, useState, useEffect } from 'react';
 import { Box, Heading, Text, Button, HStack, VStack, Alert, AlertIcon, Spinner, Code, Flex, Switch, FormControl, FormLabel, NumberInput, NumberInputField, NumberInputStepper, NumberIncrementStepper, NumberDecrementStepper } from '@chakra-ui/react';
 import { Rnd } from 'react-rnd';
 
+
 export default function LoginServiceManager() {
   const [status, setStatus] = useState('unknown');
   const [ec2Status, setEc2Status] = useState('unknown');
@@ -14,6 +15,8 @@ export default function LoginServiceManager() {
   const [lastTimestamp, setLastTimestamp] = useState(null);
   const [showLogWindow, setShowLogWindow] = useState(false);
   const logContainerRef = useRef(null);
+  // Log level highlighting state
+  const [selectedLogLevel, setSelectedLogLevel] = useState('DEBUG');
 
   const API_BASE = '/api/login';
   const LOGS_API_BASE = '/api/logs'; // match EmailServiceManager pattern
@@ -193,7 +196,7 @@ export default function LoginServiceManager() {
   return (
     <Box borderWidth="1px" borderRadius="lg" p={4} h="100%" display="flex" flexDirection="column">
       <Heading size="md" mb={2}>Login Service</Heading>
-      
+
       {/* EC2 Status Warning */}
       {ec2Status === 'stopped' && (
         <Alert status="warning" mb={4} borderRadius="md">
@@ -201,7 +204,7 @@ export default function LoginServiceManager() {
           EC2 instance is stopped. Login service cannot be accessed.
         </Alert>
       )}
-      
+
       {/* Service Controls */}
       <Box mb={4}>
         <HStack mb={4} spacing={2} align="center">
@@ -216,19 +219,19 @@ export default function LoginServiceManager() {
           )}
         </HStack>
         <HStack spacing={4}>
-          <Button 
-            colorScheme="green" 
-            onClick={handleStart} 
-            isLoading={loadingOp==='start'} 
+          <Button
+            colorScheme="green"
+            onClick={handleStart}
+            isLoading={loadingOp==='start'}
             isDisabled={status==='running' || ec2Status==='stopped'}
             title={ec2Status==='stopped' ? 'EC2 instance must be running first' : undefined}
           >
             Start
           </Button>
-          <Button 
-            colorScheme="red" 
-            onClick={handleStop} 
-            isLoading={loadingOp==='stop'} 
+          <Button
+            colorScheme="red"
+            onClick={handleStop}
+            isLoading={loadingOp==='stop'}
             isDisabled={status==='stopped' || ec2Status==='stopped'}
             title={ec2Status==='stopped' ? 'EC2 instance must be running first' : undefined}
           >
@@ -303,11 +306,11 @@ export default function LoginServiceManager() {
             >
               <span style={{fontSize: '0.9rem', color: '#222', lineHeight: 1}}>✕</span>
             </Button>
-            <Heading 
-              size="md" 
-              mb={2} 
-              color="blue.400" 
-              textAlign="center" 
+            <Heading
+              size="md"
+              mb={2}
+              color="blue.400"
+              textAlign="center"
               width="100%"
               className="log-window-header"
               style={{ cursor: "move" }}
@@ -326,34 +329,82 @@ export default function LoginServiceManager() {
             >
               {logPolling ? 'Stop Logs' : 'Start Logs'}
             </Button>
+            {/* Log Level Filter Buttons */}
+            <Box mb={2} display="flex" justifyContent="center" gap={2}>
+              {['DEBUG', 'INFO', 'ERROR'].map((level) => (
+                <Button
+                  key={level}
+                  size="sm"
+                  colorScheme={selectedLogLevel === level ? (level === 'DEBUG' ? 'purple' : level === 'INFO' ? 'blue' : 'red') : 'gray'}
+                  variant={selectedLogLevel === level ? 'solid' : 'outline'}
+                  onClick={() => setSelectedLogLevel(level)}
+                  fontWeight={selectedLogLevel === level ? 'bold' : 'normal'}
+                  leftIcon={level === 'DEBUG' ? '🐛' : level === 'INFO' ? 'ℹ️' : '❌'}
+                >
+                  {level}
+                </Button>
+              ))}
+            </Box>
             <Box
               ref={logContainerRef}
               borderWidth="1px"
               borderRadius="md"
               p={2}
-              bg="black"
-              color="green.300"
-              fontFamily="mono"
-              fontSize="sm"
-              overflowY="auto"
-              minHeight="200px"
-              flex={1}
-              width="100%"
             >
               {logs.length === 0 ? (
                 <Text color="gray.500" p={2}>No logs available. Click 'Start Logs' to begin collecting logs.</Text>
               ) : (
-                logs.map((log, index) => (
-                  <Box key={index} _hover={{ bg: 'whiteAlpha.100' }} py={0.5}>
-                    <Text as="span" color="blue.300" mr={2}>[{formatTimestamp(log.timestamp)}]</Text>
-                    <Text as="span">{log.message}</Text>
-                  </Box>
-                ))
+                logs.map((log, index) => {
+                  // Extract log level
+                  let logLevel = 'OTHER';
+                  if (/\sDEBUG\s|\[DEBUG\]/.test(log.message)) logLevel = 'DEBUG';
+                  else if (/\sINFO\s|\[INFO\]/.test(log.message)) logLevel = 'INFO';
+                  else if (/\sERROR\s|\[ERROR\]/.test(log.message)) logLevel = 'ERROR';
+
+                  // Highlight only the selected log level
+                  if (logLevel === selectedLogLevel) {
+                    let borderColor, bg, color, icon;
+                    if (logLevel === 'DEBUG') {
+                      borderColor = 'purple.400'; bg = 'purple.50'; color = 'purple.700'; icon = '🐛';
+                    } else if (logLevel === 'INFO') {
+                      borderColor = 'blue.400'; bg = 'blue.50'; color = 'blue.700'; icon = 'ℹ️';
+                    } else if (logLevel === 'ERROR') {
+                      borderColor = 'red.400'; bg = 'red.50'; color = 'red.700'; icon = '❌';
+                    }
+                    return (
+                      <Box
+                        key={index}
+                        py={0.5}
+                        px={2}
+                        mb={1}
+                        border="2px solid"
+                        borderColor={borderColor}
+                        borderRadius="md"
+                        bg={bg}
+                        boxShadow="md"
+                        display="flex"
+                        alignItems="center"
+                      >
+                        <Text as="span" fontFamily="mono" color={color} fontWeight="bold" mr={2}>{icon}</Text>
+                        <Text as="span" color="blue.300" mr={2} fontFamily="mono">[{formatTimestamp(log.timestamp)}]</Text>
+                        <Text as="span" color={color} fontWeight="bold" fontFamily="mono">{log.message}</Text>
+                      </Box>
+                    );
+                  } else {
+                    // Plain for non-selected log levels
+                    return (
+                      <Box key={index} _hover={{ bg: 'whiteAlpha.100' }} py={0.5}>
+                        <Text as="span" color="blue.300" mr={2} fontFamily="mono">[{formatTimestamp(log.timestamp)}]</Text>
+                        <Text as="span" color="gray.100" fontFamily="mono">{log.message}</Text>
+                      </Box>
+                    );
+                  }
+                })
               )}
             </Box>
           </Box>
         </Rnd>
       )}
     </Box>
-  );
-}
+  )
+};
