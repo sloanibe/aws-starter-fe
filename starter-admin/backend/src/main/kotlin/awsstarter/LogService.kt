@@ -58,22 +58,40 @@ class LogService {
         process.inputStream.bufferedReader().useLines { lines ->
             lines.forEach { line ->
                 println("[LogService] Raw log line: $line")
-                val firstSpace = line.indexOf(' ')
-                if (firstSpace > 0) {
-                    val timestampStr = line.substring(0, firstSpace)
-                    val message = line.substring(firstSpace + 1)
-                    println("[LogService] Extracted timestampStr: $timestampStr")
-                    try {
-                        // Use OffsetDateTime to handle timezones like +0000
-                        val timestamp = java.time.OffsetDateTime.parse(timestampStr, java.time.format.DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ssZ"))
-                        logs.add(LogEntry(timestamp, message))
-                        println("[LogService] Parsed timestamp OK: $timestampStr")
-                    } catch (e: Exception) {
-                        println("[LogService] Failed to parse timestamp: $timestampStr, error: ${e.message}")
-                        // Ignore lines that can't be parsed
+                // Look for the 'java[PID]:' pattern (Spring Boot log lines)
+                val javaLogPrefix = "java["
+                val javaIdx = line.indexOf(javaLogPrefix)
+                if (javaIdx > 0) {
+                    val afterPidIdx = line.indexOf("]:", javaIdx)
+                    if (afterPidIdx > 0 && afterPidIdx + 2 < line.length) {
+                        val springLog = line.substring(afterPidIdx + 2).trim()
+                        val springSpaceIdx = springLog.indexOf(' ')
+                        if (springSpaceIdx > 0) {
+                            val springTimestampStr = springLog.substring(0, springSpaceIdx)
+                            val message = springLog.substring(springSpaceIdx + 1)
+                            try {
+                                val timestamp = java.time.OffsetDateTime.parse(springTimestampStr)
+                                logs.add(LogEntry(timestamp, message))
+                                println("[LogService] Parsed Spring Boot log timestamp OK: $springTimestampStr")
+                            } catch (e: Exception) {
+                                println("[LogService] Failed to parse Spring Boot timestamp: $springTimestampStr, error: ${e.message}")
+                                // Ignore lines that can't be parsed
+                            }
+                        }
                     }
                 } else {
-                    println("[LogService] No space found in line, skipping.")
+                    // Fallback: try to parse the systemd prefix as before
+                    val firstSpace = line.indexOf(' ')
+                    if (firstSpace > 0) {
+                        val timestampStr = line.substring(0, firstSpace)
+                        val message = line.substring(firstSpace + 1)
+                        try {
+                            val timestamp = java.time.OffsetDateTime.parse(timestampStr, java.time.format.DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ssZ"))
+                            logs.add(LogEntry(timestamp, message))
+                        } catch (_: Exception) {
+                            // Ignore lines that can't be parsed
+                        }
+                    }
                 }
             }
         }

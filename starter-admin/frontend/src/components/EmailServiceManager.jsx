@@ -1,6 +1,6 @@
 import { useRef, useState, useEffect } from 'react';
 import { Box, Heading, Text, Button, HStack, VStack, Alert, AlertIcon, Spinner, Code, Flex, Switch, FormControl, FormLabel, NumberInput, NumberInputField, NumberInputStepper, NumberIncrementStepper, NumberDecrementStepper } from '@chakra-ui/react';
-import { Rnd } from 'react-rnd';
+import LogViewer from './LogViewer';
 // Removed all DraggableBox and manual drag/resize logic
 // (No stray JSX or return outside function remains)
 
@@ -11,9 +11,7 @@ export default function EmailServiceManager() {
   const [feedback, setFeedback] = useState({ message: '', status: '' });
   // Log viewer state
   const [logs, setLogs] = useState([]);
-  const [logStreamActive, setLogStreamActive] = useState(false);
-  const [logPolling, setLogPolling] = useState(false);
-  const [pollingInterval, setPollingInterval] = useState(3);
+  const [pollingInterval] = useState(3); // unused, for future use if needed
   const [autoScroll, setAutoScroll] = useState(true);
   const [lastTimestamp, setLastTimestamp] = useState(null);
   const [showLogWindow, setShowLogWindow] = useState(false);
@@ -166,10 +164,8 @@ export default function EmailServiceManager() {
       
       const res = await fetch(`${LOGS_API_BASE}/start/email-service`, { method: 'POST' });
       if (res.ok) {
-        setLogStreamActive(true);
         setFeedback({ message: 'Log streaming started', status: 'info' });
         // Start polling
-        setLogPolling(true);
         setShowLogWindow(true);
         // Clear previous logs when starting a new stream
         setLogs([{
@@ -189,7 +185,6 @@ export default function EmailServiceManager() {
     try {
       const res = await fetch(`${LOGS_API_BASE}/stop/email-service`, { method: 'POST' });
       if (res.ok) {
-        setLogStreamActive(false);
         setFeedback({ message: 'Log streaming stopped', status: 'info' });
       } else {
         setFeedback({ message: 'Failed to stop log streaming', status: 'error' });
@@ -199,20 +194,6 @@ export default function EmailServiceManager() {
     }
   };
 
-  // Check log stream status
-  const checkLogStreamStatus = async () => {
-    try {
-      const res = await fetch(`${LOGS_API_BASE}/email-service/status`);
-      if (res.ok) {
-        const data = await res.json();
-        setLogStreamActive(data.active);
-      }
-    } catch (err) {
-      console.error('Error checking log stream status:', err);
-    }
-  };
-
-  // Fetch logs with polling
   const fetchLogs = async () => {
     try {
       let url = `${LOGS_API_BASE}/email-service?limit=100`;
@@ -264,56 +245,17 @@ export default function EmailServiceManager() {
     }
   };
 
-  // Polling effect
+  // Polling effect (like LoginServiceManager)
   useEffect(() => {
-    let interval;
-    
-    if (logPolling) {
-      // Initial fetch
+    const shouldFetchLogs = showLogWindow && status === 'running' && ec2Status === 'running';
+    if (shouldFetchLogs) {
       fetchLogs();
-      
-      // Set up polling interval
-      interval = setInterval(async () => {
-        // Check EC2 status before fetching logs
-        const ec2Running = await checkEc2Status();
-        if (!ec2Running) {
-          // If EC2 is stopped, add a log entry about it and stop polling
-          setLogs(prevLogs => [
-            ...prevLogs,
-            {
-              timestamp: new Date().toISOString(),
-              message: 'EC2 instance is stopped. Log streaming interrupted.'
-            }
-          ]);
-          stopLogStream();
-          return;
-        }
-        
-        fetchLogs();
-      }, pollingInterval * 1000);
     }
-    
-    return () => {
-      if (interval) clearInterval(interval);
-    };
-  }, [logPolling, pollingInterval, lastTimestamp]);
+    // No polling, only fetch when window opens or service/EC2 status changes
+    // eslint-disable-next-line
+  }, [showLogWindow, status, ec2Status]);
 
-  // Check log stream status on mount and when EC2 status changes
-  useEffect(() => {
-    checkLogStreamStatus();
-    
-    // If EC2 is stopped, make sure log streaming is also stopped
-    if (ec2Status === 'stopped' && logPolling) {
-      stopLogStream();
-      setLogs(prevLogs => [
-        ...prevLogs,
-        {
-          timestamp: new Date().toISOString(),
-          message: 'EC2 instance is stopped. Log streaming interrupted.'
-        }
-      ]);
-    }
-  }, [ec2Status]);
+
 
   // Format timestamp for display
   const formatTimestamp = (timestamp) => {
@@ -395,101 +337,15 @@ export default function EmailServiceManager() {
         </Button>
       </Box>
 
-      {/* Floating Log Window */}
-      {showLogWindow && (
-        <Rnd
-          default={{ x: 120, y: 120, width: 500, height: 380 }}
-          minWidth={350}
-          minHeight={200}
-          bounds="window"
-          style={{ zIndex: 2000, boxShadow: '0 4px 24px rgba(0,0,0,0.20)' }}
-          dragHandleClassName="log-window-header"
-        >
-          <Box
-            bg="gray.800"
-            borderWidth="2px"
-            borderColor="blue.300"
-            borderRadius="md"
-            width="100%"
-            height="100%"
-            display="flex"
-            flexDirection="column"
-            position="relative"
-          >
-            <Button
-              aria-label="Close log window"
-              onClick={() => setShowLogWindow(false)}
-              size="xs"
-              colorScheme="gray"
-              variant="ghost"
-              position="absolute"
-              top="6px"
-              right="6px"
-              zIndex={100}
-              bg="white"
-              border="1px solid #ccc"
-              borderRadius="full"
-              p={0}
-              minW="20px"
-              minH="20px"
-              h="20px"
-              w="20px"
-              boxShadow="sm"
-              _hover={{ bg: 'gray.100', borderColor: 'blue.300' }}
-            >
-              <span style={{fontSize: '0.9rem', color: '#222', lineHeight: 1}}>✕</span>
-            </Button>
-            <Heading 
-              size="md" 
-              mb={2} 
-              color="blue.400" 
-              textAlign="center" 
-              width="100%"
-              className="log-window-header"
-              style={{ cursor: "move" }}
-            >
-              Email Service Logs
-            </Heading>
-            <Button
-              colorScheme={logPolling ? "red" : "blue"}
-              size="sm"
-              onClick={logPolling ? stopLogStream : startLogStream}
-              isLoading={loadingOp === 'logs'}
-              isDisabled={ec2Status === 'stopped'}
-              title={ec2Status === 'stopped' ? 'EC2 instance must be running to view logs' : undefined}
-              mb={2}
-              alignSelf="center"
-            >
-              {logPolling ? 'Stop Logs' : 'Start Logs'}
-            </Button>
-            <Box
-              ref={logContainerRef}
-              borderWidth="1px"
-              borderRadius="md"
-              p={2}
-              bg="black"
-              color="green.300"
-              fontFamily="mono"
-              fontSize="sm"
-              overflowY="auto"
-              minHeight="200px"
-              flex={1}
-              width="100%"
-            >
-              {logs.length === 0 ? (
-                <Text color="gray.500" p={2}>No logs available. Click 'Start Logs' to begin collecting logs.</Text>
-              ) : (
-                logs.map((log, index) => (
-                  <Box key={index} _hover={{ bg: 'whiteAlpha.100' }} py={0.5}>
-                    <Text as="span" color="blue.300" mr={2}>[{formatTimestamp(log.timestamp)}]</Text>
-                    <Text as="span">{log.message}</Text>
-                  </Box>
-                ))
-              )}
-            </Box>
-          </Box>
-        </Rnd>
-      )}
+      <LogViewer
+        logs={logs}
+        loading={loadingOp === 'logs'}
+        ec2Status={ec2Status}
+        showLogWindow={showLogWindow}
+        setShowLogWindow={setShowLogWindow}
+        title="Email Service Logs"
+        error={feedback.status === 'error' ? feedback.message : ''}
+      />
     </Box>
   );
 }
