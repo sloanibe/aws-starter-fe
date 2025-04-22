@@ -42,13 +42,7 @@ class LogController(private val logService: LogService) {
         if (!serviceCommands.containsKey(serviceId)) {
             return ResponseEntity.badRequest().build()
         }
-        
-        val logs = if (since != null) {
-            logService.getLogsSince(serviceId, since, limit)
-        } else {
-            logService.getLogs(serviceId, limit)
-        }
-        
+        val logs = logService.fetchLogsFromJournalctl(serviceId, since, null, limit)
         return ResponseEntity.ok(logs)
     }
     
@@ -57,36 +51,9 @@ class LogController(private val logService: LogService) {
      * @param serviceId the service identifier
      * @return status information
      */
-    @GetMapping("/{serviceId}/status")
-    fun getLogStatus(@PathVariable serviceId: String): ResponseEntity<Map<String, Any>> {
-        if (!serviceCommands.containsKey(serviceId)) {
-            return ResponseEntity.badRequest().build()
-        }
-        
-        val status = mapOf(
-            "serviceId" to serviceId,
-            "active" to logService.isLogStreamActive(serviceId),
-            "bufferSize" to logService.getLogBufferSize(serviceId)
-        )
-        
-        return ResponseEntity.ok(status)
-    }
-    
-    @PostMapping("/start/{serviceId}")
-    fun startLogStream(@PathVariable serviceId: String): ResponseEntity<String> {
-        val command = serviceCommands[serviceId] ?: 
-            return ResponseEntity.badRequest().body("Unknown service ID: $serviceId")
-        
-        logService.startLogStream(serviceId, command)
-        return ResponseEntity.ok("Log streaming started for $serviceId")
-    }
-    
-    @PostMapping("/stop/{serviceId}")
-    fun stopLogStream(@PathVariable serviceId: String): ResponseEntity<String> {
-        logService.stopLogStream(serviceId)
-        return ResponseEntity.ok("Log streaming stopped for $serviceId")
-    }
-    
+
+
+
     @GetMapping("/services")
     fun getAvailableServices(): ResponseEntity<List<String>> {
         return ResponseEntity.ok(serviceCommands.keys.toList())

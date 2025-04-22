@@ -3,6 +3,7 @@
     "@chakra-ui/react": "^3.16.0",
     "@emotion/react": "^11.14.0",
     "@emotion/styled": "^11.14.0",
+    "concurrently": "^9.1.2",
     "framer-motion": "^12.7.3",
     "react-rnd": "^10.5.2",
     "react-window-ui": "^2.2.0"

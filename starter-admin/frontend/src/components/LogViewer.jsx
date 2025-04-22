@@ -14,6 +14,7 @@ import { Rnd } from 'react-rnd';
  *   showLogWindow: boolean (whether log window is open)
  *   setShowLogWindow: function to toggle log window
  *   title: string (window title)
+ *   error: string (optional, error message to display)
  */
 const LOG_LEVELS = ['DEBUG', 'INFO', 'ERROR'];
 
@@ -27,6 +28,10 @@ export default function LogViewer({
   showLogWindow = false,
   setShowLogWindow,
   title = 'Service Logs',
+  error,
+  minutesBack,
+  setMinutesBack,
+  onReloadLogs,
 }) {
   const [selectedLogLevel, setSelectedLogLevel] = useState('DEBUG');
   const [sloanOnly, setSloanOnly] = useState(false);
@@ -43,11 +48,17 @@ export default function LogViewer({
   const formatTimestamp = (timestamp) => {
     try {
       const date = new Date(timestamp);
-      return date.toLocaleTimeString();
+      // Show date, time, and timezone abbreviation
+      return date.toLocaleString([], {
+        year: 'numeric', month: '2-digit', day: '2-digit',
+        hour: '2-digit', minute: '2-digit', second: '2-digit',
+        hour12: false, timeZoneName: 'short'
+      });
     } catch {
       return 'Invalid time';
     }
   };
+
 
   return (
     showLogWindow && (
@@ -107,8 +118,33 @@ export default function LogViewer({
           >
             {title}
           </Heading>
+          {error && (
+            <Box
+              mb={2}
+              color="white"
+              bg="red.500"
+              p={2}
+              borderRadius="md"
+              textAlign="center"
+            >
+              {error}
+            </Box>
+          )}
           {/* Sloan checkbox and search text filter */}
           <Box mb={2} display="flex" alignItems="center" justifyContent="center" gap={2}>
+            <label style={{ color: 'white', marginRight: 6 }}>Last</label>
+            <input
+              type="number"
+              min={1}
+              max={1440}
+              value={minutesBack}
+              onChange={e => {
+                setMinutesBack(Number(e.target.value));
+                onReloadLogs && onReloadLogs(Number(e.target.value));
+              }}
+              style={{ width: 60, padding: '2px 8px', borderRadius: 4, border: '1px solid #aaa', background: '#222', color: 'white', marginRight: 4 }}
+            />
+            <label style={{ color: 'white', marginRight: 12 }}>min</label>
             <input
               type="checkbox"
               id="sloan-checkbox"
@@ -155,8 +191,16 @@ export default function LogViewer({
               <Text color="gray.500" p={2}>No logs available. Click 'Start Logs' to begin collecting logs.</Text>
             ) : (
               logs
-                .filter(log => (!sloanOnly || (log.message && log.message.toLowerCase().includes('sloan')))
-                      && (searchText.trim() === "" || (log.message && log.message.toLowerCase().includes(searchText.toLowerCase()))))
+                .filter(log => {
+                  // Filter by minutesBack (now passed from parent, so always use prop)
+                  if (minutesBack && log.timestamp) {
+                    const logTime = new Date(log.timestamp).getTime();
+                    const now = Date.now();
+                    if (logTime < now - minutesBack * 60 * 1000) return false;
+                  }
+                  return (!sloanOnly || (log.message && log.message.toLowerCase().includes('sloan')))
+                    && (searchText.trim() === "" || (log.message && log.message.toLowerCase().includes(searchText.toLowerCase())));
+                })
                 .map((log, index) => {
                   // Extract log level
                   let logLevel = 'OTHER';
@@ -197,20 +241,41 @@ export default function LogViewer({
                       <Text as="span" color="blue.300" mr={2} fontFamily="mono">[{formatTimestamp(log.timestamp)}]</Text>
                       <Text as="span" color={color} fontWeight={logLevel === selectedLogLevel ? "bold" : "normal"} fontFamily="mono">
                         {(() => {
+                          let msg = log.message;
+                          let parts = [msg];
+                          // Highlight log level if selected
                           if (logLevel === selectedLogLevel && ['DEBUG','INFO','ERROR'].includes(logLevel)) {
                             const regex = new RegExp(logLevel, 'gi');
-                            return log.message.split(regex).reduce((acc, part, i, arr) => {
+                            parts = msg.split(regex).reduce((acc, part, i, arr) => {
                               if (i < arr.length - 1) {
                                 acc.push(part);
-                                acc.push(<span key={i} style={{ color: '#FFD600', fontWeight: 'bold' }}>{logLevel}</span>);
+                                acc.push(<span key={`level${i}`} style={{ color: '#FFD600', fontWeight: 'bold' }}>{logLevel}</span>);
                               } else {
                                 acc.push(part);
                               }
                               return acc;
                             }, []);
-                          } else {
-                            return log.message;
                           }
+                          // Highlight searchText if present
+                          if (searchText.trim() !== "") {
+                            const regex = new RegExp(searchText, 'gi');
+                            const highlight = (str) => {
+                              if (!str) return str;
+                              const split = str.split(regex);
+                              if (split.length === 1) return str;
+                              const matches = str.match(regex);
+                              let res = [];
+                              split.forEach((part, i) => {
+                                res.push(part);
+                                if (i < split.length - 1 && matches) {
+                                  res.push(<span key={`search${i}`} style={{ color: '#00FFF7', fontWeight: 'bold' }}>{matches[i]}</span>);
+                                }
+                              });
+                              return res;
+                            };
+                            parts = parts.flatMap((p, i) => typeof p === 'string' ? highlight(p) : p);
+                          }
+                          return parts;
                         })()}
                       </Text>
                     </Box>

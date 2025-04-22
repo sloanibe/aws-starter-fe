@@ -1,0 +1,12 @@
+{
+  "name": "starter-admin",
+  "version": "1.0.0",
+  "description": "Unified admin for backend and frontend",
+  "main": "start-admin.js",
+  "scripts": {
+    "dev": "node start-admin.js"
+  },
+  "dependencies": {
+    "concurrently": "^8.2.2"
+  }
+}

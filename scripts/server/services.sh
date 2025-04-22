@@ -423,13 +423,13 @@ manage_login_service() {
         status)
             if ssh -i $SSH_KEY ubuntu@$EC2_IP "systemctl is-active login-service.service" > /dev/null; then
                 echo "✅ Login Service is running"
-                health_response=$(curl -s http://$EC2_IP:8081/actuator/health)
-                if [ $? -eq 0 ]; then
-                    echo "\nHealth Status:"
-                    echo "$health_response" | jq '.'
-                else
-                    echo "❌ Health check failed: Could not connect to health endpoint"
-                fi
+                # health_response=$(curl -s http://$EC2_IP:8081/actuator/health)
+                # if [ $? -eq 0 ]; then
+                #     echo "\nHealth Status:"
+                #     echo "$health_response" | jq '.'
+                # else
+                #     echo "❌ Health check failed: Could not connect to health endpoint"
+                # fi
             else
                 echo "❌ Login Service is not running"
             fi

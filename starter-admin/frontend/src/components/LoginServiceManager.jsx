@@ -2,18 +2,19 @@ import { useRef, useState, useEffect } from 'react';
 import { Box, Heading, Text, Button, HStack, VStack, Alert, AlertIcon, Spinner } from '@chakra-ui/react';
 import LogViewer from './LogViewer';
 
-
 export default function LoginServiceManager() {
   const [status, setStatus] = useState('unknown');
   const [ec2Status, setEc2Status] = useState('unknown');
   const [loadingOp, setLoadingOp] = useState('');
   const [feedback, setFeedback] = useState({ message: '', status: '' });
   const [logs, setLogs] = useState([]);
-  const [logPolling, setLogPolling] = useState(false);
-  const [pollingInterval] = useState(3); // fixed for now, can add UI later
-  const [autoScroll] = useState(true); // fixed for now, can add UI later
-  const [lastTimestamp, setLastTimestamp] = useState(null);
+  const [error, setError] = useState('');
   const [showLogWindow, setShowLogWindow] = useState(false);
+  // Fetch logs when log window is open and service/EC2 is running
+  const shouldFetchLogs = showLogWindow && status === 'running' && ec2Status === 'running';
+  // const [autoScroll] = useState(true); // fixed for now, can add UI later
+  // Remove lastTimestamp, not needed for polling
+  // const [lastTimestamp, setLastTimestamp] = useState(null);
   const API_BASE = '/api/login';
   const LOGS_API_BASE = '/api/logs'; // match EmailServiceManager pattern
   const EC2_API_BASE = '/api/ec2';
@@ -106,40 +107,33 @@ export default function LoginServiceManager() {
     }
   };
 
-  // Log polling and streaming logic
+  // Log polling logic: always fetch logs for the last N minutes
   const fetchLogs = async () => {
     try {
-      let url = `${LOGS_API_BASE}/login-service?limit=100`;
-      if (lastTimestamp) {
-        url += `&since=${encodeURIComponent(lastTimestamp)}`;
-      }
+      const url = `${LOGS_API_BASE}/login-service?limit=500`;
       const res = await fetch(url);
       if (res.ok) {
         const newLogs = await res.json();
-        if (newLogs.length > 0) {
-          setLogs(prevLogs => {
-            const combined = [...prevLogs];
-            newLogs.forEach(newLog => {
-              const exists = combined.some(log => log.timestamp === newLog.timestamp && log.message === newLog.message);
-              if (!exists) combined.push(newLog);
-            });
-            combined.sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp));
-            return combined.slice(-1000);
-          });
-          setLastTimestamp(newLogs[newLogs.length - 1].timestamp);
-        }
+        setLogs(newLogs);
+        setError(''); // clear error on success
+      } else {
+        setError('Failed to fetch logs');
       }
-    } catch {}
+    } catch (err) {
+      setError('Error fetching logs: ' + (err.message || err.toString()));
+    }
   };
 
+
+
+
   useEffect(() => {
-    let interval;
-    if (logPolling) {
+    if (shouldFetchLogs) {
       fetchLogs();
-      interval = setInterval(fetchLogs, pollingInterval * 1000);
     }
-    return () => interval && clearInterval(interval);
-  }, [logPolling, pollingInterval, lastTimestamp]);
+    // No polling, only fetch when window opens or service/EC2 status changes
+    // eslint-disable-next-line
+  }, [shouldFetchLogs]);
 
   useEffect(() => {
     checkLoginServiceStatus();
@@ -148,30 +142,7 @@ export default function LoginServiceManager() {
     return () => clearInterval(intervalId);
   }, []);
 
-  // Start log streaming (consistent with EmailServiceManager)
-  const startLogStream = async () => {
-    try {
-      // Optionally: check EC2 status if needed
-      const res = await fetch(`/api/logs/start/login-service`, { method: 'POST' });
-      if (res.ok) {
-        setFeedback({ message: 'Log streaming started', status: 'info' });
-        setLogPolling(true);
-        setShowLogWindow(true);
-        setLogs([
-          {
-            timestamp: new Date().toISOString(),
-            message: 'Starting log collection for login-service...'
-          }
-        ]);
-        setLastTimestamp(null);
-      } else {
-        setFeedback({ message: 'Failed to start log streaming', status: 'error' });
-      }
-    } catch (err) {
-      setFeedback({ message: `Failed to start log streaming: ${err.message}`, status: 'error' });
-    }
-  };
-  const stopLogStream = () => setLogPolling(false);
+
 
   return (
     <Box borderWidth="1px" borderRadius="lg" p={4} h="100%" display="flex" flexDirection="column">
@@ -233,14 +204,7 @@ export default function LoginServiceManager() {
           size="md"
           colorScheme="blue"
           variant={showLogWindow ? "outline" : "solid"}
-          onClick={() => {
-            if (!showLogWindow) {
-              startLogStream();
-            } else {
-              stopLogStream();
-            }
-            setShowLogWindow(v => !v);
-          }}
+          onClick={() => setShowLogWindow(v => !v) }
           width="auto"
           minWidth="180px"
         >
@@ -250,15 +214,14 @@ export default function LoginServiceManager() {
       {/* Log Viewer Component */}
       <LogViewer
         logs={logs}
-        logPolling={logPolling}
+        error={error}
         loading={loadingOp === 'logs'}
         ec2Status={ec2Status}
-        onStart={startLogStream}
-        onStop={stopLogStream}
         showLogWindow={showLogWindow}
         setShowLogWindow={setShowLogWindow}
         title="Login Service Logs"
+        onReloadLogs={fetchLogs}
       />
     </Box>
   );
-};
+}
